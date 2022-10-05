@@ -1,6 +1,6 @@
 FROM ghcr.io/cdloh/calibre-bare:6.6.1@sha256:f5307fa4443259c6efe5d9d7122ac25aef79ace7e88f570ea5901e6ba1cac88f as calibre
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:a3f50b8f3603708774e6450e0601499ad41f1720fe516c3e1ed660a9baa13eb9
+FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:5d310ede7e8ed4254dc62d93f1938b2c242f63661aba7d4d74a96b4dc7e0ae78
 
 ARG VERSION
 

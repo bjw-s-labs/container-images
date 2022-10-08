@@ -1,8 +1,17 @@
-FROM ghcr.io/cdloh/calibre-bare:6.6.1@sha256:f5307fa4443259c6efe5d9d7122ac25aef79ace7e88f570ea5901e6ba1cac88f as calibre
+FROM --platform=$TARGETPLATFORM ghcr.io/cdloh/calibre-bare:6.6.1@sha256:f5307fa4443259c6efe5d9d7122ac25aef79ace7e88f570ea5901e6ba1cac88f as calibre
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:5d310ede7e8ed4254dc62d93f1938b2c242f63661aba7d4d74a96b4dc7e0ae78
+FROM --platform=$TARGETPLATFORM ghcr.io/onedr0p/ubuntu:rolling@sha256:5d310ede7e8ed4254dc62d93f1938b2c242f63661aba7d4d74a96b4dc7e0ae78
+
+ARG TARGETPLATFORM
+ARG TARGETARCH
+ARG TARGETOS
 
 ARG VERSION
+
+LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
+LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
+LABEL dev.bjw-s.image.target_os=$TARGETOS
+LABEL org.opencontainers.image.source="https://github.com/janeczku/calibre-web"
 
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -13,8 +22,6 @@ ENV \
 
 ENV \
     CALIBRE_DBPATH=/config
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # hadolint ignore=DL3008,DL3015,SC2086
 RUN \
@@ -70,5 +77,3 @@ COPY --from=calibre / /opt/calibre
 USER kah
 COPY ./apps/calibre-web/entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/janeczku/calibre-web"

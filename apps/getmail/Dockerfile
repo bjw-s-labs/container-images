@@ -1,9 +1,15 @@
-FROM ghcr.io/onedr0p/alpine:rolling@sha256:35dc08b62b80ebd6d9a4e46ff1c4503967d4c0ca6a9ca8b04e299102b0319bf6
+FROM --platform=$TARGETPLATFORM ghcr.io/onedr0p/alpine:rolling@sha256:35dc08b62b80ebd6d9a4e46ff1c4503967d4c0ca6a9ca8b04e299102b0319bf6
 
 ARG TARGETPLATFORM
-ARG BUILDPLATFORM
+ARG TARGETARCH
+ARG TARGETOS
+
 ARG VERSION
-ARG CHANNEL
+
+LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
+LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
+LABEL dev.bjw-s.image.target_os=$TARGETOS
+LABEL org.opencontainers.image.source="https://github.com/getmail6/getmail6"
 
 ENV \
     PYTHONDONTWRITEBYTECODE=1 \
@@ -12,8 +18,6 @@ ENV \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     CRYPTOGRAPHY_DONT_BUILD_RUST=1
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 #hadolint ignore=DL3018,DL3013
 RUN apk add --no-cache \
@@ -40,5 +44,3 @@ RUN apk add --no-cache \
 USER kah
 VOLUME [ "/config" ]
 CMD [ "/usr/bin/getmail", "--getmaildir", "/config" ]
-
-LABEL org.opencontainers.image.source="https://github.com/getmail6/getmail6"

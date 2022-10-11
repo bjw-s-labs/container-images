@@ -20,7 +20,7 @@ RUN \
     && \
     curl -o \
         /app/kepubify -L \
-        "https://github.com/pgaskin/kepubify/releases/download/${VERSION}/kepubify-linux-${ARCH}" \
+        "https://github.com/pgaskin/kepubify/releases/download/v${VERSION}/kepubify-linux-${ARCH}" \
     && chown -R root:root /app \
     && chmod -R 755 /app
 

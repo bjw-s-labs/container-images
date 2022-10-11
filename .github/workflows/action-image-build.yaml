@@ -109,7 +109,10 @@ jobs:
           version: v0.3.18
 
       - name: Setup QEMU
-        uses: docker/setup-qemu-action@v2
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-user-static
 
       - name: Validate image metadata
         shell: bash

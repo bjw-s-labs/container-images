@@ -42,7 +42,7 @@ tasks:
     env:
       CONTAINER_RUNTIME: podman
       GOSS_PATH: ./.goss/goss
-      GOSS_OPTS: --retry-timeout 15s --color --format documentation
+      GOSS_OPTS: --sleep 5s --retry-timeout 60s --color --format documentation
       GOSS_SLEEP: 2
       GOSS_FILE: ./apps/{{.APP}}/ci/goss.yaml
       GOSS_FILES_STRATEGY: cp

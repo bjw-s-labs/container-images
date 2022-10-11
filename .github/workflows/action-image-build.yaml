@@ -148,8 +148,10 @@ jobs:
           CONTAINER_RUNTIME: podman
           GOSS_FILE: ${{ steps.vars.outputs.chan_goss_config }}
           GOSS_OPTS: |-
-            --retry-timeout 60s --color --format documentation
+            --sleep 5s --retry-timeout 60s --color --format documentation
           GOSS_SLEEP: 2
+          GOSS_FILES_STRATEGY: cp
+          CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: >
           dgoss run ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }} ${{ steps.vars.outputs.chan_goss_args }}
 
@@ -170,6 +172,9 @@ jobs:
         run: |-
           echo "::set-output name=message::🎉 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})"
           echo "::set-output name=color::0x00FF00"
+          echo "::group::Container log output"
+          cat "goss_container_log_output"
+          echo "::endgroup::"
 
       - name: Build failed
         id: build-failed
@@ -177,6 +182,9 @@ jobs:
         run: |-
           echo "::set-output name=message::💥 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})"
           echo "::set-output name=color::0xFF0000"
+          echo "::group::Container log output"
+          cat "goss_container_log_output"
+          echo "::endgroup::"
 
   # Summarize matrix https://github.community/t/status-check-for-a-matrix-jobs/127354/7
   build_success:

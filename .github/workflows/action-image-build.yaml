@@ -127,6 +127,10 @@ jobs:
           context: .
           containerfiles: |
             ${{ steps.vars.outputs.chan_dockerfile }}
+          layers: true
+          extra-args: |
+            --cache-from
+            ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }}
           tags: |-
             ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }}
             ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_version }}

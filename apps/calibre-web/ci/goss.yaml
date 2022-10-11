@@ -14,3 +14,11 @@ port:
 http:
   http://localhost:8083/login:
     status: 200
+
+# https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#file
+file:
+  /opt/calibre/ebook-convert:
+    exists: true
+
+  /opt/kepubify/kepubify:
+    exists: true

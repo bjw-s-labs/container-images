@@ -53,45 +53,45 @@ jobs:
         shell: bash
         run: |-
           container_base=$(jq '.base' ./apps/${{ matrix.image.app }}/metadata.json)
-          echo "::set-output name=chan_build_date::$(date --rfc-3339=seconds --utc)"
+          echo "chan_build_date=$(date --rfc-3339=seconds --utc)" >> $GITHUB_OUTPUT
 
           chan_config=$(jq --arg chan "${{ matrix.image.channel }}" '(.channels | .[] | select(.name == $chan))' ./apps/${{ matrix.image.app }}/metadata.json)
           chan_stable=$(jq --raw-output '.stable' <<< "${chan_config}")
 
           chan_platforms=$(jq --raw-output '.platforms | join(",")' <<< "${chan_config}") && \
-              echo "::set-output name=chan_platforms::${chan_platforms}"
+              echo "name=chan_platforms=${chan_platforms}" >> $GITHUB_OUTPUT
           chan_tests_enabled=$(jq --raw-output '.tests.enabled' <<< "${chan_config}") && \
-              echo "::set-output name=chan_tests_enabled::${chan_tests_enabled}"
+              echo "chan_tests_enabled=${chan_tests_enabled}" >> $GITHUB_OUTPUT
           chan_tests_type=$(jq --raw-output '.tests.type' <<< "${chan_config}") && \
-              echo "::set-output name=chan_tests_type::${chan_tests_type}"
+              echo "chan_tests_type=${chan_tests_type}" >> $GITHUB_OUTPUT
 
           chan_upstream_version=$(bash ./.github/scripts/upstream.sh "${{ matrix.image.app }}" "${{ matrix.image.channel }}") && \
-              echo "::set-output name=chan_upstream_version::${chan_upstream_version}"
+              echo "chan_upstream_version=${chan_upstream_version}" >> $GITHUB_OUTPUT
 
           if [[ "${chan_tests_enabled}" == true && "${chan_tests_type}" == "cli" ]]; then
-              echo "::set-output name=chan_goss_args::tail -f /dev/null"
+              echo "chan_goss_args=tail -f /dev/null" >> $GITHUB_OUTPUT
           fi
 
           if [[ "${container_base}" == true ]]; then
-              echo "::set-output name=chan_label_type::org.opencontainers.image.base"
+              echo "chan_label_type=org.opencontainers.image.base" >> $GITHUB_OUTPUT
           else
-              echo "::set-output name=chan_label_type::org.opencontainers.image"
+              echo "chan_label_type=org.opencontainers.image" >> $GITHUB_OUTPUT
           fi
 
           if test -f "./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile"; then
-              echo "::set-output name=chan_dockerfile::./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile"
-              echo "::set-output name=chan_goss_config::./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/goss.yaml"
+              echo "chan_dockerfile=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile" >> $GITHUB_OUTPUT
+              echo "chan_goss_config=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/goss.yaml" >> $GITHUB_OUTPUT
           else
-              echo "::set-output name=chan_dockerfile::./apps/${{ matrix.image.app }}/Dockerfile"
-              echo "::set-output name=chan_goss_config::./apps/${{ matrix.image.app }}/ci/goss.yaml"
+              echo "chan_dockerfile=./apps/${{ matrix.image.app }}/Dockerfile" >> $GITHUB_OUTPUT
+              echo "chan_goss_config=./apps/${{ matrix.image.app }}/ci/goss.yaml" >> $GITHUB_OUTPUT
           fi
 
           if [[ "${chan_stable}" == true ]]; then
-              echo "::set-output name=chan_tag_rolling::${{ matrix.image.app }}:rolling"
-              echo "::set-output name=chan_tag_version::${{ matrix.image.app }}:${chan_upstream_version}"
+              echo "chan_tag_rolling=${{ matrix.image.app }}:rolling" >> $GITHUB_OUTPUT
+              echo "chan_tag_version=${{ matrix.image.app }}:${chan_upstream_version}" >> $GITHUB_OUTPUT
           else
-              echo "::set-output name=chan_tag_rolling::${{ matrix.image.app }}-${{ matrix.image.channel }}:rolling"
-              echo "::set-output name=chan_tag_version::${{ matrix.image.app }}-${{ matrix.image.channel }}:${chan_upstream_version}"
+              echo "chan_tag_rolling=${{ matrix.image.app }}-${{ matrix.image.channel }}:rolling" >> $GITHUB_OUTPUT
+              echo "chan_tag_version=${{ matrix.image.app }}-${{ matrix.image.channel }}:${chan_upstream_version}" >> $GITHUB_OUTPUT
           fi
 
       - name: Setup cli tools
@@ -177,8 +177,8 @@ jobs:
         id: build-success
         if: ${{ always() && steps.build_image.outcome == 'success' && steps.dgoss.outcome == 'success' && (steps.push_to_ghcr.outcome == 'success' || steps.push_to_ghcr.outcome == 'skipped') }}
         run: |-
-          echo "::set-output name=message::🎉 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})"
-          echo "::set-output name=color::0x00FF00"
+          echo "message=🎉 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})" >> $GITHUB_OUTPUT
+          echo "color=0x00FF00" >> $GITHUB_OUTPUT
           echo "::group::Container log output"
           cat "goss_container_log_output"
           echo "::endgroup::"
@@ -187,8 +187,8 @@ jobs:
         id: build-failed
         if: ${{ always() && (steps.build_image.outcome == 'failure' || steps.dgoss.outcome == 'failure' || steps.push_to_ghcr.outcome == 'failure') }}
         run: |-
-          echo "::set-output name=message::💥 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})"
-          echo "::set-output name=color::0xFF0000"
+          echo "message=💥 ${{ matrix.image.app }}-${{ matrix.image.channel }} (${{ steps.vars.outputs.chan_upstream_version }})" >> $GITHUB_OUTPUT
+          echo "color=0xFF0000" >> $GITHUB_OUTPUT
           echo "::group::Container log output"
           cat "goss_container_log_output"
           echo "::endgroup::"

@@ -94,10 +94,6 @@ jobs:
               echo "chan_tag_version=${{ matrix.image.app }}-${{ matrix.image.channel }}:${chan_upstream_version}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Setup cli tools
-        shell: bash
-        run: sudo apt-get install moreutils jo
-
       - name: Setup CUE
         uses: cue-lang/setup-cue@v1.0.0-alpha.2
 
@@ -108,11 +104,15 @@ jobs:
           # renovate: datasource=github-releases depName=aelsabbahy/goss
           version: v0.3.20
 
-      - name: Setup QEMU
+      # https://github.com/redhat-actions/buildah-build/issues/100
+      - name: Setup Tools
         shell: bash
         run: |
+          echo 'deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/unstable/xUbuntu_22.04/ /' | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:unstable.list
+          curl -fsSL https://download.opensuse.org/repositories/devel:kubic:libcontainers:unstable/xUbuntu_22.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/devel_kubic_libcontainers_unstable.gpg > /dev/null
           sudo apt-get update
-          sudo apt-get install -y qemu-user-static
+          sudo apt-get install -y moreutils jo qemu-user-static
+          sudo apt-get install -y buildah -o Dpkg::Options::="--force-overwrite"
 
       - name: Validate image metadata
         shell: bash
@@ -131,9 +131,6 @@ jobs:
           containerfiles: |
             ${{ steps.vars.outputs.chan_dockerfile }}
           layers: true
-          extra-args: |
-            --cache-from
-            ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }}
           tags: |-
             ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }}
             ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_version }}
@@ -169,7 +166,6 @@ jobs:
         with:
           image: ${{ steps.build_image.outputs.image }}
           tags: ${{ steps.build_image.outputs.tags }}
-          registry: ${{ env.IMAGE_REGISTRY_GHCR }}/${{ env.IMAGE_NAMESPACE }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 

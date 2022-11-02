@@ -1,7 +1,7 @@
-FROM --platform=$TARGETPLATFORM ghcr.io/cdloh/calibre-bare:6.7.1@sha256:1931ef4d1183efaaf731e2b01f38a036677f0ce53987aebd3fafca8f6cabb2f5 as calibre
-FROM --platform=$TARGETPLATFORM ghcr.io/bjw-s/kepubify:4.0.4@sha256:360a1dd8e54dcdc35f492113b6a22b1a78ba9392b0f9101566c41f16892a492e as kepubify
+FROM ghcr.io/cdloh/calibre-bare:6.7.1@sha256:1931ef4d1183efaaf731e2b01f38a036677f0ce53987aebd3fafca8f6cabb2f5 as calibre
+FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:360a1dd8e54dcdc35f492113b6a22b1a78ba9392b0f9101566c41f16892a492e as kepubify
 
-FROM --platform=$TARGETPLATFORM ghcr.io/onedr0p/ubuntu:rolling@sha256:f881d763cf5e99aa8fb583cf5d8f9b869ccbf08b7d4ac98341c3082be058d065
+FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:f881d763cf5e99aa8fb583cf5d8f9b869ccbf08b7d4ac98341c3082be058d065
 
 ARG TARGETPLATFORM
 ARG TARGETARCH

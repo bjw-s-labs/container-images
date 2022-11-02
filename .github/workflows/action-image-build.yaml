@@ -78,11 +78,11 @@ jobs:
               echo "chan_label_type=org.opencontainers.image" >> $GITHUB_OUTPUT
           fi
 
-          if test -f "./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile"; then
-              echo "chan_dockerfile=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Dockerfile" >> $GITHUB_OUTPUT
+          if test -f "./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Containerfile"; then
+              echo "chan_Containerfile=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/Containerfile" >> $GITHUB_OUTPUT
               echo "chan_goss_config=./apps/${{ matrix.image.app }}/${{ matrix.image.channel }}/goss.yaml" >> $GITHUB_OUTPUT
           else
-              echo "chan_dockerfile=./apps/${{ matrix.image.app }}/Dockerfile" >> $GITHUB_OUTPUT
+              echo "chan_Containerfile=./apps/${{ matrix.image.app }}/Containerfile" >> $GITHUB_OUTPUT
               echo "chan_goss_config=./apps/${{ matrix.image.app }}/ci/goss.yaml" >> $GITHUB_OUTPUT
           fi
 
@@ -129,7 +129,7 @@ jobs:
           platforms: ${{ steps.vars.outputs.chan_platforms }}
           context: .
           containerfiles: |
-            ${{ steps.vars.outputs.chan_dockerfile }}
+            ${{ steps.vars.outputs.chan_Containerfile }}
           layers: true
           tags: |-
             ${{ env.IMAGE_REGISTRY_GHCR }}/${{ github.repository_owner }}/${{ steps.vars.outputs.chan_tag_rolling }}

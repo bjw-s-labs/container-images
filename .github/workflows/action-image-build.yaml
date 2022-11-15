@@ -168,6 +168,9 @@ jobs:
           tags: ${{ steps.build_image.outputs.tags }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          extra-args: |
+            -f
+            v2s2
 
       - name: Build successful
         id: build-success

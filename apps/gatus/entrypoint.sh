@@ -9,6 +9,11 @@ if [ -n "${GATUS_CONFIG_FILE_URL}" ]; then
   fi
 fi
 
+if [ -n "${GATUS_CONFIG_BASE64}" ]; then
+  echo "[INFO] Converting base64 config to ${GATUS_CONFIG_FILE}"
+  echo "$GATUS_CONFIG_BASE64" | base64 -d > "${GATUS_CONFIG_FILE}"
+fi
+
 if [ ! -f "${GATUS_CONFIG_FILE}" ]; then
   echo "[INFO] Copying default configuration to ${GATUS_CONFIG_FILE}"
   cp "/app/config.default.yaml" "${GATUS_CONFIG_FILE}"

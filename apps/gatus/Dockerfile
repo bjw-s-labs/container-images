@@ -1,3 +1,4 @@
+ARG VERSION
 FROM docker.io/twinproduction/gatus:v$VERSION as gatus
 
 FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:90fc29f4c1a9dcabff4ee64b3e33882335811713ab0742cae0998b51f1a6b9da
@@ -5,8 +6,6 @@ FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:90fc29f4c1a9dcabff4ee64b3e33882335811
 ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG TARGETOS
-
-ARG VERSION
 
 LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
 LABEL dev.bjw-s.image.target_architecture=$TARGETARCH

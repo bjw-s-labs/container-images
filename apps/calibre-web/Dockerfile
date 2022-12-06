@@ -33,7 +33,7 @@ RUN \
         libegl1 \
         libfontconfig1 \
         libgl1-mesa-glx \
-        libldap-2.4-2 \
+        libldap-2.5-0 \
         libnss3 \
         libopengl0 \
         libsasl2-2 \

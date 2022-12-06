@@ -1,7 +1,7 @@
 FROM ghcr.io/cdloh/calibre-bare:6.9.0@sha256:b0c4e14d63dc8c76d37c4c962185cd62ae213c80dde25cf3f776e532dced589d as calibre
 FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:02f4672318d9a3edd19ef52c2dcb5ab9b4626b8588927d339a71e967b21199d0 as kepubify
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:90fc29f4c1a9dcabff4ee64b3e33882335811713ab0742cae0998b51f1a6b9da
+FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:80f141c34aa7a28393f51e40b6af5cac5bf5a8886a6e03fdbc3500eaa38407d5
 
 ARG TARGETPLATFORM
 ARG TARGETARCH
@@ -33,7 +33,7 @@ RUN \
         libegl1 \
         libfontconfig1 \
         libgl1-mesa-glx \
-        libldap-2.4-2 \
+        libldap-2.5-0 \
         libnss3 \
         libopengl0 \
         libsasl2-2 \

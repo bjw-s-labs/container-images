@@ -19,4 +19,18 @@
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
     },
   ],
+  packageRules: [
+    {
+      description: "Auto merge container digests",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "branch",
+      matchUpdateTypes: ["digest"],
+      // matchPackagePattern: [
+      //   "ghcr.io/bjw-s"
+      //   "ghcr.io/onedr0p",
+      // ],
+      ignoreTests: true,
+    }
+  ]
 }

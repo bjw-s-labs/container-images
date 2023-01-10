@@ -1,4 +1,4 @@
-FROM rust:1.66.0-slim AS build
+FROM rust:1.66.0-slim@sha256:2bcbf9c3c854168ce803d8cec4301778bdf360df7bc0bd4196b3ad71567288f9 AS build
 
 ARG VERSION
 

@@ -28,7 +28,8 @@ RUN \
         "mdbook-mermaid" \
         "mdbook-toc" \
         "mdbook-open-on-gh" \
-        "mdbook-emojicodes"
+        "mdbook-emojicodes" \
+        "mdbook-regex"
 
 FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:6354de1c9666bf401b6fc18e49eea81a6d68655caf35727526ff0d76a909f98c
 

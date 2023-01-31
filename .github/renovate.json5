@@ -3,6 +3,7 @@
   extends: [
     "github>bjw-s/renovate-config",
     "github>bjw-s/renovate-config:automerge-github-actions",
+    "github>bjw-s/renovate-config:automerge-docker-digest",
   ],
   platform: "github",
   username: "bjw-s-bot[bot]",
@@ -19,18 +20,4 @@
       versioningTemplate: "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}",
     },
   ],
-  packageRules: [
-    {
-      description: "Auto merge container digests",
-      matchDatasources: ["docker"],
-      automerge: true,
-      automergeType: "branch",
-      matchUpdateTypes: ["digest"],
-      // matchPackagePattern: [
-      //   "ghcr.io/bjw-s"
-      //   "ghcr.io/onedr0p",
-      // ],
-      ignoreTests: true,
-    }
-  ]
 }

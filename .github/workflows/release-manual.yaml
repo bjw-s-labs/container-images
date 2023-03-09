@@ -1,6 +1,10 @@
 ---
 name: "Release: Manual"
 
+concurrency:
+  group: container-release
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
     inputs:

@@ -1,7 +1,7 @@
 FROM ghcr.io/cdloh/calibre-bare:6.14.1@sha256:ba294da9d297f09ff752d3bb78ecf2d2993d876d52bf92dc3f212ad7fb4f6601 as calibre
 FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:cbebc90d4d84baef0b010307daad0b1ad15cf58856b4cf5007219af0de59ed60 as kepubify
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:07c7794ab341e45b5cbbe4648092ccfb2b74bbb1e33573f81f99ae773dd2a71d
+FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:e64f5d8fc84d91246b4fb27dd88c81aa74f29cbf1cee7e34c45bd7a1bc935833
 
 ARG TARGETPLATFORM
 ARG TARGETARCH

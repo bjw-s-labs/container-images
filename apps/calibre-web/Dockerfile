@@ -1,4 +1,4 @@
-FROM ghcr.io/cdloh/calibre-bare:6.14.1@sha256:ba294da9d297f09ff752d3bb78ecf2d2993d876d52bf92dc3f212ad7fb4f6601 as calibre
+FROM ghcr.io/cdloh/calibre-bare:6.15.0@sha256:1f2b0764c3551646f165d7510d094c26fb84528e71d0fcbecb2984a3e68aaeb6 as calibre
 FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:8cf6e8d7d62744f269972b3f71ccae305e13334d2ed5d0365adc5d1068cdccba as kepubify
 
 FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:e64f5d8fc84d91246b4fb27dd88c81aa74f29cbf1cee7e34c45bd7a1bc935833

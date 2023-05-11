@@ -1,4 +1,4 @@
-ARG VERSION=latest
+ARG VERSION=latest@sha256:5b429165fa9642beb87e297fe02c7d545409f8d27a0e67e31670a5f6ea0933c1
 
 FROM ghcr.io/actions/actions-runner:${VERSION}
 

@@ -7,7 +7,7 @@ RUN \
     sudo apt-get -qq update \
     && \
     sudo apt-get install -y \
-        git \
+        curl git \
     && \
     sudo rm -rf \
         /tmp/* \

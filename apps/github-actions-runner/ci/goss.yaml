@@ -1,5 +1,17 @@
 ---
 # https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#file
 file:
+  /usr/bin/docker:
+    exists: true
+
   /usr/bin/git:
+    exists: true
+
+  /usr/bin/jq:
+    exists: true
+
+  /usr/bin/jo:
+    exists: true
+
+  /usr/bin/yq:
     exists: true

@@ -3,7 +3,7 @@ FROM ubuntu:22.04@sha256:ca5534a51dd04bbcebe9b23ba05f389466cf0c190f1f8f182d7eea9
 ARG VERSION
 
 # renovate: datasource=github-releases depName=actions/runner-container-hooks
-ARG RUNNER_CONTAINER_HOOKS_VERSION=0.3.1
+ARG RUNNER_CONTAINER_HOOKS_VERSION=0.3.2
 ARG DOCKER_VERSION=20.10.23
 # renovate: datasource=github-releases depName=mikefarah/yq
 ARG YQ_VERSION=4.33.3

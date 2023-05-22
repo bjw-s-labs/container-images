@@ -1,7 +1,6 @@
-FROM ubuntu:22.04@sha256:ca5534a51dd04bbcebe9b23ba05f389466cf0c190f1f8f182d7eea92a9671d00
+FROM mcr.microsoft.com/dotnet/runtime-deps:7.0-jammy
 
 ARG VERSION
-
 # renovate: datasource=github-releases depName=actions/runner-container-hooks
 ARG RUNNER_CONTAINER_HOOKS_VERSION=0.3.2
 ARG DOCKER_VERSION=20.10.23
@@ -14,8 +13,8 @@ ARG TARGETVARIANT=""
 ARG TARGETPLATFORM
 ENV TARGETPLATFORM=${TARGETPLATFORM:-linux/amd64}
 
-ENV LANG en_US.UTF-8
 ENV DEBIAN_FRONTEND=noninteractive
+ENV LANG=en_US.UTF-8
 ENV RUNNER_MANUALLY_TRAP_SIG=1
 ENV ACTIONS_RUNNER_PRINT_LOG_TO_STDOUT=1
 
@@ -80,4 +79,6 @@ RUN \
     /var/lib/apt/lists/* \
     /var/tmp/
 
+WORKDIR /home/runner
 USER runner
+CMD ["/home/runner/run.sh"]

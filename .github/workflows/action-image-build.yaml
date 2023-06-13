@@ -19,16 +19,16 @@ on:
             ]
         required: false
         type: string
-        default: ''
+        default: ""
 
       pushImages:
         required: false
-        default: 'false'
+        default: "false"
         type: string
 
       updateMetadata:
         required: false
-        default: 'false'
+        default: "false"
         type: string
 
 env:
@@ -108,8 +108,8 @@ jobs:
         if: ${{ steps.vars.outputs.chan_tests_enabled == 'true' }}
         uses: e1himself/goss-installation-action@v1.1.0
         with:
-          # renovate: datasource=github-releases depName=aelsabbahy/goss
-          version: 0.3.23
+          # renovate: datasource=github-releases depName=aelsabbahy/goss versionTemplate=^(?<version>.*)$
+          version: v0.3.23
 
       - name: Setup Tools
         shell: bash

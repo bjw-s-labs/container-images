@@ -21,16 +21,20 @@ on:
         description: "Push"
         default: "false"
         required: true
+      notify:
+        description: "Send notification"
+        default: "false"
+        required: true
 
 env:
   TOKEN: ${{ secrets.TOKEN }}
 
 jobs:
-  generate-build-matrix:
-    name: Generate matrix for building images
+  determine-images:
+    name: Determine Images to Build
     runs-on: ubuntu-22.04
     outputs:
-      matrix: ${{ steps.determine-images.outputs.changes }}
+      imagesToBuild: ${{ steps.determine-images.outputs.changes }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -56,15 +60,16 @@ jobs:
 
             output="$(jo -a ${images_array[*]})"
             echo "changes=${output}" >> $GITHUB_OUTPUT
+            echo "Changes:\n ${output}"
           fi
 
   images-build:
-    uses: bjw-s/container-images/.github/workflows/action-image-build.yaml@main
-    if: needs.generate-build-matrix.outputs.matrix != '[]'
+    uses: ./.github/workflows/action-image-build.yaml
+    if: needs.determine-images.outputs.imagesToBuild != '[]'
     needs:
-      - generate-build-matrix
+      - determine-images
     with:
-      imagesToBuild: "${{ needs.generate-build-matrix.outputs.matrix }}"
+      imagesToBuild: "${{ needs.determine-images.outputs.imagesToBuild }}"
       pushImages: "${{ github.event.inputs.push }}"
-      updateMetadata: "${{ github.event.inputs.push }}"
+      sendNotification: "${{ github.event.inputs.notify }}"
     secrets: inherit

@@ -65,5 +65,5 @@ jobs:
     with:
       imagesToBuild: "${{ needs.determine-images.outputs.matrix }}"
       pushImages: "true"
-      updateMetadata: "true"
+      sendNotification: "true"
     secrets: inherit

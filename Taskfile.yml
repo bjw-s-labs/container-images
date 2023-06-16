@@ -48,8 +48,8 @@ tasks:
   download-goss:
     silent: true
     vars:
-      # renovate: datasource=github-releases depName=aelsabbahy/goss
-      GOSS_VERSION: 0.3.23
+      # renovate: datasource=github-releases depName=aelsabbahy/goss versionTemplate=^(?<version>.*)$
+      GOSS_VERSION: v0.3.23
     cmds:
       - mkdir -p ./.goss
       - curl -fsSL -o ./.goss/goss https://github.com/aelsabbahy/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-amd64

@@ -31,7 +31,7 @@ RUN \
         "mdbook-emojicodes" \
         "mdbook-regex"
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:6b131b2ea13b8f7497f59275b13d351e2b82d0c235ca7b9da205064bb02a28e6
+FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:5924c65dfc7db291ae97cb409812ea6b828357daeef6b34ef72eb434cc0438e3
 
 ARG TARGETPLATFORM
 ARG TARGETARCH

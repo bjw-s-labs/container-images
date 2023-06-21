@@ -45,7 +45,7 @@ Container | Channel | Image | Latest Tags
 [calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web |![0.6.20](https://img.shields.io/badge/0.6.20-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify |![4.0.4](https://img.shields.io/badge/4.0.4-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale |![3.1.8](https://img.shields.io/badge/3.1.8-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[mdbook]() | stable | ghcr.io/bjw-s/mdbook |
+[mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook |![0.4.30](https://img.shields.io/badge/0.4.30-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail |![6.18.12](https://img.shields.io/badge/6.18.12-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 
 

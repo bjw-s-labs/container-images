@@ -1,5 +1,5 @@
 ---
-name: "Renovate: Schedule"
+name: "Scheduled: Renovate"
 
 on:
   workflow_dispatch:
@@ -22,7 +22,7 @@ on:
       - ".github/renovate.json5"
       - ".github/renovate/**.json"
       - ".github/renovate/**.json5"
-      - ".github/workflows/schedule-renovate.yaml"
+      - ".github/workflows/scheduled-renovate.yaml"
 
 jobs:
   renovate:

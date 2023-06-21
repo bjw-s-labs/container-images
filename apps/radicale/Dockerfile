@@ -21,7 +21,7 @@ LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
 LABEL dev.bjw-s.image.target_os=$TARGETOS
 LABEL org.opencontainers.image.source="https://github.com/Kozea/Radicale"
 
-COPY ./apps/radicale/config /app/config.default
+COPY ./config /app/config.default
 
 #hadolint ignore=DL3018,DL3013
 RUN \
@@ -50,5 +50,5 @@ RUN \
         /tmp/*
 
 USER kah
-COPY ./apps/radicale/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

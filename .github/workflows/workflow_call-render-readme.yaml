@@ -1,0 +1,55 @@
+---
+name: "Workflow call: Render Readme"
+
+on:
+  workflow_call:
+    secrets:
+      BJWS_APP_ID:
+        description: "The ID of the GitHub App"
+        required: true
+      BJWS_APP_PRIVATE_KEY:
+        description: "The private key of the GitHub App"
+        required: true
+
+jobs:
+  render-readme:
+    name: Render README
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Token
+        uses: tibdex/github-app-token@v1
+        id: generate-token
+        with:
+          app_id: "${{ secrets.BJWS_APP_ID }}"
+          private_key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ steps.generate-token.outputs.token }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+          cache: "pip" # caching pip dependencies
+
+      - name: Install Python Requirements
+        run: |
+          pip install -r ./.github/scripts/requirements.txt && pip freeze
+
+      - name: Render README
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          python ./.github/scripts/render-readme.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        id: auto-commit
+        with:
+          file_pattern: "README.md"
+          commit_message: Render README.md
+          commit_user_name: "bjw-s-bot[bot]"
+          commit_user_email: 87358111+bjw-s-bot[bot]@users.noreply.github.com
+          commit_author: bjw-s-bot[bot] <87358111+bjw-s-bot[bot]@users.noreply.github.com>

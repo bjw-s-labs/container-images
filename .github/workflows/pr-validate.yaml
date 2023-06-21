@@ -5,53 +5,30 @@ on:
   pull_request:
     branches:
       - main
-
-concurrency:
-  group: ${{ github.head_ref }}-pr-validate
-  cancel-in-progress: true
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
-  pr-metadata:
-    uses: bjw-s/container-images/.github/workflows/pr-metadata.yaml@main
+  # Pin to main to prevent accidental injection of malicious code
+  lint:
+    name: Lint
+    uses: bjw-s/container-images/.github/workflows/workflow_call-lint.yaml@main
 
-  generate-build-matrix:
-    name: Generate matrix for building images
-    runs-on: ubuntu-22.04
+  get-changed-images:
+    name: Get changed images
+    uses: bjw-s/container-images/.github/workflows/workflow_call-get_changed_images.yaml@main
+
+  build-images:
+    name: Build images
     needs:
-      - pr-metadata
-    outputs:
-      matrix: ${{ steps.get-changed.outputs.changes }}
-    if: ${{ needs.pr-metadata.outputs.addedOrModifiedImages }} != '[]'
-    steps:
-      - name: Install tools
-        run: sudo apt-get install moreutils jo
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Fetch modified images
-        id: get-changed
-        shell: bash
-        run: |
-          declare -a changes_array=()
-          while read -r app
-          do
-            while read -r channel
-            do
-              change="$(jo app="$app" channel="$channel")"
-              changes_array+=($change)
-            done < <(jq --raw-output -c '.channels[] | .name' "./apps/$app/metadata.json")
-          done < <(echo '${{ needs.pr-metadata.outputs.addedOrModifiedImages }}' | jq --raw-output -c '.[]')
-
-          output="$(jo -a ${changes_array[*]})"
-          echo "changes=${output}" >> $GITHUB_OUTPUT
-
-  images-build:
-    uses: bjw-s/container-images/.github/workflows/action-image-build.yaml@main
-    needs:
-      - generate-build-matrix
-    with:
-      imagesToBuild: "${{ needs.generate-build-matrix.outputs.matrix }}"
+      - lint
+      - get-changed-images
+    if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
+    uses: bjw-s/container-images/.github/workflows/workflow_call-build_images.yaml@main
     secrets: inherit
+    with:
+      appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
+      pushImages: false
+      sendNotifications: false

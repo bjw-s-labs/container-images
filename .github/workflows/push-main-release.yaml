@@ -1,0 +1,43 @@
+---
+name: "Push to main: Release"
+
+concurrency:
+  group: container-release
+  cancel-in-progress: false
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Lint
+    uses: ./.github/workflows/workflow_call-lint.yaml
+
+  get-changed-images:
+    name: Get changed images
+    needs:
+      - lint
+    uses: ./.github/workflows/workflow_call-get_changed_images.yaml
+
+  build-images:
+    name: Build images
+    needs:
+      - lint
+      - get-changed-images
+    if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
+    uses: ./.github/workflows/workflow_call-build_images.yaml
+    secrets: inherit
+    with:
+      appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
+      pushImages: true
+      sendNotifications: true
+
+  render-readme:
+    name: Render Readme
+    needs:
+      - build-images
+    if: ${{ always() && needs.build-images.result != 'failure' }}}
+    uses: ./.github/workflows/workflow_call-render-readme.yaml
+    secrets: inherit

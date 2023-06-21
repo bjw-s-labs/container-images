@@ -26,5 +26,5 @@ RUN \
     && chmod -R 755 /app
 
 USER kah
-COPY ./apps/gatus/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

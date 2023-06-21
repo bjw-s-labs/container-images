@@ -77,5 +77,5 @@ COPY --from=calibre / /opt/calibre
 COPY --from=kepubify /app/kepubify /opt/kepubify/kepubify
 
 USER kah
-COPY ./apps/calibre-web/entrypoint.sh /entrypoint.sh
+COPY ./entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]

@@ -88,6 +88,9 @@ def get_image_metadata(subdir, file, forRelease=False, force=False, channels=Non
                 toBuild["tags"].append(".".join(parts))
                 parts = parts[:-1]
 
+        # Image Platforms
+        toBuild["platforms"] = channel["platforms"]
+
         imagesToBuild["images"].append(toBuild)
 
         # Platform Metadata

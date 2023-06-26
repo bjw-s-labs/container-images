@@ -41,7 +41,7 @@ Application Images are all built from the customer base images below, and will l
 
 Container | Channel | Image | Latest Tags
 --- | --- | --- | ---
-{% for image in app_images -%}
+{% for image in app_images | sort(attribute='name') -%}
 [{{ image.name }}]({{ image.html_url }}) | {{ image.channel }} | ghcr.io/bjw-s/{{ image.name }} |
 {%- set space = joiner(" ") -%}
 {%- for tag in image.tags -%}
@@ -54,7 +54,7 @@ All Base Images are configured with a non-root user (`bjw-s:bjw-s`), and exposed
 
 Container | Channel | Image | Latest Tags
 --- | --- | --- | ---
-{% for image in base_images -%}
+{% for image in base_images | sort(attribute='name') -%}
 [{{ image.name }}]({{ image.html_url }}) | {{ image.channel }} | ghcr.io/bjw-s/{{ image.name }} |
 {%- set space = joiner(" ") -%}
 {%- for tag in image.tags -%}

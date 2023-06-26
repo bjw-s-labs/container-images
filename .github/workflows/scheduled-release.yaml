@@ -36,7 +36,7 @@ jobs:
       packages: write
     with:
       appsToBuild: ${{ inputs.appsToBuild }}
-      force: ${{ inputs.force }}
+      force: ${{ inputs.force == true }}
       pushImages: true
       sendNotifications: true
 

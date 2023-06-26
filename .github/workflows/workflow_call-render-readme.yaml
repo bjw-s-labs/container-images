@@ -36,13 +36,13 @@ jobs:
 
       - name: Install Python Requirements
         run: |
-          pip install -r ./.github/scripts/requirements.txt && pip freeze
+          pip install -r ./.ci/scripts/requirements.txt && pip freeze
 
       - name: Render README
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          python ./.github/scripts/render-readme.py
+          python ./.ci/scripts/render-readme.py
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4

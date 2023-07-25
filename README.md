@@ -42,7 +42,7 @@ Application Images are all built from the customer base images below, and will l
 Container | Channel | Image | Latest Tags
 --- | --- | --- | ---
 [calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web |![0.6.20](https://img.shields.io/badge/0.6.20-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[gatus]() | stable | ghcr.io/bjw-s/gatus |
+[gatus](https://github.com/bjw-s/container-images/pkgs/container/gatus) | stable | ghcr.io/bjw-s/gatus |![5](https://img.shields.io/badge/5-blue?style=flat-square) ![5.5](https://img.shields.io/badge/5.5-blue?style=flat-square) ![5.5.1](https://img.shields.io/badge/5.5.1-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail |![6.18.12](https://img.shields.io/badge/6.18.12-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify |![4.0.4](https://img.shields.io/badge/4.0.4-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook |![0.4.31](https://img.shields.io/badge/0.4.31-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)

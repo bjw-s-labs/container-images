@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "id": "rtrox-containers/metadata",
+  "title": "App Metadata",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "app": {
+      "type": "string",
+      "description": "The name of the app to use in container name",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "base": {
+      "type": "boolean",
+      "description": "If true, this is a base container"
+    },
+    "semantic_versioning": {
+      "type": "boolean",
+      "description": "If true, this is a semantic versioning container"
+    },
+    "channels": {
+      "type": "array",
+      "description": "The channels to use in container name",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The name of the channel",
+            "pattern": "^[a-z0-9.-]+$"
+          },
+          "platforms": {
+            "type": "array",
+            "description": "The platforms to build",
+            "items": {
+              "type": "string",
+              "enum": ["linux/amd64", "linux/arm/v7", "linux/arm64"]
+            }
+          },
+          "stable": {
+            "type": "boolean",
+            "description": "If true, this is the main stable channel"
+          },
+          "tests": {
+            "type": "object",
+            "description": "Test Configuration",
+            "properties": {
+              "enabled": {
+                "type": "boolean",
+                "description": "If true, tests are enabled for this channel"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

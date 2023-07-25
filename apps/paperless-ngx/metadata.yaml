@@ -1,5 +1,5 @@
 ---
-app: "paperless"
+app: "paperless-ngx"
 base: false
 channels:
   - name: "stable"

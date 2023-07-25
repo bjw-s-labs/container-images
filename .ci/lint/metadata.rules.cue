@@ -15,6 +15,7 @@
     }
 }
 
-#AcceptableAppName:           string & !="" & =~"^[a-zA-Z0-9_\-]+$"
-#AcceptableChannelName:       string & !="" & =~"^[a-zA-Z0-9_\-\.]+$"
+#NonEmptyString:           string & !=""
+#AcceptableAppName:        string & !="" & =~"^[a-zA-Z0-9_\\-]+$"
+#AcceptableChannelName:    string & !="" & =~"^[a-zA-Z0-9_\\-\\.]+$"
 #AcceptedPlatforms:        "linux/amd64" | "linux/arm64" | "linux/arm/v7"

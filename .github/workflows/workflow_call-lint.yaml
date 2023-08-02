@@ -61,7 +61,7 @@ jobs:
 
       - name: Setup CUE
         if: ${{ steps.filter.outputs.cue == 'true' }}
-        uses: cue-lang/setup-cue@77366d144ab0764cb592a3ef8b5d2a2f470090b6
+        uses: cue-lang/setup-cue@8e50d5daeea97b99230670818ef0f610522193da
 
       - name: Validate image metadata
         if: ${{ steps.filter.outputs.cue == 'true' }}

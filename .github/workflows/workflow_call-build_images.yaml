@@ -54,7 +54,7 @@ jobs:
           pip install -r ./.ci/scripts/requirements.txt && pip freeze
 
       - name: Generate Token
-        uses: tibdex/github-app-token@v1
+        uses: tibdex/github-app-token@v2
         id: generate-token
         with:
           app_id: "${{ secrets.BJWS_APP_ID }}"

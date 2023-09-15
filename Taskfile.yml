@@ -49,7 +49,7 @@ tasks:
     silent: true
     vars:
       # renovate: datasource=github-releases depName=aelsabbahy/goss versionTemplate=^(?<version>.*)$
-      GOSS_VERSION: v0.4.1
+      GOSS_VERSION: v0.4.2
     cmds:
       - mkdir -p ./.goss
       - curl -fsSL -o ./.goss/goss https://github.com/aelsabbahy/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-amd64

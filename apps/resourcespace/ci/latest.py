@@ -15,7 +15,7 @@ def get_latest(channel):
         if entry["kind"] == "dir":
             releases.append(float(entry["name"]))
 
-    return sorted(releases)[-1]
+    return str(sorted(releases)[-1])
 
 if __name__ == "__main__":
     import sys

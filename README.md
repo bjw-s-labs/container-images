@@ -48,6 +48,7 @@ Container | Channel | Image | Latest Tags
 [mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook |![0.4.35](https://img.shields.io/badge/0.4.35-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [paperless-ngx](https://github.com/bjw-s/container-images/pkgs/container/paperless-ngx) | stable | ghcr.io/bjw-s/paperless-ngx |![1.17.4](https://img.shields.io/badge/1.17.4-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale |![3.1.8](https://img.shields.io/badge/3.1.8-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
+[resourcespace]() | stable | ghcr.io/bjw-s/resourcespace |
 
 
 ### Base Images

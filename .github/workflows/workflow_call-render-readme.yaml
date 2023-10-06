@@ -45,7 +45,7 @@ jobs:
           python ./.ci/scripts/render-readme.py
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         id: auto-commit
         with:
           file_pattern: "README.md"

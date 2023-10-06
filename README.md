@@ -41,6 +41,7 @@ Application Images are all built from the customer base images below, and will l
 
 Container | Channel | Image | Latest Tags
 --- | --- | --- | ---
+[bepasty](https://github.com/bjw-s/container-images/pkgs/container/bepasty) | stable | ghcr.io/bjw-s/bepasty |![1](https://img.shields.io/badge/1-blue?style=flat-square) ![1.2](https://img.shields.io/badge/1.2-blue?style=flat-square) ![1.2.0](https://img.shields.io/badge/1.2.0-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web |![0.6.20](https://img.shields.io/badge/0.6.20-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [gatus](https://github.com/bjw-s/container-images/pkgs/container/gatus) | stable | ghcr.io/bjw-s/gatus |![5](https://img.shields.io/badge/5-blue?style=flat-square) ![5.6](https://img.shields.io/badge/5.6-blue?style=flat-square) ![5.6.0](https://img.shields.io/badge/5.6.0-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail |![6.18.13](https://img.shields.io/badge/6.18.13-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)

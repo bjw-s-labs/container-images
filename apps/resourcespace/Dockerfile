@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM ghcr.io/onedr0p/alpine:3.18.4@sha256:cf87d34e67b3ebb2978fddb6ef93243febd62a482097dcc9d72cf50dea1e1e5d as build
+FROM ghcr.io/onedr0p/alpine:3.18.4@sha256:7de9e0039cbc791e8fac00d59844a63c81e5bd7532a850a1f6731a190aab6ccd as build
 
 ARG VERSION
 
@@ -10,7 +10,7 @@ RUN \
         subversion \
     && svn co "http://svn.resourcespace.com/svn/rs/releases/${VERSION}/" /src
 
-FROM ghcr.io/onedr0p/alpine:3.18.4@sha256:cf87d34e67b3ebb2978fddb6ef93243febd62a482097dcc9d72cf50dea1e1e5d
+FROM ghcr.io/onedr0p/alpine:3.18.4@sha256:7de9e0039cbc791e8fac00d59844a63c81e5bd7532a850a1f6731a190aab6ccd
 
 ARG VERSION
 ARG TARGETPLATFORM

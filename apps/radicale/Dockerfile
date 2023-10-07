@@ -1,4 +1,4 @@
-FROM ghcr.io/onedr0p/alpine:rolling@sha256:640268cbf735904105ec132b1c73556ec3ff29a0c76505e78d077cb22d55e9e7
+FROM ghcr.io/onedr0p/alpine:rolling@sha256:cf87d34e67b3ebb2978fddb6ef93243febd62a482097dcc9d72cf50dea1e1e5d
 
 ARG VERSION
 ARG TARGETPLATFORM

@@ -1,6 +1,7 @@
 ---
 app: "calibre-web"
 base: false
+semantic_versioning: true
 channels:
   - name: "stable"
     platforms:

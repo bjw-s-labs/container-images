@@ -41,12 +41,12 @@ jobs:
       matrices: ${{ steps.prepare-matrices.outputs.matrices }}
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.11"
           cache: "pip" # caching pip dependencies
 
       - name: Install Python Requirements
@@ -121,8 +121,9 @@ jobs:
           fi
           echo "${{ matrix.image.name }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Name is invalid"
           echo "${{ matrix.image.version }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Version is invalid"
+
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
@@ -140,7 +141,7 @@ jobs:
         if: ${{ matrix.image.tests_enabled }}
         uses: e1himself/goss-installation-action@v1.1.0
         with:
-          version: v0.3.21
+          version: v0.4.2
 
       - name: Prepare Build Outputs
         id: prepare-build-outputs
@@ -162,19 +163,20 @@ jobs:
           build-args: |-
             VERSION=${{ matrix.image.version }}
             REVISION=${{ github.sha }}
+            CHANNEL=${{ matrix.image.channel }}
           context: ${{ matrix.image.context }}
           platforms: ${{ matrix.image.platform }}
           file: ${{ matrix.image.dockerfile }}
           outputs: ${{ steps.prepare-build-outputs.outputs.outputs }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          labels: |
-            "org.opencontainers.image.title": "${{ matrix.image.name }}",
-            "org.opencontainers.image.url": "https://ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}",
-            "org.opencontainers.image.source": "https://github.com/bjw-s/container-images",
-            "org.opencontainers.image.version": "${{ matrix.image.version }}",
-            "org.opencontainers.image.revision": "${{ github.sha }}",
-            "org.opencontainers.image.vendor": "bjw-s",
+          labels: |-
+            org.opencontainers.image.title=${{ matrix.image.name }}
+            org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}"
+            org.opencontainers.image.source=https://github.com/bjw-s/container-images"
+            org.opencontainers.image.version=${{ matrix.image.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
 
       - name: Run Goss Tests
         id: dgoss

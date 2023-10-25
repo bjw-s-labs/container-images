@@ -8,8 +8,8 @@ concurrency:
 on:
   workflow_dispatch:
     inputs:
-      appsToBuild:
-        description: "Which apps to release"
+      apps:
+        description: "Apps (ex: radarr,sonarr)"
         required: false
         type: string
         default: "all"
@@ -35,7 +35,7 @@ jobs:
     permissions:
       packages: write
     with:
-      appsToBuild: ${{ inputs.appsToBuild }}
+      appsToBuild: ${{ inputs.apps }}
       force: ${{ inputs.force == true }}
       pushImages: true
       sendNotifications: true

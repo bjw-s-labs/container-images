@@ -1,17 +1,29 @@
 import os
+import json
 import requests
 import yaml
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 env = Environment(
-    loader=FileSystemLoader(".ci/templates"),
+    loader=PackageLoader("render-readme"),
     autoescape=select_autoescape()
 )
 
-def load_metadata_file(file_path):
+def load_metadata_file_yaml(file_path):
     with open(file_path, "r") as f:
         return yaml.safe_load(f)
+
+def load_metadata_file_json(file_path):
+    with open(file_path, "r") as f:
+        return json.load(f)
+
+def load_metadata_file(file_path):
+    if file_path.endswith(".json"):
+        return load_metadata_file_json(file_path)
+    elif file_path.endswith(".yaml"):
+        return load_metadata_file_yaml(file_path)
+    return None
 
 # TODO: remove hard-coded repo owner
 def get_latest_image(name):
@@ -38,7 +50,7 @@ if __name__ == "__main__":
     app_images = []
     for subdir, dirs, files in os.walk("./apps"):
         for file in files:
-            if file != "metadata.yaml":
+            if file != "metadata.yaml" and file != "metadata.json":
                 continue
             meta = load_metadata_file(os.path.join(subdir, file))
             for channel in meta["channels"]:

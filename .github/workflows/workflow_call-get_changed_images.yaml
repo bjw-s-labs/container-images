@@ -19,7 +19,7 @@ jobs:
       addedOrModified: "${{ steps.filter.outputs.addedOrModified }}"
       addedOrModifiedImages: "${{ steps.filter-containers.outputs.addedOrModifiedImages }}"
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
+      - uses: actions/checkout@v4
 
       - name: Collect changed files
         uses: dorny/paths-filter@v2

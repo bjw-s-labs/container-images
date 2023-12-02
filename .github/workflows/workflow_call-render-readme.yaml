@@ -5,10 +5,10 @@ on:
   workflow_call:
     secrets:
       BJWS_APP_ID:
-        description: "The App ID of the GitHub App (found in app settings)"
+        description: "The App ID of the GitHub App"
         required: true
       BJWS_APP_PRIVATE_KEY:
-        description: "The private key of the GitHub App, used for generating JWT tokens, generated in GitHub App settings page, uses the X.509 private key format"
+        description: "The private key of the GitHub App"
         required: true
 
 jobs:
@@ -44,17 +44,16 @@ jobs:
         run: |
           python ./.ci/scripts/render-readme.py
 
-      # below is yoinked from https://gist.github.com/swinton/03e84635b45c78353b1f71e41007fc7c
       - name: Commit Changes
         env:
           GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
           FILE_TO_COMMIT: "README.md"
           DESTINATION_BRANCH: "main"
         run: |
-          export TODAY=$( date -u '+%Y-%m-%d' )
+          export TODAY=$(date -u '+%Y-%m-%d')
           export MESSAGE="chore: regenerate $FILE_TO_COMMIT for $TODAY [skip ci]"
-          export SHA=$( git rev-parse $DESTINATION_BRANCH:$FILE_TO_COMMIT )
-          export CONTENT=$( base64 -i $FILE_TO_COMMIT )
+          export SHA=$(git rev-parse $DESTINATION_BRANCH:$FILE_TO_COMMIT)
+          export CONTENT=$(base64 -i $FILE_TO_COMMIT)
           gh api --method PUT /repos/:owner/:repo/contents/$FILE_TO_COMMIT \
             --field message="$MESSAGE" \
             --field content="$CONTENT" \

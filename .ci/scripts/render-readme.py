@@ -6,6 +6,10 @@ import yaml
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
+# read repository name and repository owner's username from custom env vars, else read from GitHub Actions default env vars
+repo_owner = os.environ.get('REPO_OWNER', os.environ.get('GITHUB_REPOSITORY_OWNER'))
+repo_name = os.environ.get('REPO_NAME', os.environ.get('GITHUB_REPOSITORY')) # uses format "owner/repo"
+
 env = Environment(
     loader=FileSystemLoader(".ci/templates"),
     autoescape=select_autoescape()
@@ -29,7 +33,7 @@ def load_metadata_file(file_path):
 # TODO: remove hard-coded repo owner
 def get_latest_image(name):
     r = requests.get(
-        f"https://api.github.com/users/bjw-s/packages/container/{name}/versions",
+        f"https://api.github.com/users/{repo_owner}/packages/container/{name}/versions",
         headers={
             "Accept": "application/vnd.github.v3+json",
             "Authorization": "token " + os.environ["GITHUB_TOKEN"]
@@ -67,7 +71,7 @@ if __name__ == "__main__":
                 }
                 gh_data = get_latest_image(name)
                 if gh_data is not None:
-                    image["html_url"] = f"https://github.com/bjw-s/container-images/pkgs/container/{name}"
+                    image["html_url"] = f"https://github.com/{repo_name}/pkgs/container/{name}"
                     image["tags"] = sorted(gh_data["metadata"]["container"]["tags"])
                 if meta["base"]:
                     base_images.append(image)

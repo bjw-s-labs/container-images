@@ -5,10 +5,10 @@ on:
   workflow_call:
     secrets:
       BJWS_APP_ID:
-        description: "The ID of the GitHub App"
+        description: "The App ID of the GitHub App (found in app settings)"
         required: true
       BJWS_APP_PRIVATE_KEY:
-        description: "The private key of the GitHub App"
+        description: "The private key of the GitHub App, used for generating JWT tokens, generated in GitHub App settings page, uses the X.509 private key format"
         required: true
 
 jobs:
@@ -16,17 +16,17 @@ jobs:
     name: Render README
     runs-on: ubuntu-latest
     steps:
-      - name: Generate Token
-        uses: tibdex/github-app-token@v2
-        id: generate-token
+      - name: "Generate Short Lived OAuth App Token (ghs_*)"
+        uses: actions/create-github-app-token@v1.6.1
+        id: app-token
         with:
-          app_id: "${{ secrets.BJWS_APP_ID }}"
-          private_key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
+          app-id: "${{ secrets.BJWS_APP_ID }}"
+          private-key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
 
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ steps.generate-token.outputs.token }}
+          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -40,16 +40,25 @@ jobs:
 
       - name: Render README
         env:
-          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
         run: |
           python ./.ci/scripts/render-readme.py
 
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        id: auto-commit
-        with:
-          file_pattern: "README.md"
-          commit_message: Render README.md
-          commit_user_name: "bjw-s-bot[bot]"
-          commit_user_email: 87358111+bjw-s-bot[bot]@users.noreply.github.com
-          commit_author: bjw-s-bot[bot] <87358111+bjw-s-bot[bot]@users.noreply.github.com>
+      # below is yoinked from https://gist.github.com/swinton/03e84635b45c78353b1f71e41007fc7c
+      - name: Commit Changes
+        env:
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+          FILE_TO_COMMIT: "README.md"
+          DESTINATION_BRANCH: "main"
+        run: |
+          export TODAY=$( date -u '+%Y-%m-%d' )
+          export MESSAGE="chore: regenerate $FILE_TO_COMMIT for $TODAY [skip ci]"
+          export SHA=$( git rev-parse $DESTINATION_BRANCH:$FILE_TO_COMMIT )
+          export CONTENT=$( base64 -i $FILE_TO_COMMIT )
+          gh api --method PUT /repos/:owner/:repo/contents/$FILE_TO_COMMIT \
+            --field message="$MESSAGE" \
+            --field content="$CONTENT" \
+            --field encoding="base64" \
+            --field branch="$DESTINATION_BRANCH" \
+            --field sha="$SHA" \
+            || echo "No changes to push"

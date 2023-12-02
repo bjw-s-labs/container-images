@@ -27,10 +27,10 @@ on:
         description: "Rebuild images regardless of whether version has changed"
     secrets:
       BJWS_APP_ID:
-        description: "The ID of the GitHub App"
+        description: "The App ID of the GitHub App (found in app settings)"
         required: true
       BJWS_APP_PRIVATE_KEY:
-        description: "The private key of the GitHub App"
+        description: "The private key of the GitHub App, used for generating JWT tokens, generated in GitHub App settings page, uses the X.509 private key format"
         required: true
 
 jobs:
@@ -40,8 +40,22 @@ jobs:
     outputs:
       matrices: ${{ steps.prepare-matrices.outputs.matrices }}
     steps:
+      - name: Lowercase repository owner
+        shell: bash
+        run: |
+          echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
+
+      - name: "Generate Short Lived OAuth App Token (ghs_*)"
+        uses: actions/create-github-app-token@v1.6.1
+        id: app-token
+        with:
+          app-id: "${{ secrets.BJWS_APP_ID }}"
+          private-key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
+
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -53,17 +67,10 @@ jobs:
         run: |
           pip install -r ./.ci/scripts/requirements.txt && pip freeze
 
-      - name: Generate Token
-        uses: tibdex/github-app-token@v2
-        id: generate-token
-        with:
-          app_id: "${{ secrets.BJWS_APP_ID }}"
-          private_key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
-
       - name: Prepare Matrices
         id: prepare-matrices
         env:
-          TOKEN: ${{ steps.generate-token.outputs.token }}
+          TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           if [[ -z "${{ inputs.appsToBuild }}" ]]; then
               matrices=$(python ./.ci/scripts/prepare-matrices.py "all" "${{ inputs.pushImages }}" "${{ inputs.force }}")
@@ -87,7 +94,15 @@ jobs:
       matrix:
         image:
           ["${{ fromJSON(needs.prepare.outputs.matrices).imagePlatforms }}"]
+    permissions:
+      contents: read
+      packages: write
     steps:
+      - name: Lowercase repository owner
+        shell: bash
+        run: |
+          echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
+
       - name: Log Matrix Input
         run: |
           cat << EOF
@@ -122,9 +137,17 @@ jobs:
           echo "${{ matrix.image.name }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Name is invalid"
           echo "${{ matrix.image.version }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Version is invalid"
 
+      - name: "Generate Short Lived OAuth App Token (ghs_*)"
+        uses: actions/create-github-app-token@v1.6.1
+        id: app-token
+        with:
+          app-id: "${{ secrets.BJWS_APP_ID }}"
+          private-key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          token: "${{ steps.app-token.outputs.token }}"
           fetch-depth: 1
 
       - name: Set up Docker Buildx
@@ -147,10 +170,10 @@ jobs:
         id: prepare-build-outputs
         run: |
           if [[ "${{ inputs.pushImages }}" == "true" ]]; then
-              image_name="ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}"
+              image_name="ghcr.io/${{ env.LOWERCASE_REPO_OWNER }}/${{ matrix.image.name }}"
               outputs="type=image,name=${image_name},push-by-digest=true,name-canonical=true,push=true"
           else
-              image_name="ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:zztesting"
+              image_name="ghcr.io/${{ env.LOWERCASE_REPO_OWNER }}/${{ matrix.image.name }}:zztesting"
               outputs="type=docker,name=${image_name},push=false"
           fi
           echo "image_name=${image_name}" >> $GITHUB_OUTPUT
@@ -172,11 +195,11 @@ jobs:
           cache-to: type=gha,mode=max
           labels: |-
             org.opencontainers.image.title=${{ matrix.image.name }}
-            org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}"
+            org.opencontainers.image.url=https://ghcr.io/${{ env.LOWERCASE_REPO_OWNER }}/${{ matrix.image.name }}"
             org.opencontainers.image.source=https://github.com/bjw-s/container-images"
             org.opencontainers.image.version=${{ matrix.image.version }}
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.opencontainers.image.vendor=${{ env.LOWERCASE_REPO_OWNER }}
 
       - name: Run Goss Tests
         id: dgoss
@@ -228,6 +251,11 @@ jobs:
         image: ["${{ fromJSON(needs.prepare.outputs.matrices).images }}"]
       fail-fast: false
     steps:
+      - name: Lowercase repository owner
+        shell: bash
+        run: |
+          echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
+
       - name: Download Digests
         uses: actions/download-artifact@v3
         with:
@@ -272,13 +300,13 @@ jobs:
         env:
           TAGS: ${{ toJSON(matrix.image.tags) }}
         run: |
-          docker buildx imagetools create $(jq -cr '. | map("-t ghcr.io/${{ github.repository_owner }}/${{matrix.image.name}}:" + .) | join(" ")'  <<< "$TAGS") \
-              $(printf 'ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}@sha256:%s ' *)
+          docker buildx imagetools create $(jq -cr '. | map("-t ghcr.io/${{ env.LOWERCASE_REPO_OWNER }}/${{matrix.image.name}}:" + .) | join(" ")'  <<< "$TAGS") \
+              $(printf 'ghcr.io/${{ env.LOWERCASE_REPO_OWNER }}/${{ matrix.image.name }}@sha256:%s ' *)
 
       - name: Inspect image
         id: inspect
         run: |
-          docker buildx imagetools inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.image.name }}:${{ matrix.image.tags[0] }}
+          docker buildx imagetools inspect ghcr.io/${{ env.LOWERCASE_REPO_OWNER }}/${{ matrix.image.name }}:${{ matrix.image.tags[0] }}
 
       - name: Build successful
         id: build-success

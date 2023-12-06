@@ -31,7 +31,6 @@ jobs:
       - get-changed-images
     if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
     uses: ./.github/workflows/workflow_call-build_images.yaml
-    secrets: inherit
     permissions:
       contents: read
       packages: write

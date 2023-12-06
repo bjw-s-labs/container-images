@@ -25,13 +25,6 @@ on:
         default: true
         type: boolean
         description: "Rebuild images regardless of whether version has changed"
-    secrets:
-      BJWS_APP_ID:
-        description: "The App ID of the GitHub App"
-        required: true
-      BJWS_APP_PRIVATE_KEY:
-        description: "The private key of the GitHub App"
-        required: true
 
 jobs:
   prepare:
@@ -45,17 +38,8 @@ jobs:
         run: |
           echo "LOWERCASE_REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >> "${GITHUB_ENV}"
 
-      - name: "Generate Short Lived OAuth App Token (ghs_*)"
-        uses: actions/create-github-app-token@v1.6.1
-        id: app-token
-        with:
-          app-id: "${{ secrets.BJWS_APP_ID }}"
-          private-key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
-
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -70,7 +54,7 @@ jobs:
       - name: Prepare Matrices
         id: prepare-matrices
         env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if [[ -z "${{ inputs.appsToBuild }}" ]]; then
               matrices=$(python ./.ci/scripts/prepare-matrices.py "all" "${{ inputs.pushImages }}" "${{ inputs.force }}")
@@ -134,17 +118,9 @@ jobs:
           echo "${{ matrix.image.name }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Name is invalid"
           echo "${{ matrix.image.version }}" | grep -E "[a-zA-Z0-9_\.\-]+" || "Image Version is invalid"
 
-      - name: "Generate Short Lived OAuth App Token (ghs_*)"
-        uses: actions/create-github-app-token@v1.6.1
-        id: app-token
-        with:
-          app-id: "${{ secrets.BJWS_APP_ID }}"
-          private-key: "${{ secrets.BJWS_APP_PRIVATE_KEY }}"
-
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: "${{ steps.app-token.outputs.token }}"
           fetch-depth: 1
 
       - name: Set up Docker Buildx

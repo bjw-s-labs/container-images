@@ -1,0 +1,138 @@
+---
+version: "3"
+
+vars:
+  cue_file: "{{ .ROOT_DIR }}/.ci/lint/metadata.rules.cue"
+  goss_folder: "{{ .ROOT_DIR }}/.goss"
+
+tasks:
+  build:
+    desc: Build container image
+    summary: |
+      Args:
+        app: App to build (required)
+        channel: Channel to build for the app (default: stable)
+        multiplatform: Build multi-platform image (default: false)
+        push: Push the image to the registry (default: false)
+        registry: Registry to prefix the image with (default: {{.default_registry}})
+    silent: true
+    vars:
+      # User vars
+      app: "{{ .app }}"
+      channel: '{{ .channel | default "stable" }}'
+      multiplatform: '{{ .multiplatform | default "false" }}'
+      push: '{{ .push | default "false" }}'
+      registry: "{{ .registry | default .default_registry }}"
+
+      # Helper vars
+      app_folder: "{{ .ROOT_DIR }}/apps/{{ .app }}"
+      dockerfile: "{{ .app_folder }}/Dockerfile"
+      version_script: "{{ .app_folder }}/ci/latest.py"
+      metadata_file: "{{ .app_folder }}/metadata.yaml"
+      app_version:
+        sh: >-
+          [ ! -f "{{ .version_script }}" ] || python "{{ .version_script }}" "{{ .channel }}"
+      all_platforms:
+        sh: >-
+          [ ! -f "{{ .metadata_file }}" ] || yq -r '.channels[] | select(.name=="{{ .channel }}").platforms | join(",")' "{{ .metadata_file }}"
+      single_platform: "{{ARCH}}"
+    requires:
+      vars:
+        - app
+    preconditions:
+      - sh: test -f "{{ .dockerfile }}"
+        msg: |
+          Dockerfile "{{ .dockerfile }}" not found
+      - sh: test -f "{{ .version_script }}"
+        msg: |
+          No latest.py script found in "{{ .app_folder }}/ci"
+      - sh: test -f "{{ .metadata_file }}"
+        msg: |
+          No metadata.yaml found in "{{ .app_folder }}"
+    cmd: >-
+      docker buildx build
+      --tag {{ .registry }}/{{ .app }}:{{ .channel }}
+      --build-arg CHANNEL={{ .channel }}
+      --build-arg VERSION={{ .app_version }}
+      --platform {{ if eq .multiplatform "true" }} {{ .all_platforms }} {{ else }} {{ .single_platform }} {{ end }}
+      --file {{ .dockerfile }}
+      {{ if not (eq .multiplatform "true") }}
+      --load
+      {{ end }}
+      {{ if eq .push "true" }}
+      --push
+      {{ end }}
+      {{ .app_folder }}
+
+  test:
+    desc: test container image
+    summary: |
+      Args:
+        app: App to build (required)
+        channel: Channel to build for the app (default: stable)
+        registry: Registry to prefix the image with (default: {{.default_registry}})
+    silent: true
+    vars:
+      # User vars
+      app: "{{ .app }}"
+      channel: '{{ .channel | default "stable" }}'
+      registry: "{{ .registry | default .default_registry }}"
+
+      # Helper vars
+      base:
+        sh: >-
+          [ ! -f "{{ .metadata_file }}" ] || yq -r '.base' "{{ .metadata_file }}"
+      app_folder: "{{ .ROOT_DIR }}/apps/{{ .app }}"
+      dockerfile: "{{ .app_folder }}/Dockerfile"
+      metadata_file: "{{ .app_folder }}/metadata.yaml"
+      goss_file: "{{ .app_folder }}/ci/goss.yaml"
+    requires:
+      vars:
+        - app
+    preconditions:
+      - sh: test -f "{{ .dockerfile }}"
+        msg: |
+          Dockerfile "{{ .dockerfile }}" not found
+      - sh: test -f "{{ .metadata_file }}"
+        msg: |
+          No metadata.yaml found in "{{ .app_folder }}"
+      - sh: test -f "{{ .goss_file }}"
+        msg: |
+          No container test file found at "{{ .goss_file }}"
+      - sh: test -f "{{ .cue_file }}"
+        msg: |
+          No metadata validation file found at "{{ .cue_file }}"
+    env:
+      CONTAINER_RUNTIME: docker
+      GOSS_PATH: "{{ .goss_folder }}/goss"
+      GOSS_OPTS: --sleep 5s --retry-timeout 60s --color --format documentation
+      GOSS_SLEEP: 2
+      GOSS_FILES_PATH: "{{ .app_folder }}/ci"
+      GOSS_FILES_STRATEGY: cp
+    cmds:
+      - cue vet --schema '#Spec' "{{ .metadata_file }}" "{{ .cue_file }}"
+      - task: download-goss
+      - task: build
+        vars:
+          app: "{{.app}}"
+          channel: "{{.channel}}"
+          registry: "{{.registry}}"
+          multiplatform: "false"
+          push: "false"
+      - '"{{ .goss_folder}}/dgoss" run "{{ .registry }}/{{ .app }}:{{ .channel }}" {{if eq .base "true"}}tail -f /dev/null{{end}}'
+
+  download-goss:
+    silent: true
+    internal: true
+    vars:
+      # renovate: datasource=github-releases depName=goss-org/goss versionTemplate=^(?<version>.*)$
+      GOSS_VERSION: v0.4.4
+    cmds:
+      - mkdir -p "{{ .goss_folder }}"
+      - curl -fsSL -o "{{ .goss_folder }}/goss" "https://github.com/goss-org/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-{{ARCH}}"
+      - chmod +x "{{ .goss_folder }}/goss"
+      - curl -fsSL -o "{{ .goss_folder }}/dgoss" "https://raw.githubusercontent.com/goss-org/goss/{{.GOSS_VERSION}}/extras/dgoss/dgoss"
+      - chmod +x "{{ .goss_folder }}/dgoss"
+    status:
+      - test -f "{{ .goss_folder }}/goss"
+      - test -f "{{ .goss_folder }}/dgoss"

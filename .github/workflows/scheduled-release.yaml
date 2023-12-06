@@ -33,6 +33,7 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_images.yaml
     secrets: inherit
     permissions:
+      contents: read
       packages: write
     with:
       appsToBuild: ${{ inputs.apps }}

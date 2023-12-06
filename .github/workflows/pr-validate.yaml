@@ -28,6 +28,8 @@ jobs:
     if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
     uses: bjw-s/container-images/.github/workflows/workflow_call-build_images.yaml@main
     secrets: inherit
+    permissions:
+      contents: read
     with:
       appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
       pushImages: false

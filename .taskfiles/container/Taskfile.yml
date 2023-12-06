@@ -35,7 +35,7 @@ tasks:
       all_platforms:
         sh: >-
           [ ! -f "{{ .metadata_file }}" ] || yq -r '.channels[] | select(.name=="{{ .channel }}").platforms | join(",")' "{{ .metadata_file }}"
-      single_platform: "{{ARCH}}"
+      single_platform: "linux/{{ARCH}}"
     requires:
       vars:
         - app

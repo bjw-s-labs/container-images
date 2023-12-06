@@ -79,13 +79,13 @@ tasks:
       registry: "{{ .registry | default .default_registry }}"
 
       # Helper vars
-      base:
-        sh: >-
-          [ ! -f "{{ .metadata_file }}" ] || yq -r '.base' "{{ .metadata_file }}"
       app_folder: "{{ .ROOT_DIR }}/apps/{{ .app }}"
       dockerfile: "{{ .app_folder }}/Dockerfile"
       metadata_file: "{{ .app_folder }}/metadata.yaml"
       goss_file: "{{ .app_folder }}/ci/goss.yaml"
+      test_type:
+        sh: >-
+          [ ! -f "{{ .metadata_file }}" ] || yq -r '.channels[] | select(.name=="{{ .channel }}").tests.type' "{{ .metadata_file }}"
     requires:
       vars:
         - app
@@ -119,7 +119,7 @@ tasks:
           registry: "{{.registry}}"
           multiplatform: "false"
           push: "false"
-      - '"{{ .goss_folder}}/dgoss" run "{{ .registry }}/{{ .app }}:{{ .channel }}" {{if eq .base "true"}}tail -f /dev/null{{end}}'
+      - '"{{ .goss_folder}}/dgoss" run "{{ .registry }}/{{ .app }}:{{ .channel }}" {{if eq .test_type "cli"}}tail -f /dev/null{{end}}'
 
   download-goss:
     silent: true

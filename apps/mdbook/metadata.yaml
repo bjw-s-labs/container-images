@@ -1,6 +1,7 @@
 ---
 app: "mdbook"
 base: false
+semantic_versioning: true
 channels:
   - name: "stable"
     platforms:

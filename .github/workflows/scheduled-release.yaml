@@ -22,14 +22,8 @@ on:
     - cron: "0 * * * *"
 
 jobs:
-  lint:
-    name: Lint
-    uses: ./.github/workflows/workflow_call-lint.yaml
-
   build-images:
     name: Build Images
-    needs:
-      - lint
     uses: ./.github/workflows/workflow_call-build_images.yaml
     permissions:
       contents: read

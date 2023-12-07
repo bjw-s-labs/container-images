@@ -51,7 +51,7 @@ jobs:
         with:
           commit_message: "chore: regenerate README.md [skip ci]"
           repo: ${{ github.repository }}
-          branch: ${{ github.head_ref || github.ref_name }}
+          branch: main
           empty: false
           file_pattern: "README.md"
         env:

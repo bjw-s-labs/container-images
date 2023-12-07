@@ -15,6 +15,8 @@ jobs:
   render-readme:
     name: Render README
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: "Generate Short Lived OAuth App Token (ghs_*)"
         uses: actions/create-github-app-token@v1.6.2
@@ -45,19 +47,12 @@ jobs:
           python ./.ci/scripts/render-readme.py
 
       - name: Commit Changes
+        uses: planetscale/ghcommit-action@v0.1.28
+        with:
+          commit_message: "chore: regenerate README.md [skip ci]"
+          repo: ${{ github.repository }}
+          branch: ${{ github.head_ref || github.ref_name }}
+          empty: false
+          file_pattern: "README.md"
         env:
-          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
-          FILE_TO_COMMIT: "README.md"
-          DESTINATION_BRANCH: "main"
-        run: |
-          export TODAY=$(date -u '+%Y-%m-%d')
-          export MESSAGE="chore: regenerate $FILE_TO_COMMIT for $TODAY [skip ci]"
-          export SHA=$(git rev-parse $DESTINATION_BRANCH:$FILE_TO_COMMIT)
-          export CONTENT=$(base64 -i $FILE_TO_COMMIT)
-          gh api --method PUT /repos/:owner/:repo/contents/$FILE_TO_COMMIT \
-            --field message="$MESSAGE" \
-            --field content="$CONTENT" \
-            --field encoding="base64" \
-            --field branch="$DESTINATION_BRANCH" \
-            --field sha="$SHA" \
-            || echo "No changes to push"
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

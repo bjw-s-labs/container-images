@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM ghcr.io/onedr0p/alpine:3.18.5@sha256:55b35f580db486e93271ce2bb5b222ceed8591abd6e5fa99142f9337e0ab504d as build
+FROM ghcr.io/onedr0p/alpine:3.18.5@sha256:2d4bec1c2378a8a682626148425bf73e4996e4f8f322ba61b046f280f141503a as build
 
 ARG VERSION
 

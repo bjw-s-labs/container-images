@@ -5,7 +5,4 @@
     "github>bjw-s/renovate-config:automerge-github-actions",
     "github>bjw-s/renovate-config:automerge-docker-digest",
   ],
-  platform: "github",
-  username: "bjw-s-bot[bot]",
-  gitAuthor: "bjw-s-bot <87358111+bjw-s-bot[bot]@users.noreply.github.com>",
 }

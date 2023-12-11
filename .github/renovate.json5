@@ -8,5 +8,4 @@
   platform: "github",
   username: "bjw-s-bot[bot]",
   gitAuthor: "bjw-s-bot <87358111+bjw-s-bot[bot]@users.noreply.github.com>",
-  repositories: ["bjw-s/container-images"],
 }

@@ -135,7 +135,7 @@ jobs:
 
       - name: Setup Goss
         if: ${{ matrix.image.tests_enabled }}
-        uses: e1himself/goss-installation-action@v1.1.0
+        uses: e1himself/goss-installation-action@v1.2.1
         with:
           version: v0.4.2
 

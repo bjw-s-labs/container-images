@@ -1,4 +1,5 @@
 requests
 pyyaml
 jinja2
+semver
 svn

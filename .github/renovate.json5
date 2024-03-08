@@ -5,4 +5,5 @@
     "github>bjw-s/renovate-config:automerge-github-actions",
     "github>bjw-s/renovate-config:automerge-docker-digest",
   ],
+  ignorePaths: [".archive/**"],
 }

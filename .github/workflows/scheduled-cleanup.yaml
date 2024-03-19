@@ -25,7 +25,7 @@ jobs:
           password: ${{ secrets.TOKEN }}
 
       - name: Delete all containers from package without tags
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v3
+        uses: Chizkiyahu/delete-untagged-ghcr-action@v4
         with:
           token: ${{ secrets.TOKEN }}
           repository_owner: ${{ github.repository_owner }}

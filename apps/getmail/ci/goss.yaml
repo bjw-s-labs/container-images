@@ -1,5 +1,5 @@
 ---
 # https://github.com/aelsabbahy/goss/blob/master/docs/manual.md#file
 file:
-  /usr/bin/getmail:
+  /usr/local/bin/getmail:
     exists: true

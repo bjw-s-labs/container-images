@@ -1,4 +1,4 @@
-FROM ghcr.io/onedr0p/alpine:rolling@sha256:3fbc581cb0fe29830376161ae026e2a765dcc11e1747477fe9ebf155720b8638
+FROM docker.io/library/python:3.12-alpine
 
 ARG TARGETPLATFORM
 ARG TARGETARCH
@@ -17,30 +17,29 @@ ENV \
     PIP_ROOT_USER_ACTION=ignore \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1
+    PIP_BREAK_SYSTEM_PACKAGES=1
+
+USER root
 
 #hadolint ignore=DL3018,DL3013
 RUN apk add --no-cache \
+        bash \
         ca-certificates \
-        python3 \
     && \
     apk add --no-cache --virtual=.build-deps \
         build-base \
         libffi-dev \
         openssl-dev \
         musl-dev \
-        python3-dev \
-        py3-pip \
     && \
-    pip install --upgrade pip \
+    pip install --upgrade pip uv \
     && \
-    pip install --no-cache-dir getmail6=="${VERSION}" \
+    uv pip install --system --no-cache-dir getmail6=="${VERSION}" \
     && apk del --purge .build-deps \
     && rm -rf \
         /root/.cache \
         /root/.cargo \
         /tmp/*
 
-USER kah
 VOLUME [ "/config" ]
-CMD [ "/usr/bin/getmail", "--getmaildir", "/config" ]
+CMD [ "/usr/local/bin/getmail", "--getmaildir", "/config" ]

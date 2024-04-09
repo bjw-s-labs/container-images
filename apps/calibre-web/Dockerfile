@@ -1,7 +1,7 @@
 FROM ghcr.io/cdloh/calibre-bare:7.8.0@sha256:03462ee868729787730ccd9a3a6ae575183df37fa2acad7245d24001448ebf13 as calibre
-FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:cd20b7a1079ca33a41eea5f35e2bc82200904888d52a19d0eb5a1164feda64e4 as kepubify
+FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:0b9b33aa83c7bdf2a26f49052d51113bba81a122f3cf81639d0df1da0c1daee3 as kepubify
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:a79a3386914dfdf37d4d03173ab8bba51512305b3863ab178f2520ef27981083
+FROM docker.io/library/python:3.11-alpine
 
 ARG TARGETPLATFORM
 ARG TARGETARCH
@@ -19,58 +19,53 @@ ENV \
     PYTHONUNBUFFERED=1 \
     PIP_ROOT_USER_ACTION=ignore \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_BREAK_SYSTEM_PACKAGES=1
 
 ENV \
-    CALIBRE_DBPATH=/config
+    CALIBRE_DBPATH=/config \
+    UMASK="0002"
+
+USER root
 
 # hadolint ignore=DL3008,DL3015,SC2086
 RUN \
-    apt-get -qq update \
-    && \
-    apt-get -qq install -y \
+    apk add --no-cache \
+        bash \
+        ca-certificates \
         ghostscript \
-        libldap-2.5-0 \
-        libsasl2-2 \
-        libxi6 \
-        libxslt1.1 \
-        python3 \
-        python3-pip \
-        python3-pkg-resources \
+        libldap \
+        libsasl \
+        libxi \
+        libxslt \
     && \
-    # Dev
-    apt-get -qq install -y \
-        libldap2-dev \
-        libsasl2-dev \
-        python3-dev \
-        gcc \
-        g++ \
+    apk add --no-cache --virtual=.build-deps \
+        build-base \
+        curl \
+        libffi-dev \
+        linux-headers \
+        openldap-dev \
     && \
     # Download calibre-web release
-    curl -fsSL https://github.com/janeczku/calibre-web/archive/${VERSION}.tar.gz \
+    mkdir -p /app \
+    && curl -fsSL https://github.com/janeczku/calibre-web/archive/${VERSION}.tar.gz \
         | tar xzf - -C /app --strip-components=1 \
     # Install required python packages
-    && pip install --upgrade pip \
-    && pip install --upgrade --requirement /app/requirements.txt \
-    && pip install --upgrade --requirement /app/optional-requirements.txt \
+    && pip install --upgrade pip uv \
+    && uv pip install --system --requirement /app/requirements.txt \
+    && uv pip install --system --requirement /app/optional-requirements.txt \
     # Cleanup
-    && apt-get purge -y --auto-remove libldap2-dev libsasl2-dev python3-dev gcc g++\
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && \
-    rm -rf \
+    && apk del --purge .build-deps \
+    && rm -rf \
+        /root/.cache \
+        /root/.cargo \
         /tmp/* \
-        /var/lib/apt/lists/* \
-        /var/tmp/ \
     # Set permissions
-    && chown -R 568:568 /app \
-    && chmod -R 755 /app \
-    && printf "umask %d" "${UMASK}" >> /etc/bash.bashrc
+    && chmod -R 755 /app
 
 COPY --from=calibre / /opt/calibre
 COPY --from=kepubify /app/kepubify /opt/kepubify/kepubify
-
-USER kah
 COPY ./entrypoint.sh /entrypoint.sh
+
+VOLUME [ "/config" ]
 CMD ["/entrypoint.sh"]

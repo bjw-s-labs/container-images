@@ -26,35 +26,28 @@ _A Collection of Container Images Optimized for Kubernetes_
 This repo contains a collection of containers which are optimized for use in kubernetes, and updated automatically to keep up with upstream versions. Using an image effectively in Kubernetes requires a few ingredients:
 
 - The filesystem must be able to be immutable
-- The container must not run as root
+- Semantic versioning is available to specify exact versions to run
+- The container can be run rootless
 - The container shouldn't require any manual interaction
 - The container should ideally be configurable via environmental variables
+
+## Configuration volume
+
+For applications that need to have persistent configuration data the container will leverage a `/data` and a `/config` volume where these are necessary. This is not able to be changed in most cases.
 
 ---
 
 ## Available Tags
 
-Each Image will be built with the standard `latest` rolling tag, along with tags specific to it's version. For Semantically Versioned containers (e.g. `v1.2.3`), `major`, `major.minor`, and `major.minor.patch` tags will be generated, for example, ![1](https://img.shields.io/badge/1-blue?style=flat-square) ![1.2](https://img.shields.io/badge/1.2-blue?style=flat-square) and ![1.2.3](https://img.shields.io/badge/1.2.3-blue?style=flat-square). Available Images Below.
+For Semantically Versioned containers (e.g. `v1.2.3`), `major`, `major.minor`, and `major.minor.patch` tags will be generated, for example, ![1](https://img.shields.io/badge/1-blue?style=flat-square) ![1.2](https://img.shields.io/badge/1.2-blue?style=flat-square) and ![1.2.3](https://img.shields.io/badge/1.2.3-blue?style=flat-square). Available Images Below.
 
 ### Application Images
-Application Images are all built from the customer base images below, and will leverage a `/data` and a `/config` volume where these are necessary, and follow the guidelines above for use in Kubernetes.
+
+Each Image will be built with a `rolling` tag, along with tags specific to it's version. Available Images Below
 
 Container | Channel | Image | Latest Tags
 --- | --- | --- | ---
 {% for image in app_images | sort(attribute='name') -%}
-[{{ image.name }}]({{ image.html_url }}) | {{ image.channel }} | ghcr.io/bjw-s/{{ image.name }} |
-{%- set space = joiner(" ") -%}
-{%- for tag in image.tags -%}
-{{ space() }}![{{ tag }}](https://img.shields.io/badge/{{ tag.replace("-", "--") }}-{% if tag == "latest" %}green{% else %}blue{% endif %}?style=flat-square)
-{%- endfor %}
-{% endfor %}
-
-### Base Images
-All Base Images are configured with a non-root user (`bjw-s:bjw-s`), and exposed `/data` and `/config` volumes, and use `tini` as an entrypoint to ensure proper signal handling.
-
-Container | Channel | Image | Latest Tags
---- | --- | --- | ---
-{% for image in base_images | sort(attribute='name') -%}
 [{{ image.name }}]({{ image.html_url }}) | {{ image.channel }} | ghcr.io/bjw-s/{{ image.name }} |
 {%- set space = joiner(" ") -%}
 {%- for tag in image.tags -%}

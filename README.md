@@ -49,7 +49,7 @@ Container | Channel | Image | Latest Tags
 [kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify |![4.0.4](https://img.shields.io/badge/4.0.4-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook |![0](https://img.shields.io/badge/0-blue?style=flat-square) ![0.4](https://img.shields.io/badge/0.4-blue?style=flat-square) ![0.4.37](https://img.shields.io/badge/0.4.37-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 [paperless-ngx](https://github.com/bjw-s/container-images/pkgs/container/paperless-ngx) | stable | ghcr.io/bjw-s/paperless-ngx |![2.7.2](https://img.shields.io/badge/2.7.2-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale |![3.1.8](https://img.shields.io/badge/3.1.8-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
+[radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale |![3](https://img.shields.io/badge/3-blue?style=flat-square) ![3.1](https://img.shields.io/badge/3.1-blue?style=flat-square) ![3.1.9](https://img.shields.io/badge/3.1.9-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
 
 
 ### Base Images

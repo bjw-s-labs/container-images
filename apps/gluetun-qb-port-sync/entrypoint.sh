@@ -5,8 +5,8 @@
 
 if [[ "${CRON_ENABLED}" = "true" ]]; then
   export LOG_TIMESTAMP="false"
-  echo "${CRON_SCHEDULE} /app/script.sh $*" > /app/crontab
-  supercronic /app/crontab
+  echo "${CRON_SCHEDULE} /app/script.sh $*" > /config/crontab
+  supercronic /config/crontab
 else
   exec \
     /app/script.sh \

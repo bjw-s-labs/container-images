@@ -1,4 +1,4 @@
-FROM ghcr.io/onedr0p/alpine:rolling@sha256:3fbc581cb0fe29830376161ae026e2a765dcc11e1747477fe9ebf155720b8638
+FROM docker.io/library/python:3.12-alpine
 
 ARG VERSION
 ARG TARGETPLATFORM
@@ -11,7 +11,7 @@ ENV \
     PIP_ROOT_USER_ACTION=ignore \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1
+    PIP_BREAK_SYSTEM_PACKAGES=1
 
 ENV \
     RADICALE_CONFIG_FILE=/config/config
@@ -23,32 +23,26 @@ LABEL org.opencontainers.image.source="https://github.com/Kozea/Radicale"
 
 COPY ./config /app/config.default
 
+USER root
+
 #hadolint ignore=DL3018,DL3013
 RUN \
-    apk add --no-cache --virtual=build-dependencies \
-        gcc \
-        musl-dev \
-        libffi-dev \
-        python3-dev \
-    && apk add --no-cache \
+    apk add --no-cache \
+        bash \
         ca-certificates \
-        python3 \
-        py3-pip \
-        py3-tz \
-        tzdata \
-    && python3 -m pip install --upgrade pip \
-    && python3 -m pip install radicale==$VERSION passlib[bcrypt] \
-    && chown -R 568:568 /app \
+    && apk add --no-cache --virtual=build-dependencies \
+        build-base \
+        linux-headers \
+    && pip install --upgrade pip uv \
+    && uv pip install --system radicale==$VERSION passlib[bcrypt] \
     && chmod -R 755 /app \
-    && mkdir -p /data \
-    && chown -R kah:kah /data \
-    && chmod -R 775 /data \
     && apk del --purge build-dependencies \
     && rm -rf \
         /root/.cache \
         /root/.cargo \
         /tmp/*
 
-USER kah
 COPY ./entrypoint.sh /entrypoint.sh
+
+VOLUME [ "/config" "/data" ]
 CMD ["/entrypoint.sh"]

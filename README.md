@@ -45,13 +45,13 @@ For Semantically Versioned containers (e.g. `v1.2.3`), `major`, `major.minor`, a
 
 Each Image will be built with a `rolling` tag, along with tags specific to it's version. Available Images Below
 
-Container | Channel | Image | Latest Tags
---- | --- | --- | ---
-[calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web |![0](https://img.shields.io/badge/0-blue?style=flat-square) ![0.6](https://img.shields.io/badge/0.6-blue?style=flat-square) ![0.6.21](https://img.shields.io/badge/0.6.21-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[gatus](https://github.com/bjw-s/container-images/pkgs/container/gatus) | stable | ghcr.io/bjw-s/gatus |![5](https://img.shields.io/badge/5-blue?style=flat-square) ![5.8](https://img.shields.io/badge/5.8-blue?style=flat-square) ![5.8.0](https://img.shields.io/badge/5.8.0-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail |![6](https://img.shields.io/badge/6-blue?style=flat-square) ![6.18](https://img.shields.io/badge/6.18-blue?style=flat-square) ![6.18.14](https://img.shields.io/badge/6.18.14-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[gh-safe-settings](https://github.com/bjw-s/container-images/pkgs/container/gh-safe-settings) | stable | ghcr.io/bjw-s/gh-safe-settings |![2](https://img.shields.io/badge/2-blue?style=flat-square) ![2.1](https://img.shields.io/badge/2.1-blue?style=flat-square) ![2.1.4](https://img.shields.io/badge/2.1.4-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[gluetun-qb-port-sync](https://github.com/bjw-s/container-images/pkgs/container/gluetun-qb-port-sync) | stable | ghcr.io/bjw-s/gluetun-qb-port-sync |![latest](https://img.shields.io/badge/latest-green?style=flat-square) ![v0](https://img.shields.io/badge/v0-blue?style=flat-square) ![v0.0](https://img.shields.io/badge/v0.0-blue?style=flat-square) ![v0.0.2](https://img.shields.io/badge/v0.0.2-blue?style=flat-square)
-[kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify |![4.0.4](https://img.shields.io/badge/4.0.4-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook |![0](https://img.shields.io/badge/0-blue?style=flat-square) ![0.4](https://img.shields.io/badge/0.4-blue?style=flat-square) ![0.4.37](https://img.shields.io/badge/0.4.37-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
-[radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale |![3](https://img.shields.io/badge/3-blue?style=flat-square) ![3.1](https://img.shields.io/badge/3.1-blue?style=flat-square) ![3.1.9](https://img.shields.io/badge/3.1.9-blue?style=flat-square) ![latest](https://img.shields.io/badge/latest-green?style=flat-square)
+Container | Channel | Image
+--- | --- | ---
+[calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web
+[gatus](https://github.com/bjw-s/container-images/pkgs/container/gatus) | stable | ghcr.io/bjw-s/gatus
+[getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail
+[gh-safe-settings](https://github.com/bjw-s/container-images/pkgs/container/gh-safe-settings) | stable | ghcr.io/bjw-s/gh-safe-settings
+[gluetun-qb-port-sync](https://github.com/bjw-s/container-images/pkgs/container/gluetun-qb-port-sync) | stable | ghcr.io/bjw-s/gluetun-qb-port-sync
+[kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify
+[mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook
+[radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale

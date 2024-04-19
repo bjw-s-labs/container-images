@@ -1,4 +1,4 @@
-FROM ghcr.io/cdloh/calibre-bare:7.8.0@sha256:03462ee868729787730ccd9a3a6ae575183df37fa2acad7245d24001448ebf13 as calibre
+FROM ghcr.io/cdloh/calibre-bare:7.9.0@sha256:6b4d467fbdb803f343f1d1591715925822fbf360456a12810e3d5b7e27bc211d as calibre
 FROM ghcr.io/bjw-s/kepubify:4.0.4@sha256:0b9b33aa83c7bdf2a26f49052d51113bba81a122f3cf81639d0df1da0c1daee3 as kepubify
 
 FROM docker.io/library/python:3.11-alpine

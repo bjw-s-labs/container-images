@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM rust:1.77.2-slim@sha256:badf412ccb1e2ece18376a1e8e4a7754a2ad126cc4048072d6ba659fa6cbdcb6 AS build
+FROM rust:1.77.2-slim@sha256:34c14e5ce66fff3b20e69a223c7f5194a73445882e57c34e04571597bbf55352 AS build
 
 ENV CARGO_INSTALL_ROOT /usr/local/
 ENV CARGO_TARGET_DIR /tmp/target/

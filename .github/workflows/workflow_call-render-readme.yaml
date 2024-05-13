@@ -47,7 +47,7 @@ jobs:
           python ./.ci/scripts/render-readme.py
 
       - name: Commit Changes
-        uses: planetscale/ghcommit-action@v0.1.37
+        uses: planetscale/ghcommit-action@v0.1.38
         with:
           commit_message: "chore: regenerate README.md [skip ci]"
           repo: ${{ github.repository }}

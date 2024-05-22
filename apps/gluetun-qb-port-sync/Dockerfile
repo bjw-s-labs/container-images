@@ -1,4 +1,4 @@
-FROM docker.io/library/alpine:3.19
+FROM docker.io/library/alpine:3.20
 
 LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
 LABEL dev.bjw-s.image.target_architecture=$TARGETARCH

@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM rust:1.79.0-slim@sha256:073c8e7ae12d2637d1d541cb0f3f9d92bfa22c97e2e45db87a9fc6a90c9a7f22 AS build
+FROM rust:1.79.0-slim AS build
 
 ENV CARGO_INSTALL_ROOT /usr/local/
 ENV CARGO_TARGET_DIR /tmp/target/
@@ -32,7 +32,7 @@ RUN \
         "mdbook-regex" \
         "mdbook-mermaid"
 
-FROM ghcr.io/onedr0p/ubuntu:rolling@sha256:a79a3386914dfdf37d4d03173ab8bba51512305b3863ab178f2520ef27981083
+FROM docker.io/library/ubuntu:24.04
 
 ARG TARGETPLATFORM
 ARG TARGETARCH

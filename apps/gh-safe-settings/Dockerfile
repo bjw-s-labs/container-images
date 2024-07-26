@@ -9,7 +9,7 @@ RUN \
         git \
     && git clone --branch "${VERSION}" "https://github.com/github/safe-settings.git" /src
 
-FROM node:20-alpine
+FROM docker.io/library/node:20-alpine
 
 COPY --from=build /src/package.json /opt/safe-settings/
 COPY --from=build /src/index.js /opt/safe-settings/

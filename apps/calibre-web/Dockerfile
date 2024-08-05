@@ -33,6 +33,7 @@ RUN \
         ghostscript \
         libc6-compat \
         libldap \
+        libmagic \
         libsasl \
         libxi \
         libxslt \

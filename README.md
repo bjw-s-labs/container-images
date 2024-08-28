@@ -53,5 +53,6 @@ Container | Channel | Image
 [gh-safe-settings](https://github.com/bjw-s/container-images/pkgs/container/gh-safe-settings) | stable | ghcr.io/bjw-s/gh-safe-settings
 [gluetun-qb-port-sync](https://github.com/bjw-s/container-images/pkgs/container/gluetun-qb-port-sync) | stable | ghcr.io/bjw-s/gluetun-qb-port-sync
 [kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify
+[manyfold](https://github.com/bjw-s/container-images/pkgs/container/manyfold) | stable | ghcr.io/bjw-s/manyfold
 [mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook
 [radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale

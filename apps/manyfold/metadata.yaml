@@ -1,0 +1,12 @@
+---
+app: "manyfold"
+base: false
+semantic_versioning: true
+channels:
+  - name: "stable"
+    platforms:
+      - linux/amd64
+    stable: true
+    tests:
+      enabled: true
+      type: web

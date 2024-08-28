@@ -34,6 +34,7 @@ RUN \
     mesa-gl \
     postgresql-dev \
     nodejs \
+    sqlite-dev \
     tzdata \
     valkey \
     yarn \

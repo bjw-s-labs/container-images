@@ -49,9 +49,9 @@ RUN \
   && bundle config set --local without 'development test' \
   && bundle install \
   && \
-  DATABASE_URL="nulldb://user:pass@localhost/db" \
-  SECRET_KEY_BASE="placeholder" \
-  bundle exec rake assets:precompile \
+  # DATABASE_URL="nulldb://user:pass@localhost/db" \
+  # SECRET_KEY_BASE="placeholder" \
+  # bundle exec rake assets:precompile \
   # Cleanup
   && rm -rf \
     /app/.git \

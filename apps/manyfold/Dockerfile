@@ -1,4 +1,4 @@
-FROM ruby:3.3.4-alpine3.20 AS build
+FROM ruby:3.3.4-alpine3.20
 
 ARG VERSION
 ARG TARGETPLATFORM
@@ -39,19 +39,20 @@ RUN \
     valkey \
     yarn \
   && gem install foreman \
-  && gem install bundler -v 2.4.13 \
   # Install manyfold
   && git clone --branch "v${VERSION}" "https://github.com/manyfold3d/manyfold.git" /app \
   && echo "${RUBY_VERSION}" > "/app/.ruby-version" \
+  # Workaround for https://github.com/sparklemotion/sqlite3-ruby/issues/434
+  && sed -i '/sqlite3/ s/$/, force_ruby_platform: true/' "/app/Gemfile" \
   && yarn config set network-timeout 600000 -g \
   && yarn install --prod \
   && bundle config set --local deployment 'true' \
   && bundle config set --local without 'development test' \
   && bundle install \
   && \
-  # DATABASE_URL="nulldb://user:pass@localhost/db" \
-  # SECRET_KEY_BASE="placeholder" \
-  # bundle exec rake assets:precompile \
+  DATABASE_URL="nulldb://user:pass@localhost/db" \
+  SECRET_KEY_BASE="placeholder" \
+  bundle exec rake assets:precompile \
   # Cleanup
   && rm -rf \
     /app/.git \

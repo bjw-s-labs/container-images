@@ -15,6 +15,7 @@ ENV \
   RACK_ENV="production" \
   RAILS_ENV="production" \
   RAILS_SERVE_STATIC_FILES="true" \
+  RAILS_LOG_TO_STDOUT="1" \
   APP_VERSION="${VERSION}" \
   GIT_SHA="v${VERSION}"
 
@@ -48,7 +49,7 @@ RUN \
   && yarn install --prod \
   && bundle config set --local deployment 'true' \
   && bundle config set --local without 'development test' \
-  && bundle install \
+  && bundle install -j $(nproc) \
   && \
   DATABASE_URL="nulldb://user:pass@localhost/db" \
   SECRET_KEY_BASE="placeholder" \
@@ -56,14 +57,12 @@ RUN \
   # Cleanup
   && rm -rf \
     /app/.git \
-    /app/log/* \
     /app/tmp \
     /data \
     /root/.cache \
     /root/.cargo \
     /tmp/* \
   # Prepare folders
-  && ln -s /dev/stdout /app/log/production.log \
   && mkdir -p /tmp/manyfold \
   && chmod 777 /tmp/manyfold \
   && ln -s /tmp/manyfold /app/tmp

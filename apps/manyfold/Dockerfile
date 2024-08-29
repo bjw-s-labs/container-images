@@ -15,7 +15,7 @@ ENV \
   RACK_ENV="production" \
   RAILS_ENV="production" \
   RAILS_SERVE_STATIC_FILES="true" \
-  RAILS_LOG_TO_STDOUT="1" \
+  # RAILS_LOG_TO_STDOUT="1" \
   APP_VERSION="${VERSION}" \
   GIT_SHA="v${VERSION}"
 
@@ -44,7 +44,6 @@ RUN \
   && git clone --branch "v${VERSION}" "https://github.com/manyfold3d/manyfold.git" /app \
   && echo "${RUBY_VERSION}" > "/app/.ruby-version" \
   && sed -i '/^end$/i \ \ config.active_record.sqlite3_production_warning=false' /app/config/environments/production.rb \
-  && sed -i 's/# config.active_storage.service = :local/config.active_storage.service = :temp/' /app/config/environments/production.rb \
   # Workaround for https://github.com/sparklemotion/sqlite3-ruby/issues/434
   && sed -i '/sqlite3/ s/$/, force_ruby_platform: true/' "/app/Gemfile" \
   && yarn config set network-timeout 600000 -g \
@@ -59,13 +58,15 @@ RUN \
   # Cleanup
   && rm -rf \
     /app/.git \
+    /app/log/* \
     /app/tmp/* \
     /data \
     /root/.cache \
     /root/.cargo \
     /tmp/* \
   # Prepare folders
-  && chmod 777 /app/tmp
+  && chmod 777 /app/tmp \
+  && chmod 777 /app/log
 
 USER nobody:nogroup
 WORKDIR /data

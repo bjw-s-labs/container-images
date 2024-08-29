@@ -43,6 +43,7 @@ RUN \
   # Install manyfold
   && git clone --branch "v${VERSION}" "https://github.com/manyfold3d/manyfold.git" /app \
   && echo "${RUBY_VERSION}" > "/app/.ruby-version" \
+  && sed -i '/^end$/i \ \ config.active_record.sqlite3_production_warning=false' /app/config/environments/production.rb \
   # Workaround for https://github.com/sparklemotion/sqlite3-ruby/issues/434
   && sed -i '/sqlite3/ s/$/, force_ruby_platform: true/' "/app/Gemfile" \
   && yarn config set network-timeout 600000 -g \

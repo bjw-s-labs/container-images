@@ -13,9 +13,9 @@ _A Collection of Container Images Optimized for Kubernetes_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/bjw-s/container-images?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/bjw-s/container-images?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/bjw-s/container-images/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
+![GitHub Repo stars](https://img.shields.io/github/stars/bernd-schorgers/container-images?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/bernd-schorgers/container-images?style=for-the-badge)
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/bernd-schorgers/container-images/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
 
 </div>
 
@@ -47,12 +47,12 @@ Each Image will be built with a `rolling` tag, along with tags specific to it's 
 
 Container | Channel | Image
 --- | --- | ---
-[calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web
-[gatus](https://github.com/bjw-s/container-images/pkgs/container/gatus) | stable | ghcr.io/bjw-s/gatus
-[getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail
-[gh-safe-settings](https://github.com/bjw-s/container-images/pkgs/container/gh-safe-settings) | stable | ghcr.io/bjw-s/gh-safe-settings
-[gluetun-qb-port-sync](https://github.com/bjw-s/container-images/pkgs/container/gluetun-qb-port-sync) | stable | ghcr.io/bjw-s/gluetun-qb-port-sync
-[kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify
-[manyfold](https://github.com/bjw-s/container-images/pkgs/container/manyfold) | stable | ghcr.io/bjw-s/manyfold
-[mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook
-[radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale
+[calibre-web](https://github.com/bernd-schorgers/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bernd-schorgers/calibre-web
+[gatus](https://github.com/bernd-schorgers/container-images/pkgs/container/gatus) | stable | ghcr.io/bernd-schorgers/gatus
+[getmail](https://github.com/bernd-schorgers/container-images/pkgs/container/getmail) | stable | ghcr.io/bernd-schorgers/getmail
+[gh-safe-settings](https://github.com/bernd-schorgers/container-images/pkgs/container/gh-safe-settings) | stable | ghcr.io/bernd-schorgers/gh-safe-settings
+[gluetun-qb-port-sync](https://github.com/bernd-schorgers/container-images/pkgs/container/gluetun-qb-port-sync) | stable | ghcr.io/bernd-schorgers/gluetun-qb-port-sync
+[kepubify](https://github.com/bernd-schorgers/container-images/pkgs/container/kepubify) | stable | ghcr.io/bernd-schorgers/kepubify
+[manyfold](https://github.com/bernd-schorgers/container-images/pkgs/container/manyfold) | stable | ghcr.io/bernd-schorgers/manyfold
+[mdbook](https://github.com/bernd-schorgers/container-images/pkgs/container/mdbook) | stable | ghcr.io/bernd-schorgers/mdbook
+[radicale](https://github.com/bernd-schorgers/container-images/pkgs/container/radicale) | stable | ghcr.io/bernd-schorgers/radicale

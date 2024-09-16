@@ -23,9 +23,14 @@ jobs:
         with:
           dir_names: true
           dir_names_max_depth: "1"
-          json: true
           path: apps
+          separator: ","
 
-      - name: Debug
+      - name: Summarize step
+        env:
+          CHANGED_IMAGES: "${{ steps.filter-containers.outputs.all_changed_files }}"
         run: |
-          echo "${{ steps.filter-containers.outputs.all_changed_files }}"
+          echo "### Changed images:" > "$GITHUB_STEP_SUMMARY"
+          for image in ${CHANGED_IMAGES}; do
+            echo "- $image" >> "$GITHUB_STEP_SUMMARY"
+          done

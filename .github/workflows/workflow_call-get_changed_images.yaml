@@ -22,9 +22,9 @@ jobs:
         id: filter-containers
         with:
           dir_names: true
-          files: |
-            apps/*/**
+          dir_names_max_depth: "1"
           json: true
+          path: apps
 
       - name: Debug
         run: |

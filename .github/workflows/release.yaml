@@ -93,7 +93,7 @@ jobs:
     with:
       image: ${{ matrix.job_name }}
       platforms: |
-        ${{ join(matrix.platforms, ", ") }}
+        ${{ join(matrix.platforms, ', ') }}
       tags: |
         type=semver,pattern={{version}},value=${{ matrix.version }}
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}

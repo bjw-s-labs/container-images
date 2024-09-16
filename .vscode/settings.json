@@ -1,5 +1,16 @@
 {
+  "editor.fontLigatures": true,
+  "editor.formatOnSave": true,
+  "editor.guides.bracketPairs": true,
+  "editor.guides.highlightActiveBracketPair": true,
+  "files.trimTrailingWhitespace": true,
   "yaml.schemas": {
     "./.vscode/metadata-schema.json": "**/apps/**/metadata.yaml"
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker",
+    "editor.quickSuggestions": {
+      "strings": true
+    }
   }
 }

@@ -33,10 +33,3 @@ jobs:
       force: ${{ inputs.force == true }}
       pushImages: true
       sendNotifications: true
-
-  render-readme:
-    name: Render Readme
-    needs:
-      - build-images
-    uses: ./.github/workflows/workflow_call-render-readme.yaml
-    secrets: inherit

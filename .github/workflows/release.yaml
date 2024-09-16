@@ -92,8 +92,7 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
       image: ${{ matrix.job_name }}
-      platforms: |
-        ${{ join(matrix.platforms, "\\n") }}
+      platforms: ${{ matrix.platforms }}
       tags: |
         type=semver,pattern={{version}},value=${{ matrix.version }}
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}

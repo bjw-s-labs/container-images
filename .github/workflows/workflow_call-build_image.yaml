@@ -21,6 +21,10 @@ on:
         type: string
         description: Labels for the image.
         required: false
+      annotations:
+        type: string
+        description: Annotations for the image.
+        required: false
       context:
         type: string
         description: The context for the docker build command.
@@ -55,6 +59,23 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: "${{ inputs.image }}"
+          images: |
+            ghcr.io/bjw-s/${{ inputs.image }}
+            ghcr.io/bjw-s-labs/${{ inputs.image }}
           tags: "${{ inputs.tags }}"
           labels: "${{ inputs.labels }}"
+          annotations: "${{ inputs.annotations }}"
+
+      - name: Build and (optionally) Push
+        uses: docker/build-push-action@v6
+        with:
+          context: "${{ inputs.context }}"
+          file: "${{ inputs.dockerfile }}"
+          platforms: "${{ inputs.platforms }}"
+          push: "${{ !inputs.dry-run }}"
+          tags: "${{ steps.meta.outputs.tags }}"
+          labels: "${{ steps.meta.outputs.labels }}"
+          annotations: "${{ steps.meta.outputs.annotations }}"
+          build-args: "${{ inputs.build-args }}"
+          cache-to: type=registry,ref=${{ inputs.image }}:buildcache
+          cache-from: type=registry,ref=${{ inputs.image }}:buildcache,mode=max

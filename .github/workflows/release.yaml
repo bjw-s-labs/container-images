@@ -94,7 +94,10 @@ jobs:
       image: |
         ghcr.io/bjw-s/${{ matrix.job_name }}
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
-      # platforms: ${{ matrix.platforms }}
+      platforms: |
+        ${{ join(matrix.platforms, '\n') }}
+      labels: |
+        org.opencontainers.image.title=${{ matrix.job_name }}
       tags: |
         type=semver,pattern={{version}},value=${{ matrix.version }}
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}

@@ -12,7 +12,7 @@ LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
 LABEL dev.bjw-s.image.target_os=$TARGETOS
 LABEL org.opencontainers.image.source="https://github.com/TwiN/gatus"
 
-ENV GATUS_CONFIG_PATH "/config/config.yaml"
+ENV GATUS_CONFIG_PATH="/config/config.yaml"
 
 USER root
 

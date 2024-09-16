@@ -1,0 +1,58 @@
+---
+name: "Build Image"
+
+on:
+  workflow_call:
+    inputs:
+      image:
+        type: string
+        description: The name of the image to build.
+        required: true
+      platforms:
+        type: string
+        description: The OS arches for which to build the docker image.
+        default: linux/amd64
+        required: false
+      tags:
+        type: string
+        description: Tags for the image.
+        required: true
+      context:
+        type: string
+        description: The context for the docker build command.
+        required: false
+        default: "."
+      dockerfile:
+        type: string
+        description: The path to the dockerfile to build.
+        required: true
+      build-args:
+        type: string
+        description: Additional build args to pass to the build command.
+        default: ""
+        required: false
+      dry-run:
+        type: boolean
+        description: Whether or not to push the image.
+        default: false
+        required: false
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: "${{ inputs.image }}"
+          tags: |
+            type=semver,pattern={{version}},value=${{ inputs.tags }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.tags }}
+            type=semver,pattern={{major}},value=${{ inputs.tags }}

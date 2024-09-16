@@ -82,18 +82,18 @@ jobs:
           matrix=$(cat matrix.json)
           echo "matrix=${matrix}" | tee $GITHUB_OUTPUT
 
-  # build:
-  #   name: ${{ matrix.job_name }}
-  #   needs: generate-matrix
-  #   uses: mirceanton/reusable-workflows/.github/workflows/docker-release.yaml@17d8ef4df857d93b905170956fbbcd56b296e8bb
-  #   if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
-  #   strategy:
-  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-  #   secrets: inherit
-  #   with:
-  #     image: ${{ matrix.image_name }}
-  #     platforms: linux/amd64, linux/arm64
-  #     tags: ${{ matrix.version }}
-  #     context: ${{ matrix.context }}
-  #     dockerfile: ${{ matrix.dockerfile }}
-  #     dry-run: false
+  build:
+    name: Build ${{ matrix.job_name }}
+    needs: generate-matrix
+    uses: ./.github/workflows/workflow_call-build_image.yaml
+    if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    secrets: inherit
+    with:
+      image: ${{ matrix.image_name }}
+      platforms: ${{ matrix.platforms }}
+      tags: ${{ matrix.version }}
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
+      dry-run: true

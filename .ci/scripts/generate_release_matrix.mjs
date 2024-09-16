@@ -142,7 +142,7 @@ async function generateMatrix() {
           context: folderPath,
           dockerfile: dockerfilePath,
           version: version,
-          platforms: platforms.join("\n"),
+          platforms: platforms,
         });
       } catch (error) {
         console.error(

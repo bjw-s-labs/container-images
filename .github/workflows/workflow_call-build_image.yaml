@@ -82,8 +82,6 @@ jobs:
           load: true
           tags: |
             testing
-          labels: ${{ steps.meta.outputs.labels }}
-          annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
           cache-to: type=registry,ref=${{ inputs.image }}:buildcache
           cache-from: type=registry,ref=${{ inputs.image }}:buildcache,mode=max

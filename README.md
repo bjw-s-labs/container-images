@@ -10,7 +10,6 @@ _A Collection of Container Images Optimized for use in Kubernetes_
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/bjw-s/container-images?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/bjw-s/container-images?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/bjw-s/container-images/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
 
 </div>
 

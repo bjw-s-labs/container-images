@@ -12,11 +12,17 @@ on:
   pull_request:
     paths:
       - apps/**
+    types:
+      - opened
+      - synchronize
+      - reopened
 
 jobs:
   get-changed-images:
     name: Determine changed images
     runs-on: ubuntu-latest
+    needs:
+      - lint
     outputs:
       changed_images: ${{ steps.filter-containers.outputs.all_changed_files }}
     steps:
@@ -50,18 +56,8 @@ jobs:
     needs:
       - get-changed-images
     steps:
-      # - name: Generate Token
-      #   uses: actions/create-github-app-token@v1
-      #   if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-      #   id: app-token
-      #   with:
-      #     app-id: ${{ secrets.LAB_ASSISTANT_APP_ID }}
-      #     private-key: ${{ secrets.LAB_ASSISTANT_APP_KEY }}
-
       - name: Checkout
         uses: actions/checkout@v4
-        # with:
-        #   token: "${{ steps.app-token.outputs.token }}"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -113,3 +109,18 @@ jobs:
       dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
       type: ${{ matrix.type }}
       tests-enabled: ${{ matrix.tests.enabled }}
+
+  build_success:
+    name: Build matrix success
+    needs:
+      - build
+    if: |
+      always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix status
+        if: >-
+          ${{
+            (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
+          }}
+        run: exit 1

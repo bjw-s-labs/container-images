@@ -83,7 +83,7 @@ jobs:
           echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   build:
-    name: build ${{ matrix.job_name }}
+    name: Build ${{ matrix.job_name }} image
     needs:
       - generate-matrix
     strategy:
@@ -94,6 +94,13 @@ jobs:
       image: |
         ghcr.io/bjw-s/${{ matrix.job_name }}
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
+      platforms: ${{ matrix.platforms }}
+      tags: |
+        type=semver,pattern={{version}},value=${{ matrix.version }}
+        type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
+        type=semver,pattern={{major}},value=${{ matrix.version }}
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
     # steps:
     #   - name: Debug
     #     run: |

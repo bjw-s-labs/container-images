@@ -90,6 +90,10 @@ jobs:
         if: ${{ inputs.tests-enabled == true }}
         id: build-test-image
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_CHECKS_ANNOTATIONS: false
+          DOCKER_BUILD_SUMMARY: false
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
@@ -128,6 +132,8 @@ jobs:
 
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}

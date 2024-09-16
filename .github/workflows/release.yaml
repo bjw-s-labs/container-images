@@ -21,8 +21,6 @@ jobs:
   get-changed-images:
     name: Determine changed images
     runs-on: ubuntu-latest
-    needs:
-      - lint
     outputs:
       changed_images: ${{ steps.filter-containers.outputs.all_changed_files }}
     steps:

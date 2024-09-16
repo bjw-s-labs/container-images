@@ -8,8 +8,8 @@ _A Collection of Container Images Optimized for use in Kubernetes_
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/bjw-s/container-images?style=for-the-badge)
-![GitHub forks](https://img.shields.io/github/forks/bjw-s/container-images?style=for-the-badge)
+![GitHub Repo stars](https://img.shields.io/github/stars/bjw-s-labs/container-images?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/bjw-s-labs/container-images?style=for-the-badge)
 
 </div>
 
@@ -27,7 +27,7 @@ This repo contains a collection of container images which are optimized for use 
 
 ## Available Images
 
-Images can be [browsed on the GitHub Packages page for this repo's packages](https://github.com/bjw-s?tab=packages&repo_name=container-images).
+Images can be [browsed on the GitHub Packages page for this repo's packages](https://github.com/orgs/bjw-s-labs/packages?tab=packages&repo_name=container-images).
 
 ## Persistent data
 

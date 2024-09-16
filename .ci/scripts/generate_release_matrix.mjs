@@ -63,6 +63,10 @@ function extractPlatforms(metadataPath) {
   return extractMetadataField(metadataPath, "platforms");
 }
 
+function extractTestConfig(metadataPath) {
+  return extractMetadataField(metadataPath, "tests");
+}
+
 // async function isGithubOrg(owner) {
 //     try {
 //         const response = await octokit.request('GET /users/{owner}', {
@@ -134,6 +138,7 @@ async function generateMatrix() {
       try {
         let version = extractVersion(metadatafilePath);
         const platforms = extractPlatforms(metadatafilePath);
+        const testsConfig = extractTestConfig(metadatafilePath);
         console.info(
           `Adding image ${image_name}:${version} to the job matrix.`
         );
@@ -143,6 +148,7 @@ async function generateMatrix() {
           dockerfile: dockerfilePath,
           version: version,
           platforms: platforms,
+          tests: testsConfig,
         });
       } catch (error) {
         console.error(

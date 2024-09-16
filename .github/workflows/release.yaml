@@ -111,3 +111,4 @@ jobs:
       labels: |
         org.opencontainers.image.title=${{ matrix.job_name }}
       dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
+      tests-enabled: ${{ matrix.run_tests.enabled }}

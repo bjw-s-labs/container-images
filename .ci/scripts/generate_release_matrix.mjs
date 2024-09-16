@@ -36,7 +36,7 @@ const GITHUB_OWNER = process.env.GITHUB_REPOSITORY.split("/")[0];
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_EVENT_NAME = process.env.GITHUB_EVENT_NAME;
 const GITHUB_REF = process.env.GITHUB_REF;
-const IMAGES_FOLDER = process.env.IMAGE_FOLDER;
+const IMAGES_FOLDER = process.env.IMAGE_FOLDER || "apps";
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 

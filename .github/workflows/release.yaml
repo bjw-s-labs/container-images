@@ -9,13 +9,13 @@ on:
       - main
     paths:
       - apps/**
-      - ./.github/workflows/release.yaml
-      - ./.github/workflows/workflow_call-build_image.yaml
+      - .github/workflows/release.yaml
+      - .github/workflows/workflow_call-build_image.yaml
   pull_request:
     paths:
       - apps/**
-      - ./.github/workflows/release.yaml
-      - ./.github/workflows/workflow_call-build_image.yaml
+      - .github/workflows/release.yaml
+      - .github/workflows/workflow_call-build_image.yaml
     types:
       - opened
       - synchronize

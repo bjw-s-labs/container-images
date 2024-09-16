@@ -79,9 +79,8 @@ jobs:
       - name: Save Matrix
         id: matrix
         run: |
-          {
-            cat matrix.json
-          } >> "$GITHUB_OUTPUT"
+          matrix=$(cat matrix.json)
+          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   build:
     name: Build ${{ matrix.job_name }} image

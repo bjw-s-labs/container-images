@@ -80,9 +80,7 @@ jobs:
         id: matrix
         run: |
           {
-            echo '<<EOF'
             cat matrix.json
-            echo EOF
           } >> "$GITHUB_OUTPUT"
 
   build:
@@ -95,7 +93,8 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
       image: ${{ matrix.job_name }}
-      platforms: ${{ matrix.platforms }}
+      platforms: |
+        ${{ join(matrix.platforms, ", ") }}
       tags: |
         type=semver,pattern={{version}},value=${{ matrix.version }}
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}

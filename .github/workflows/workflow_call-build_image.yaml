@@ -21,10 +21,6 @@ on:
         type: string
         description: Labels for the image.
         required: false
-      annotations:
-        type: string
-        description: Annotations for the image.
-        required: false
       context:
         type: string
         description: The context for the docker build command.
@@ -64,7 +60,6 @@ jobs:
             ghcr.io/bjw-s-labs/${{ inputs.image }}
           tags: "${{ inputs.tags }}"
           labels: "${{ inputs.labels }}"
-          annotations: "${{ inputs.annotations }}"
 
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6

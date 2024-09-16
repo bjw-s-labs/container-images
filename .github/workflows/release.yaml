@@ -99,8 +99,8 @@ jobs:
         type=semver,pattern={{version}},value=${{ matrix.version }}
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
         type=semver,pattern={{major}},value=${{ matrix.version }}
-      # context: ${{ matrix.context }}
-      # dockerfile: ${{ matrix.dockerfile }}
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
     # steps:
     #   - name: Debug
     #     run: |

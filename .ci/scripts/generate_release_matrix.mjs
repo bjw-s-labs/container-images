@@ -37,6 +37,7 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_EVENT_NAME = process.env.GITHUB_EVENT_NAME;
 const GITHUB_REF = process.env.GITHUB_REF;
 const IMAGES_FOLDER = process.env.IMAGE_FOLDER || "apps";
+const INCLUDE_IMAGES = process.env.INCLUDE_IMAGES;
 
 const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
@@ -115,7 +116,16 @@ async function generateMatrix() {
   const isPullRequest = GITHUB_EVENT_NAME === "pull_request";
   const prNumber = isPullRequest ? getPullRequestNumber(GITHUB_REF) : null;
 
+  var foldersToInclude = [];
+  if (INCLUDE_IMAGES) {
+    foldersToInclude = INCLUDE_IMAGES.split(",");
+  }
+
   for (const folder of fs.readdirSync(basePath)) {
+    if (foldersToInclude.length > 0 && !foldersToInclude.includes(folder)) {
+      continue;
+    }
+
     const image_name = folder;
     const folderPath = path.join(basePath, folder);
     const dockerfilePath = path.join(folderPath, "Dockerfile");

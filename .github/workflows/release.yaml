@@ -1,0 +1,67 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Docker: Build and Push"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/**
+  pull_request:
+    paths:
+      - apps/**
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Generate Token
+        uses: actions/create-github-app-token@v1
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+        id: app-token
+        with:
+          app-id: ${{ secrets.LAB_ASSISTANT_APP_ID }}
+          private-key: ${{ secrets.LAB_ASSISTANT_APP_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: "${{ steps.app-token.outputs.token }}"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate matrix
+        run: npm run genmatrix
+        env:
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+          GITHUB_REPOSITORY: "${{ github.repository }}"
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+
+      - name: Save Matrix
+        id: matrix
+        run: |
+          matrix=$(cat matrix.json)
+          echo "matrix=${matrix}" | tee $GITHUB_OUTPUT
+
+  # build:
+  #   name: ${{ matrix.job_name }}
+  #   needs: generate-matrix
+  #   uses: mirceanton/reusable-workflows/.github/workflows/docker-release.yaml@17d8ef4df857d93b905170956fbbcd56b296e8bb
+  #   if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
+  #   strategy:
+  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+  #   secrets: inherit
+  #   with:
+  #     image: ${{ matrix.image_name }}
+  #     platforms: linux/amd64, linux/arm64
+  #     tags: ${{ matrix.version }}
+  #     context: ${{ matrix.context }}
+  #     dockerfile: ${{ matrix.dockerfile }}
+  #     dry-run: false

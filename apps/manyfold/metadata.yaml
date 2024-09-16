@@ -1,12 +1,8 @@
 ---
-app: "manyfold"
-base: false
-semantic_versioning: true
-channels:
-  - name: "stable"
-    platforms:
-      - linux/amd64
-    stable: true
-    tests:
-      enabled: true
-      type: web
+app: manyfold
+# renovate: depName=manyfold3d/manyfold
+version: 0.78.1
+platforms:
+  - linux/amd64
+tests:
+  enabled: true

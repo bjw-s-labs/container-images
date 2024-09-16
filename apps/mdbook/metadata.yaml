@@ -1,12 +1,8 @@
 ---
-app: "mdbook"
-base: false
-semantic_versioning: true
-channels:
-  - name: "stable"
-    platforms:
-      - linux/amd64
-    stable: true
-    tests:
-      enabled: true
-      type: cli
+app: mdbook
+# renovate: depName=rust-lang/mdBook
+version: 0.4.40
+platforms:
+  - linux/amd64
+tests:
+  enabled: true

@@ -4,7 +4,7 @@ ARG TARGETPLATFORM
 ARG TARGETARCH
 ARG TARGETOS
 
-ARG VERSION
+ARG VERSION="0.6.23"
 
 LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
 LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
@@ -28,27 +28,27 @@ USER root
 # hadolint ignore=DL3008,DL3015,SC2086
 RUN \
     apk add --no-cache \
-        bash \
-        ca-certificates \
-        ghostscript \
-        libc6-compat \
-        libldap \
-        libmagic \
-        libsasl \
-        libxi \
-        libxslt \
+    bash \
+    ca-certificates \
+    ghostscript \
+    libc6-compat \
+    libldap \
+    libmagic \
+    libsasl \
+    libxi \
+    libxslt \
     && \
     apk add --no-cache --virtual=.build-deps \
-        build-base \
-        curl \
-        libffi-dev \
-        linux-headers \
-        openldap-dev \
+    build-base \
+    curl \
+    libffi-dev \
+    linux-headers \
+    openldap-dev \
     && \
     # Download calibre-web release
     mkdir -p /app \
     && curl -fsSL https://github.com/janeczku/calibre-web/archive/${VERSION}.tar.gz \
-        | tar xzf - -C /app --strip-components=1 \
+    | tar xzf - -C /app --strip-components=1 \
     # Install required python packages
     && pip install --upgrade pip uv \
     && uv pip install --system --requirement /app/requirements.txt \
@@ -56,9 +56,9 @@ RUN \
     # Cleanup
     && apk del --purge .build-deps \
     && rm -rf \
-        /root/.cache \
-        /root/.cargo \
-        /tmp/* \
+    /root/.cache \
+    /root/.cargo \
+    /tmp/* \
     # Set permissions
     && chmod -R 755 /app
 

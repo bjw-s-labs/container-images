@@ -17,6 +17,10 @@ on:
         type: string
         description: Tags for the image.
         required: true
+      labels:
+        type: string
+        description: Labels for the image.
+        required: false
       context:
         type: string
         description: The context for the docker build command.

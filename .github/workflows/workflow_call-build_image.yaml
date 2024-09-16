@@ -84,7 +84,6 @@ jobs:
           tags: |
             ${{ inputs.image }}:testing
           build-args: ${{ inputs.build-args }}
-          cache-to: type=registry,ref=${{ inputs.image }}:buildcache
           cache-from: type=registry,ref=${{ inputs.image }}:buildcache,mode=max
 
       - name: Setup Goss

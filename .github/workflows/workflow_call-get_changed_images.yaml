@@ -32,6 +32,6 @@ jobs:
         run: |
           IFS=',' read -a images <<< "${CHANGED_IMAGES}"
           echo "### Changed images:" > "$GITHUB_STEP_SUMMARY"
-          for image in ${images}; do
+          for image in ${images[@]}; do
             echo "- ${image}" >> "$GITHUB_STEP_SUMMARY"
           done

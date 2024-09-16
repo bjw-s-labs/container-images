@@ -15,8 +15,8 @@ on:
 
 jobs:
   get-changed-images:
+    name: Determine changed images
     runs-on: ubuntu-latest
-    container: mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
     outputs:
       changed_images: ${{ steps.filter-containers.outputs.all_changed_files }}
     steps:
@@ -43,6 +43,7 @@ jobs:
           done
 
   generate-matrix:
+    name: Generate build matrix
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
     outputs:

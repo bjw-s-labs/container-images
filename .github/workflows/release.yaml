@@ -15,14 +15,40 @@ on:
 
 jobs:
   get-changed-images:
-    name: Get changed images
-    uses: ./.github/workflows/workflow_call-get_changed_images.yaml
+    runs-on: ubuntu-latest
+    container: mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
+    outputs:
+      changed_images: ${{ steps.filter-containers.outputs.all_changed_files }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine changed images
+        uses: tj-actions/changed-files@v45
+        id: filter-containers
+        with:
+          dir_names: true
+          dir_names_max_depth: "1"
+          path: apps
+          separator: ","
+
+      - name: Add summary
+        env:
+          CHANGED_IMAGES: "${{ steps.filter-containers.outputs.all_changed_files }}"
+        run: |
+          IFS=',' read -a images <<< "${CHANGED_IMAGES}"
+          echo "### Changed images:" > "$GITHUB_STEP_SUMMARY"
+          for image in ${images[@]}; do
+            echo "- ${image}" >> "$GITHUB_STEP_SUMMARY"
+          done
 
   generate-matrix:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/devcontainers/javascript-node:22-bookworm
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
+    needs:
+      - get-changed-images
     steps:
       # - name: Generate Token
       #   uses: actions/create-github-app-token@v1
@@ -47,6 +73,7 @@ jobs:
           GITHUB_REPOSITORY: "${{ github.repository }}"
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
+          INCLUDE_IMAGES: ${{ steps.filter-containers.outputs.all_changed_files }}
 
       - name: Save Matrix
         id: matrix

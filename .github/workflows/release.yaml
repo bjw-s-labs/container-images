@@ -76,7 +76,7 @@ jobs:
           GITHUB_REPOSITORY: "${{ github.repository }}"
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           GITHUB_REF: ${{ github.ref }}
-          INCLUDE_IMAGES: ${{ steps.filter-containers.outputs.all_changed_files }}
+          INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
 
       - name: Save Matrix
         id: matrix

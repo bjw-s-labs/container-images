@@ -86,14 +86,14 @@ jobs:
     name: build ${{ matrix.job_name }}
     needs:
       - generate-matrix
-    runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-    steps:
-      - name: Debug
-        run: |
-          echo ${{ matrix.job_name }}
+    uses: ./.github/workflows/workflow_call-build_image.yaml
+    # steps:
+    #   - name: Debug
+    #     run: |
+    #       echo ${{ matrix.job_name }}
 
   # build:
   #   name: Build ${{ matrix.job_name }}

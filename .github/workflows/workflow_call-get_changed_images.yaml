@@ -25,3 +25,7 @@ jobs:
           files: |
             apps/*/**
           json: true
+
+      - name: Debug
+        run: |
+          echo "${{ steps.filter-containers.outputs.all_changed_files }}"

@@ -104,17 +104,14 @@ function extractPlatforms(metadataPath) {
 //     }
 // }
 
-function getPullRequestNumber(ref) {
-  const match = ref.match(/^refs\/pull\/(\d+)\/merge$/);
-  return match ? match[1] : null;
-}
+// function getPullRequestNumber(ref) {
+//   const match = ref.match(/^refs\/pull\/(\d+)\/merge$/);
+//   return match ? match[1] : null;
+// }
 
 async function generateMatrix() {
   const basePath = IMAGES_FOLDER;
   const matrix = [];
-
-  const isPullRequest = GITHUB_EVENT_NAME === "pull_request";
-  const prNumber = isPullRequest ? getPullRequestNumber(GITHUB_REF) : null;
 
   var foldersToInclude = [];
   if (INCLUDE_IMAGES) {
@@ -139,9 +136,6 @@ async function generateMatrix() {
       try {
         let version = extractVersion(metadatafilePath);
         const platforms = extractPlatforms(metadatafilePath);
-        if (isPullRequest) {
-          version = `pr-${prNumber}-${version}`;
-        }
         console.info(
           `Adding image ${image_name}:${version} to the job matrix.`
         );

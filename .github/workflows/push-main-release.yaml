@@ -18,23 +18,23 @@ jobs:
     name: Lint
     uses: ./.github/workflows/workflow_call-lint.yaml
 
-  get-changed-images:
-    name: Get changed images
-    needs:
-      - lint
-    uses: ./.github/workflows/workflow_call-get_changed_images.yaml
+  # get-changed-images:
+  #   name: Get changed images
+  #   needs:
+  #     - lint
+  #   uses: ./.github/workflows/workflow_call-get_changed_images.yaml
 
-  build-images:
-    name: Build images
-    needs:
-      - lint
-      - get-changed-images
-    if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
-    uses: ./.github/workflows/workflow_call-build_images.yaml
-    permissions:
-      contents: read
-      packages: write
-    with:
-      appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
-      pushImages: true
-      sendNotifications: true
+  # build-images:
+  #   name: Build images
+  #   needs:
+  #     - lint
+  #     - get-changed-images
+  #   if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
+  #   uses: ./.github/workflows/workflow_call-build_images.yaml
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #   with:
+  #     appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
+  #     pushImages: true
+  #     sendNotifications: true

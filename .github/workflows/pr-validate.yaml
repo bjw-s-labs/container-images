@@ -16,21 +16,21 @@ jobs:
     name: Lint
     uses: bjw-s/container-images/.github/workflows/workflow_call-lint.yaml@main
 
-  get-changed-images:
-    name: Get changed images
-    uses: bjw-s/container-images/.github/workflows/workflow_call-get_changed_images.yaml@main
+  # get-changed-images:
+  #   name: Get changed images
+  #   uses: bjw-s/container-images/.github/workflows/workflow_call-get_changed_images.yaml@main
 
-  build-images:
-    name: Build images
-    needs:
-      - lint
-      - get-changed-images
-    if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
-    uses: bjw-s/container-images/.github/workflows/workflow_call-build_images.yaml@main
-    permissions:
-      contents: read
-      packages: read
-    with:
-      appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
-      pushImages: false
-      sendNotifications: false
+  # build-images:
+  #   name: Build images
+  #   needs:
+  #     - lint
+  #     - get-changed-images
+  #   if: ${{ needs.get-changed-images.outputs.addedOrModified == 'true' }}
+  #   uses: bjw-s/container-images/.github/workflows/workflow_call-build_images.yaml@main
+  #   permissions:
+  #     contents: read
+  #     packages: read
+  #   with:
+  #     appsToBuild: "${{ needs.get-changed-images.outputs.addedOrModifiedImages }}"
+  #     pushImages: false
+  #     sendNotifications: false

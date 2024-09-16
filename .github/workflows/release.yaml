@@ -83,7 +83,7 @@ jobs:
           echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   build:
-    name: build
+    name: build ${{ matrix.job_name }}
     needs:
       - generate-matrix
     runs-on: ubuntu-latest

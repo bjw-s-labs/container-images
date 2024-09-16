@@ -94,6 +94,8 @@ jobs:
       fail-fast: true
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     uses: ./.github/workflows/workflow_call-build_image.yaml
+    permissions:
+      packages: write
     with:
       image: ${{ matrix.job_name }}
       platforms: |

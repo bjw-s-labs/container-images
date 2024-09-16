@@ -111,10 +111,10 @@ jobs:
         run: |
           image_name="${{ inputs.image }}:testing"
           goss_args=""
-          if [[ ${{ inputs.type }} == "cli" ]]; then
+          if [[ "${{ inputs.type }}" == "cli" ]]; then
             goss_args="tail -f /dev/null"
           fi
-          dgoss run ${image_name} ${ goss_args }
+          dgoss run ${image_name} ${goss_args}
 
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6

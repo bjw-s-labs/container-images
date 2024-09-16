@@ -4,9 +4,6 @@ name: "Workflow call: Get Changed Images"
 on:
   workflow_call:
     outputs:
-      addedOrModified:
-        description: "Whether any files were added or modified"
-        value: ${{ jobs.get-changed-images.outputs.addedOrModified }}
       addedOrModifiedImages:
         description: "The images that were added or modified"
         value: ${{ jobs.get-changed-images.outputs.addedOrModifiedImages }}
@@ -16,7 +13,6 @@ jobs:
     name: Get Changed Images
     runs-on: ubuntu-latest
     outputs:
-      addedOrModified: "${{ steps.filter.outputs.addedOrModified }}"
       addedOrModifiedImages: "${{ steps.filter-containers.outputs.addedOrModifiedImages }}"
     steps:
       - uses: actions/checkout@v4

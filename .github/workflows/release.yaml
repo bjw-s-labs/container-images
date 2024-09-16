@@ -14,6 +14,10 @@ on:
       - apps/**
 
 jobs:
+  get-changed-images:
+    name: Get changed images
+    uses: ./.github/workflows/workflow_call-get_changed_images.yaml
+
   generate-matrix:
     runs-on: ubuntu-latest
     container: mcr.microsoft.com/devcontainers/javascript-node:22-bookworm

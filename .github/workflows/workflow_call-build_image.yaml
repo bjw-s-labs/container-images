@@ -62,9 +62,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: |
-            ghcr.io/bjw-s/${{ inputs.image }}
-            ghcr.io/bjw-s-labs/${{ inputs.image }}
+          images: ${{ inputs.image }}
           tags: ${{ inputs.tags }}
           labels: ${{ inputs.labels }}
 

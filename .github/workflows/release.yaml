@@ -97,7 +97,7 @@ jobs:
     permissions:
       packages: write
     with:
-      image: ${{ matrix.job_name }}
+      image: ghcr.io/bjw-s/${{ matrix.job_name }}
       platforms: |
         ${{ join(matrix.platforms, ', ') }}
       tags: |

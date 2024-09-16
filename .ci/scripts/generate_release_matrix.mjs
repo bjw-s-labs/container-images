@@ -56,6 +56,10 @@ function extractPlatforms(metadataPath) {
   return extractMetadataField(metadataPath, "platforms");
 }
 
+function extractType(metadataPath) {
+  return extractMetadataField(metadataPath, "type");
+}
+
 function extractTestConfig(metadataPath) {
   return extractMetadataField(metadataPath, "tests");
 }
@@ -87,6 +91,7 @@ async function generateMatrix() {
       try {
         let version = extractVersion(metadatafilePath);
         const platforms = extractPlatforms(metadatafilePath);
+        const type = extractType(metadatafilePath);
         const testsConfig = extractTestConfig(metadatafilePath);
         console.info(
           `Adding image ${image_name}:${version} to the job matrix.`
@@ -97,6 +102,7 @@ async function generateMatrix() {
           dockerfile: dockerfilePath,
           version: version,
           platforms: platforms,
+          type: type,
           tests: testsConfig,
         });
       } catch (error) {

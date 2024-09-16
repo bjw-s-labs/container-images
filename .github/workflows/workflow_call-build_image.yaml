@@ -40,6 +40,11 @@ on:
         description: Whether or not to push the image.
         default: false
         required: false
+      type:
+        type: string
+        description: The type of application. Valid values are "web" and "cli".
+        default: "web"
+        required: false
       tests-enabled:
         type: boolean
         description: Whether or not to run goss tests.
@@ -105,7 +110,11 @@ jobs:
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
           image_name="${{ inputs.image }}:testing"
-          dgoss run ${image_name} ${{ matrix.image.goss_args }}
+          goss_args=""
+          if [[ ${{ inputs.type }} == "cli" ]]; then
+            goss_args="tail -f /dev/null"
+          fi
+          dgoss run ${image_name} ${ goss_args }
 
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6

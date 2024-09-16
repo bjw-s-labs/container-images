@@ -13,23 +13,15 @@ jobs:
     name: Get Changed Images
     runs-on: ubuntu-latest
     outputs:
-      addedOrModifiedImages: "${{ steps.filter-containers.outputs.addedOrModifiedImages }}"
+      addedOrModifiedImages: "${{ steps.filter-containers.outputs.all_changed_files }}"
     steps:
       - uses: actions/checkout@v4
 
-      - name: Collect changed files
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          list-files: json
-          filters: |
-            addedOrModified:
-              - added|modified: 'apps/*/**'
-
       - name: Determine changed images
-        if: ${{ steps.filter.outputs.addedOrModified == 'true' }}
+        uses: tj-actions/changed-files@v45
         id: filter-containers
-        run: |
-          PATHS='${{ steps.filter.outputs.addedOrModified_files }}'
-          OUTPUT=$(echo $PATHS | jq --raw-output -c 'map(. |= split("/")[1]) | unique | join(",")')
-          echo "addedOrModifiedImages=${OUTPUT}" >> $GITHUB_OUTPUT
+        with:
+          dir_names: true
+          files: |
+            apps/*/**
+          json: true

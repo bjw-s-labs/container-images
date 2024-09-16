@@ -12,7 +12,6 @@
  *    - Formats the matrix in JSON to be used by GitHub Actions for subsequent build jobs.
  *
  * **Environment Variables**:
- * - `GITHUB_TOKEN`: A GitHub token with permissions to access the GHCR and the repository.
  * - `IMAGES_FOLDER`: The base folder that contains the container images. Defaults to "apps".
  * - `INCLUDE_IMAGES`: An optional comma-separated list of images to include in the matrix.
  *
@@ -23,14 +22,10 @@
 import fs from "fs";
 import path from "path";
 import YAML from "yaml";
-import { Octokit } from "@octokit/rest";
 
 // Configuration from environment variables
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const IMAGES_FOLDER = process.env.IMAGE_FOLDER || "apps";
 const INCLUDE_IMAGES = process.env.INCLUDE_IMAGES;
-
-const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 function extractMetadataField(metadataPath, field) {
   const content = fs.readFileSync(metadataPath, "utf8");

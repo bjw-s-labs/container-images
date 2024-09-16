@@ -80,7 +80,7 @@ jobs:
         id: matrix
         run: |
           matrix=$(cat matrix.json)
-          echo "matrix=${matrix}" | tee $GITHUB_OUTPUT
+          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   build:
     name: Build ${{ matrix.job_name }}

@@ -86,7 +86,7 @@ jobs:
     name: Build ${{ matrix.job_name }}
     needs: generate-matrix
     uses: ./.github/workflows/workflow_call-build_image.yaml
-    if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
+    # if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
     strategy:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     secrets: inherit

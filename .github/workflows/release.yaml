@@ -89,7 +89,7 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
     strategy:
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'] }}
     secrets: inherit
     with:
       image: |

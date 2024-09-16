@@ -73,6 +73,7 @@ jobs:
 
       - name: Build single arch for testing
         if: ${{ inputs.tests-enabled == true }}
+        id: build-test-image
         uses: docker/build-push-action@v6
         with:
           context: ${{ inputs.context }}
@@ -81,7 +82,7 @@ jobs:
           push: false
           load: true
           tags: |
-            ${{ inputs.image }}@testing
+            ${{ inputs.image }}:testing
           build-args: ${{ inputs.build-args }}
           cache-to: type=registry,ref=${{ inputs.image }}:buildcache
           cache-from: type=registry,ref=${{ inputs.image }}:buildcache,mode=max
@@ -104,7 +105,7 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
-          image_name="${{ inputs.image }}@testing"
+          image_name="${{ inputs.image }}:testing"
           dgoss run ${image_name} ${{ matrix.image.goss_args }}
 
       - name: Build and (optionally) Push

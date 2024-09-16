@@ -83,23 +83,36 @@ jobs:
           echo "matrix=${matrix}" >> $GITHUB_OUTPUT
 
   build:
-    name: Build ${{ matrix.job_name }}
+    name: build
     needs:
       - generate-matrix
-    uses: ./.github/workflows/workflow_call-build_image.yaml
-    if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
+    runs-on: ubuntu-latest
     strategy:
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'] }}
-    secrets: inherit
-    with:
-      image: |
-        ghcr.io/bjw-s/${{ matrix.image_name }}
-        ghcr.io/bjw-s-labs/${{ matrix.image_name }}
-      platforms: ${{ matrix.platforms }}
-      tags: |
-        type=semver,pattern={{version}},value=${{ matrix.version }}
-        type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
-        type=semver,pattern={{major}},value=${{ matrix.version }}
-      context: ${{ matrix.context }}
-      dockerfile: ${{ matrix.dockerfile }}
-      dry-run: true
+      fail-fast: true
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix)
+    steps:
+      - name: Debug
+        run: |
+          echo ${{ matrix.job_name }}
+
+  # build:
+  #   name: Build ${{ matrix.job_name }}
+  #   needs:
+  #     - generate-matrix
+  #   uses: ./.github/workflows/workflow_call-build_image.yaml
+  #   if: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'].length > 0 }}
+  #   strategy:
+  #     matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix)['include'] }}
+  #   secrets: inherit
+  #   with:
+  #     image: |
+  #       ghcr.io/bjw-s/${{ matrix.image_name }}
+  #       ghcr.io/bjw-s-labs/${{ matrix.image_name }}
+  #     platforms: ${{ matrix.platforms }}
+  #     tags: |
+  #       type=semver,pattern={{version}},value=${{ matrix.version }}
+  #       type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
+  #       type=semver,pattern={{major}},value=${{ matrix.version }}
+  #     context: ${{ matrix.context }}
+  #     dockerfile: ${{ matrix.dockerfile }}
+  #     dry-run: true

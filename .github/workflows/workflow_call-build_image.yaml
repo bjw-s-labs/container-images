@@ -81,7 +81,7 @@ jobs:
           push: false
           load: true
           tags: |
-            type=raw,value=testing
+            testing
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}

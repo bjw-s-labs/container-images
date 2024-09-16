@@ -52,7 +52,4 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: "${{ inputs.image }}"
-          tags: |
-            type=semver,pattern={{version}},value=${{ inputs.tags }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.tags }}
-            type=semver,pattern={{major}},value=${{ inputs.tags }}
+          tags: "${{ inputs.tags }}"

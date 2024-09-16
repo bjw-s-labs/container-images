@@ -91,9 +91,14 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     secrets: inherit
     with:
-      image: ${{ matrix.image_name }}
+      image: |
+        ghcr.io/bjw-s/${{ matrix.image_name }}
+        ghcr.io/bjw-s-labs/${{ matrix.image_name }}
       platforms: ${{ matrix.platforms }}
-      tags: ${{ matrix.version }}
+      tags: |
+        type=semver,pattern={{version}},value=${{ matrix.version }}
+        type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
+        type=semver,pattern={{major}},value=${{ matrix.version }}
       context: ${{ matrix.context }}
       dockerfile: ${{ matrix.dockerfile }}
       dry-run: true

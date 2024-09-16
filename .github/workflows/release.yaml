@@ -93,8 +93,8 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
       image: |
-        ghcr.io/bjw-s/${{ matrix.job_name }}
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
+        ghcr.io/bjw-s/${{ matrix.job_name }}
       platforms: |
         ${{ join(matrix.platforms, ', ') }}
       tags: |

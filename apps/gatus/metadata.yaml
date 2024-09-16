@@ -1,13 +1,10 @@
 ---
-app: "gatus"
-base: false
-semantic_versioning: true
-channels:
-  - name: "stable"
-    platforms:
-      - linux/amd64
-      - linux/arm64
-    stable: true
-    tests:
-      enabled: true
-      type: web
+app: gatus
+# renovate: depName=TwiN/gatus
+version: 5.12.1
+platforms:
+  - linux/amd64
+  - linux/arm64
+type: web
+tests:
+  enabled: true

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@octokit/rest": "^21.0.2",
+    "yaml": "^2.5.1"
+  },
+  "scripts": {
+    "genmatrix": "node .ci/scripts/generate_release_matrix.mjs"
+  }
+}

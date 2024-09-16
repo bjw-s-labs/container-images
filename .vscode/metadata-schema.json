@@ -3,6 +3,7 @@
   "id": "rtrox-containers/metadata",
   "title": "App Metadata",
   "type": "object",
+  "additionalProperties": false,
   "properties": {
     "$schema": {
       "type": "string"
@@ -12,47 +13,30 @@
       "description": "The name of the app to use in container name",
       "pattern": "^[a-z0-9-]+$"
     },
-    "base": {
-      "type": "boolean",
-      "description": "If true, this is a base container"
+    "version": {
+      "type": "string",
+      "description": "The version of the app"
     },
-    "semantic_versioning": {
-      "type": "boolean",
-      "description": "If true, this is a semantic versioning container"
+    "type": {
+      "type": "string",
+      "description": "The type of the app. Used to determine test types.",
+      "enum": ["web", "cli"]
     },
-    "channels": {
+    "platforms": {
       "type": "array",
-      "description": "The channels to use in container name",
+      "description": "The platforms to build",
       "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The name of the channel",
-            "pattern": "^[a-z0-9.-]+$"
-          },
-          "platforms": {
-            "type": "array",
-            "description": "The platforms to build",
-            "items": {
-              "type": "string",
-              "enum": ["linux/amd64", "linux/arm/v7", "linux/arm64"]
-            }
-          },
-          "stable": {
-            "type": "boolean",
-            "description": "If true, this is the main stable channel"
-          },
-          "tests": {
-            "type": "object",
-            "description": "Test Configuration",
-            "properties": {
-              "enabled": {
-                "type": "boolean",
-                "description": "If true, tests are enabled for this channel"
-              }
-            }
-          }
+        "type": "string",
+        "enum": ["linux/amd64", "linux/arm/v7", "linux/arm64"]
+      }
+    },
+    "tests": {
+      "type": "object",
+      "description": "Test Configuration",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "If true, tests are enabled for this channel"
         }
       }
     }

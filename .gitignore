@@ -1,7 +1,5 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
+node_modules/
+package-lock.json
+matrix.json
 
 .goss
-.private

@@ -1,13 +1,8 @@
-<!---
-NOTE: AUTO-GENERATED FILE
-to edit this file, instead edit its template at: ./ci/templates/README.md.j2
--->
 <div align="center">
 
+## Container Images
 
-## Containers
-
-_A Collection of Container Images Optimized for Kubernetes_
+_A Collection of Container Images Optimized for use in Kubernetes_
 
 </div>
 
@@ -15,7 +10,6 @@ _A Collection of Container Images Optimized for Kubernetes_
 
 ![GitHub Repo stars](https://img.shields.io/github/stars/bjw-s/container-images?style=for-the-badge)
 ![GitHub forks](https://img.shields.io/github/forks/bjw-s/container-images?style=for-the-badge)
-![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/bjw-s/container-images/scheduled-release.yaml?style=for-the-badge&label=Scheduled%20Release)
 
 </div>
 
@@ -23,36 +17,30 @@ _A Collection of Container Images Optimized for Kubernetes_
 
 ## About
 
-This repo contains a collection of containers which are optimized for use in kubernetes, and updated automatically to keep up with upstream versions. Using an image effectively in Kubernetes requires a few ingredients:
+This repo contains a collection of container images which are optimized for use in Kubernetes, and updated automatically to keep up with upstream versions. The images try to adhere to the following principles:
 
-- The filesystem must be able to be immutable
-- Semantic versioning is available to specify exact versions to run
-- The container can be run rootless
-- The container shouldn't require any manual interaction
-- The container should ideally be configurable via environmental variables
+- Images are built upon a [Alpine](https://hub.docker.com/_/alpine) or [Ubuntu](https://hub.docker.com/_/ubuntu) base image.
+- The container can be run rootless.
+- No use of [s6-overlay](https://github.com/just-containers/s6-overlay).
+- Semantic versioning is available to specify exact versions to run.
+- The container filesystem must be able to be immutable.
 
-## Configuration volume
+## Available Images
 
-For applications that need to have persistent configuration data the container will leverage a `/data` and a `/config` volume where these are necessary. This is not able to be changed in most cases.
+Images can be [browsed on the GitHub Packages page for this repo's packages](https://github.com/bjw-s?tab=packages&repo_name=container-images).
 
----
+## Persistent data
 
-## Available Tags
+For applications that need to have persistent data the container will leverage a `/data` and/or a `/config` volume where these are necessary. These locations are hardcoded and not able to be changed in most cases.
 
-For Semantically Versioned containers (e.g. `v1.2.3`), `major`, `major.minor`, and `major.minor.patch` tags will be generated, for example, ![1](https://img.shields.io/badge/1-blue?style=flat-square) ![1.2](https://img.shields.io/badge/1.2-blue?style=flat-square) and ![1.2.3](https://img.shields.io/badge/1.2.3-blue?style=flat-square). Available Images Below.
+## Deprecations
 
-### Application Images
+Containers here can be **deprecated** at any point, this could be for any reason described below.
 
-Each Image will be built with a `rolling` tag, along with tags specific to it's version. Available Images Below
+1. The upstream application is no longer actively developed.
+2. The upstream application has an official upstream container that fits within the goals of this project.
+3. The upstream application has been replaced with a better alternative.
+4. The maintenance burden of keeping the container here is too bothersome.
 
-Container | Channel | Image
---- | --- | ---
-[calibre-web](https://github.com/bjw-s/container-images/pkgs/container/calibre-web) | stable | ghcr.io/bjw-s/calibre-web
-[gatus](https://github.com/bjw-s/container-images/pkgs/container/gatus) | stable | ghcr.io/bjw-s/gatus
-[getmail](https://github.com/bjw-s/container-images/pkgs/container/getmail) | stable | ghcr.io/bjw-s/getmail
-[gh-safe-settings](https://github.com/bjw-s/container-images/pkgs/container/gh-safe-settings) | stable | ghcr.io/bjw-s/gh-safe-settings
-[gluetun-qb-port-sync](https://github.com/bjw-s/container-images/pkgs/container/gluetun-qb-port-sync) | stable | ghcr.io/bjw-s/gluetun-qb-port-sync
-[kepubify](https://github.com/bjw-s/container-images/pkgs/container/kepubify) | stable | ghcr.io/bjw-s/kepubify
-[manyfold](https://github.com/bjw-s/container-images/pkgs/container/manyfold) | stable | ghcr.io/bjw-s/manyfold
-[mdbook](https://github.com/bjw-s/container-images/pkgs/container/mdbook) | stable | ghcr.io/bjw-s/mdbook
-[radicale](https://github.com/bjw-s/container-images/pkgs/container/radicale) | stable | ghcr.io/bjw-s/radicale
+> [!NOTE]
+> Deprecated containers will remained published to this repo for 6 months after which they will be pruned.

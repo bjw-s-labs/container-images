@@ -1,13 +1,10 @@
 ---
-app: "calibre-web"
-base: false
-semantic_versioning: true
-channels:
-  - name: "stable"
-    platforms:
-      - linux/amd64
-      - linux/arm64
-    stable: true
-    tests:
-      enabled: true
-      type: web
+app: calibre-web
+# renovate: depName=janeczku/calibre-web
+version: 0.6.23
+platforms:
+  - linux/amd64
+  - linux/arm64
+type: web
+tests:
+  enabled: true

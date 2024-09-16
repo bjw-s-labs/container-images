@@ -1,13 +1,10 @@
 ---
-app: "gh-safe-settings"
-base: false
-semantic_versioning: true
-channels:
-  - name: "stable"
-    platforms:
-      - linux/amd64
-      - linux/arm64
-    stable: true
-    tests:
-      enabled: true
-      type: web
+app: gh-safe-settings
+# renovate: depName=github/safe-settings
+version: 2.1.11
+platforms:
+  - linux/amd64
+  - linux/arm64
+type: web
+tests:
+  enabled: true

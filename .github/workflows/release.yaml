@@ -1,0 +1,126 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "Docker: Build and Push"
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/**
+  pull_request:
+    paths:
+      - apps/**
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  get-changed-images:
+    name: Determine changed images
+    runs-on: ubuntu-latest
+    outputs:
+      changed_images: ${{ steps.filter-containers.outputs.all_changed_files }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine changed images
+        uses: tj-actions/changed-files@v45
+        id: filter-containers
+        with:
+          dir_names: true
+          dir_names_max_depth: "1"
+          path: apps
+          separator: ","
+
+      - name: Add summary
+        env:
+          CHANGED_IMAGES: "${{ steps.filter-containers.outputs.all_changed_files }}"
+        run: |
+          IFS=',' read -a images <<< "${CHANGED_IMAGES}"
+          echo "### Changed images:" > "$GITHUB_STEP_SUMMARY"
+          for image in ${images[@]}; do
+            echo "- ${image}" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+  generate-matrix:
+    name: Generate build matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    needs:
+      - get-changed-images
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate matrix
+        run: npm run genmatrix
+        env:
+          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
+          GITHUB_REPOSITORY: "${{ github.repository }}"
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          INCLUDE_IMAGES: ${{ steps.filter-containers.outputs.all_changed_files }}
+
+      - name: Save Matrix
+        id: matrix
+        run: |
+          matrix=$(cat matrix.json)
+          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build ${{ matrix.job_name }} image
+    needs:
+      - generate-matrix
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    uses: ./.github/workflows/workflow_call-build_image.yaml
+    with:
+      image: |
+        ghcr.io/bjw-s/${{ matrix.job_name }}
+        ghcr.io/bjw-s-labs/${{ matrix.job_name }}
+      platforms: |
+        ${{ join(matrix.platforms, ', ') }}
+      tags: |
+        type=raw,value=${{ matrix.version }}
+        type=raw,value=latest
+        type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
+        type=semver,pattern={{major}},value=${{ matrix.version }}
+      build-args: |
+        VERSION=${{ matrix.version }}
+      context: ${{ matrix.context }}
+      dockerfile: ${{ matrix.dockerfile }}
+      labels: |
+        org.opencontainers.image.title=${{ matrix.job_name }}
+      dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
+      type: ${{ matrix.type }}
+      tests-enabled: ${{ matrix.tests.enabled }}
+    secrets:
+      GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+
+  build_success:
+    name: Build matrix success
+    needs:
+      - build
+    if: |
+      always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix status
+        if: >-
+          ${{
+            (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
+          }}
+        run: exit 1

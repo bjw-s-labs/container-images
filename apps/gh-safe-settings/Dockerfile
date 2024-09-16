@@ -1,12 +1,12 @@
 ARG VERSION
 
-FROM docker.io/library/alpine:3.20 as build
+FROM docker.io/library/alpine:3.20 AS build
 
 ARG VERSION
 
 RUN \
     apk add --no-cache --virtual=build-dependencies \
-        git \
+    git \
     && git clone --branch "${VERSION}" "https://github.com/github/safe-settings.git" /src
 
 FROM docker.io/library/node:22-alpine

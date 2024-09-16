@@ -1,5 +1,5 @@
 ARG VERSION
-FROM docker.io/twinproduction/gatus:v$VERSION as gatus
+FROM docker.io/twinproduction/gatus:v$VERSION AS gatus
 
 FROM docker.io/library/alpine:3.20
 
@@ -22,8 +22,8 @@ COPY --from=gatus /config/config.yaml /app/config.default.yaml
 #hadolint ignore=DL3018,DL3013
 RUN \
     apk add --no-cache \
-        bash \
-        ca-certificates \
+    bash \
+    ca-certificates \
     && chmod -R 755 /app
 
 COPY ./entrypoint.sh /entrypoint.sh

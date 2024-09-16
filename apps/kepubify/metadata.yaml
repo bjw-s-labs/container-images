@@ -1,12 +1,10 @@
 ---
-app: "kepubify"
-base: false
-channels:
-  - name: "stable"
-    platforms:
-      - linux/amd64
-      - linux/arm64
-    stable: true
-    tests:
-      enabled: true
-      type: cli
+app: kepubify
+# renovate: depName=pgaskin/kepubify
+version: 4.0.4
+platforms:
+  - linux/amd64
+  - linux/arm64
+type: cli
+tests:
+  enabled: true

@@ -66,6 +66,21 @@ jobs:
           tags: ${{ inputs.tags }}
           labels: ${{ inputs.labels }}
 
+      - name: Build single arch for testing
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
+          build-args: ${{ inputs.build-args }}
+          cache-to: type=registry,ref=${{ inputs.image }}:buildcache
+          cache-from: type=registry,ref=${{ inputs.image }}:buildcache,mode=max
+
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6
         with:

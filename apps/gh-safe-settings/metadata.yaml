@@ -1,5 +1,6 @@
 ---
 app: gh-safe-settings
+source_repo: https://github.com/github/safe-settings
 # renovate: depName=github/safe-settings
 version: 2.1.13
 platforms:

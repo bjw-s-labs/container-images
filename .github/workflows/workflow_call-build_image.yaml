@@ -124,7 +124,7 @@ jobs:
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
           image_name="${{ steps.determine-primary-image.outputs.image }}:testing"
-          declare -A goss_args
+          declare -a goss_args
           if [[ "${{ inputs.type }}" == "cli" ]]; then
             goss_args+=(
               "tail" "-f" "/dev/null"

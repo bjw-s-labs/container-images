@@ -108,8 +108,6 @@ jobs:
       - name: Setup Goss
         if: ${{ inputs.tests-enabled == true }}
         uses: e1himself/goss-installation-action@v1.2.1
-        with:
-          version: v0.4.2
 
       - name: Run Goss Tests
         id: dgoss

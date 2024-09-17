@@ -80,11 +80,11 @@ jobs:
           labels: ${{ inputs.labels }}
 
       - name: Determine primary image name
-        id: primary-image
+        id: determine-primary-image
         shell: bash
         run: |
           IFS=$'\n' read -r PRIMARY_IMAGE <<<"${{ inputs.image }}"
-          echo "PRIMARY_IMAGE=$PRIMARY_IMAGE" >> $GITHUB_ENV
+          echo "image=$PRIMARY_IMAGE" >> "$GITHUB_OUTPUT"
 
       - name: Build single arch for testing
         if: ${{ inputs.tests-enabled == true }}
@@ -101,15 +101,13 @@ jobs:
           push: false
           load: true
           tags: |
-            ${{ env.PRIMARY_IMAGE }}:testing
+            ${{ steps.determine-primary-image.outputs.image }}:testing
           build-args: ${{ inputs.build-args }}
-          cache-from: type=registry,ref=${{ env.PRIMARY_IMAGE }}:buildcache,mode=max
+          cache-from: type=registry,ref=${{ steps.determine-primary-image.outputs.image }}:buildcache,mode=max
 
       - name: Setup Goss
         if: ${{ inputs.tests-enabled == true }}
         uses: e1himself/goss-installation-action@v1.2.1
-        with:
-          version: v0.4.2
 
       - name: Run Goss Tests
         id: dgoss
@@ -123,12 +121,14 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
-          image_name="${{ env.PRIMARY_IMAGE }}:testing"
-          goss_args=""
+          image_name="${{ steps.determine-primary-image.outputs.image }}:testing"
+          declare -a goss_args
           if [[ "${{ inputs.type }}" == "cli" ]]; then
-            goss_args="tail -f /dev/null"
+            goss_args+=(
+              "tail" "-f" "/dev/null"
+            )
           fi
-          dgoss run ${image_name} ${goss_args}
+          dgoss run "${image_name}" "${goss_args[@]}"
 
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6
@@ -143,5 +143,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
-          cache-to: type=registry,ref=${{ env.PRIMARY_IMAGE }}:buildcache
-          cache-from: type=registry,ref=${{ env.PRIMARY_IMAGE }}:buildcache,mode=max
+          cache-to: type=registry,ref=${{ steps.determine-primary-image.outputs.image }}:buildcache
+          cache-from: type=registry,ref=${{ steps.determine-primary-image.outputs.image }}:buildcache,mode=max

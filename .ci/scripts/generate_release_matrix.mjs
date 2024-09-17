@@ -23,6 +23,8 @@ import fs from "fs";
 import path from "path";
 import YAML from "yaml";
 
+const imagesRepo = "https://github.com/bjw-s-labs/container-images";
+
 // Configuration from environment variables
 const IMAGES_FOLDER = process.env.IMAGE_FOLDER || "apps";
 const INCLUDE_IMAGES = process.env.INCLUDE_IMAGES;
@@ -59,6 +61,14 @@ function extractTestConfig(metadataPath) {
   return extractMetadataField(metadataPath, "tests");
 }
 
+function extractSourceRepo(metadataPath) {
+  try {
+    return extractMetadataField(metadataPath, "source_repo");
+  } catch (error) {
+    return imagesRepo;
+  }
+}
+
 async function generateMatrix() {
   const basePath = IMAGES_FOLDER;
   const matrix = [];
@@ -88,6 +98,7 @@ async function generateMatrix() {
         const platforms = extractPlatforms(metadatafilePath);
         const type = extractType(metadatafilePath);
         const testsConfig = extractTestConfig(metadatafilePath);
+        const source_repo = extractSourceRepo(metadatafilePath);
         console.info(
           `Adding image ${image_name}:${version} to the job matrix.`
         );
@@ -98,6 +109,7 @@ async function generateMatrix() {
           version: version,
           platforms: platforms,
           type: type,
+          source_repo: source_repo,
           tests: testsConfig,
         });
       } catch (error) {

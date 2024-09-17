@@ -44,9 +44,9 @@ jobs:
         env:
           CHANGED_IMAGES: "${{ steps.filter-containers.outputs.all_changed_files }}"
         run: |
-          IFS=',' read -a images <<< "${CHANGED_IMAGES}"
+          IFS=',' read -r -a images <<< "${CHANGED_IMAGES}"
           echo "### Changed images:" > "$GITHUB_STEP_SUMMARY"
-          for image in ${images[@]}; do
+          for image in "${images[@]}"; do
             echo "- ${image}" >> "$GITHUB_STEP_SUMMARY"
           done
 
@@ -72,17 +72,14 @@ jobs:
       - name: Generate matrix
         run: npm run genmatrix
         env:
-          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
-          GITHUB_REPOSITORY: "${{ github.repository }}"
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_REF: ${{ github.ref }}
+          IMAGES_FOLDER: "apps"
           INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
 
       - name: Save Matrix
         id: matrix
         run: |
-          matrix=$(cat matrix.json)
-          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
+          matrix="$(cat matrix.json)"
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build ${{ matrix.job_name }} image
@@ -108,6 +105,7 @@ jobs:
       dockerfile: ${{ matrix.dockerfile }}
       labels: |
         org.opencontainers.image.title=${{ matrix.job_name }}
+        org.opencontainers.image.source=${{ matrix.source_repo }}
       dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
       type: ${{ matrix.type }}
       tests-enabled: ${{ matrix.tests.enabled }}

@@ -21,31 +21,69 @@ jobs:
         with:
           extra_args: --config .pre-commit-config.yaml
 
-  lint-yaml:
-    name: Lint Yaml Files
+  actionlint:
+    name: actionlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
-      - uses: dorny/paths-filter@v3
-        id: filter
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
         with:
-          list-files: shell
-          filters: |
-            yaml:
-              - added|modified: "**.yaml"
-              - added|modified: "**.yml"
+          files: |
+            .github/workflows/**/*.yml
+            .github/workflows/**/*.yaml
 
-      - name: "Yamllint"
-        if: ${{ steps.filter.outputs.yaml == 'true' }}
-        uses: karancode/yamllint-github-action@master
+      - name: Run actionlint
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: bjw-s/action-actionlint@v0.1
         with:
-          yamllint_file_or_dir: "${{ steps.filter.outputs.yaml_files }}"
-          yamllint_strict: false
-          yamllint_comment: true
-          yamllint_config_filepath: .ci/lint/yamllint.yaml
-        env:
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          actionlint_config: .ci/lint/actionlint.yml
+          file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
+
+  yamllint:
+    name: yamllint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **.yml
+            **.yaml
+
+      - name: Install yamllint
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          pip install yamllint
+
+      - name: Run yamllint
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: yamllint --config-file .ci/lint/yamllint.yaml --format github ${{ steps.changed-files.outputs.all_changed_files }}
+
+  lint_success:
+    name: Linting success
+    needs:
+      - pre-commit-check
+      - actionlint
+      - yamllint
+    if: |
+      always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check matrix status
+        if: >-
+          ${{
+            (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
+          }}
+        run: exit 1

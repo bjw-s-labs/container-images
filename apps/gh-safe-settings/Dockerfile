@@ -2,8 +2,6 @@ ARG VERSION
 
 FROM docker.io/library/alpine:3.20 AS build
 
-LABEL org.opencontainers.image.source="https://github.com/github/safe-settings"
-
 ARG VERSION
 
 RUN \

@@ -17,6 +17,10 @@
       "type": "string",
       "description": "The version of the app"
     },
+    "source_repo": {
+      "type": "string",
+      "description": "The upstream repo to pull release notes from, etc."
+    },
     "type": {
       "type": "string",
       "description": "The type of the app. Used to determine test types.",

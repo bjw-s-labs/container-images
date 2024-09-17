@@ -74,8 +74,7 @@ jobs:
         env:
           DEFAULT_SOURCE_URL: "https://github.com/${{ github.repository }}"
           IMAGES_FOLDER: "apps"
-          # INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
-          INCLUDE_IMAGES: gh-safe-settings
+          INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
 
       - name: Save Matrix
         id: matrix

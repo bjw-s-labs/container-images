@@ -78,8 +78,6 @@ jobs:
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
-        # env:
-        #   DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           images: ${{ inputs.image }}
           tags: ${{ inputs.tags }}
@@ -145,8 +143,7 @@ jobs:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
-          # push: ${{ !inputs.dry-run }}
-          push: true
+          push: ${{ !inputs.dry-run }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}

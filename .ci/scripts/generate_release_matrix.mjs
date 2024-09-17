@@ -12,6 +12,7 @@
  *    - Formats the matrix in JSON to be used by GitHub Actions for subsequent build jobs.
  *
  * **Environment Variables**:
+ * - `DEFAULT_SOURCE_URL`: The default URL to use for the source_url if none has been set in metadata.
  * - `IMAGES_FOLDER`: The base folder that contains the container images. Defaults to "apps".
  * - `INCLUDE_IMAGES`: An optional comma-separated list of images to include in the matrix.
  *
@@ -23,9 +24,8 @@ import fs from "fs";
 import path from "path";
 import YAML from "yaml";
 
-const imagesRepo = "https://github.com/bjw-s-labs/container-images";
-
 // Configuration from environment variables
+const DEFAULT_SOURCE_URL = process.env.DEFAULT_SOURCE_URL;
 const IMAGES_FOLDER = process.env.IMAGE_FOLDER || "apps";
 const INCLUDE_IMAGES = process.env.INCLUDE_IMAGES;
 
@@ -65,7 +65,7 @@ function extractSourceRepo(metadataPath) {
   try {
     return extractMetadataField(metadataPath, "source_repo");
   } catch (error) {
-    return imagesRepo;
+    return DEFAULT_SOURCE_URL;
   }
 }
 

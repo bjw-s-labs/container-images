@@ -72,6 +72,7 @@ jobs:
       - name: Generate matrix
         run: npm run genmatrix
         env:
+          DEFAULT_SOURCE_URL: "https://github.com/${{ github.repository }}"
           IMAGES_FOLDER: "apps"
           INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
 

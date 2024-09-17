@@ -4,6 +4,11 @@
   "editor.guides.bracketPairs": true,
   "editor.guides.highlightActiveBracketPair": true,
   "files.trimTrailingWhitespace": true,
+  "linter.linters": {
+    "yamllint": {
+      "configFiles": [".ci/lint/yamllint.yaml"]
+    }
+  },
   "yaml.schemas": {
     "./.vscode/metadata-schema.json": "**/apps/**/metadata.yaml"
   },

@@ -1,5 +1,6 @@
 ---
 app: kepubify
+source_repo: https://github.com/pgaskin/kepubify
 # renovate: depName=pgaskin/kepubify
 version: 4.0.4
 platforms:

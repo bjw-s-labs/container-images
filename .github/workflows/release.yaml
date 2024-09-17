@@ -72,17 +72,14 @@ jobs:
       - name: Generate matrix
         run: npm run genmatrix
         env:
-          GITHUB_TOKEN: "${{ steps.app-token.outputs.token }}"
-          GITHUB_REPOSITORY: "${{ github.repository }}"
-          GITHUB_EVENT_NAME: ${{ github.event_name }}
-          GITHUB_REF: ${{ github.ref }}
+          IMAGES_FOLDER: "apps"
           INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
 
       - name: Save Matrix
         id: matrix
         run: |
-          matrix=$(cat matrix.json)
-          echo "matrix=${matrix}" >> $GITHUB_OUTPUT
+          matrix="$(cat matrix.json)"
+          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
 
   build:
     name: Build ${{ matrix.job_name }} image

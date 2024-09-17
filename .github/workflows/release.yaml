@@ -74,7 +74,8 @@ jobs:
         env:
           DEFAULT_SOURCE_URL: "https://github.com/${{ github.repository }}"
           IMAGES_FOLDER: "apps"
-          INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
+          # INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
+          INCLUDE_IMAGES: gh-safe-settings
 
       - name: Save Matrix
         id: matrix
@@ -105,6 +106,9 @@ jobs:
       context: ${{ matrix.context }}
       dockerfile: ${{ matrix.dockerfile }}
       labels: |
+        org.opencontainers.image.title=${{ matrix.job_name }}
+        org.opencontainers.image.source=${{ matrix.source_repo }}
+      annotations: |
         org.opencontainers.image.title=${{ matrix.job_name }}
         org.opencontainers.image.source=${{ matrix.source_repo }}
       dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}

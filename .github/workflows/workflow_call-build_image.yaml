@@ -19,7 +19,11 @@ on:
         required: true
       labels:
         type: string
-        description: Labels for the image.
+        description: Custom labels for the image.
+        required: false
+      annotations:
+        type: string
+        description: Custom annotations for the image.
         required: false
       context:
         type: string
@@ -74,12 +78,13 @@ jobs:
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
-        env:
-          DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
+        # env:
+        #   DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
         with:
           images: ${{ inputs.image }}
           tags: ${{ inputs.tags }}
           labels: ${{ inputs.labels }}
+          annotations: ${{ inputs.annotations }}
 
       - name: Determine primary image name
         id: determine-primary-image
@@ -140,7 +145,8 @@ jobs:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
           platforms: ${{ inputs.platforms }}
-          push: ${{ !inputs.dry-run }}
+          # push: ${{ !inputs.dry-run }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}

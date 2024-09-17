@@ -19,7 +19,11 @@ on:
         required: true
       labels:
         type: string
-        description: Labels for the image.
+        description: Custom labels for the image.
+        required: false
+      annotations:
+        type: string
+        description: Custom annotations for the image.
         required: false
       context:
         type: string
@@ -78,6 +82,7 @@ jobs:
           images: ${{ inputs.image }}
           tags: ${{ inputs.tags }}
           labels: ${{ inputs.labels }}
+          annotations: ${{ inputs.annotations }}
 
       - name: Determine primary image name
         id: determine-primary-image

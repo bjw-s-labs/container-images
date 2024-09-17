@@ -124,11 +124,13 @@ jobs:
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
           image_name="${{ steps.determine-primary-image.outputs.image }}:testing"
-          goss_args=""
+          declare -A goss_args
           if [[ "${{ inputs.type }}" == "cli" ]]; then
-            goss_args="tail -f /dev/null"
+            goss_args+=(
+              "tail" "-f" "/dev/null"
+            )
           fi
-          dgoss run ${image_name} ${goss_args}
+          dgoss run "${image_name}" "${goss_args[@]}"
 
       - name: Build and (optionally) Push
         uses: docker/build-push-action@v6

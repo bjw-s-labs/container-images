@@ -2,7 +2,7 @@
 app: manyfold
 source_repo: https://github.com/manyfold3d/manyfold
 # renovate: depName=manyfold3d/manyfold
-version: 0.78.1
+version: 0.79.0
 platforms:
   - linux/amd64
 type: web

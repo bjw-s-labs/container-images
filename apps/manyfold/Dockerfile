@@ -26,28 +26,29 @@ WORKDIR /app
 # hadolint ignore=DL3008,DL3015,SC2086
 RUN \
   apk add --no-cache \
-    alpine-sdk \
-    bash \
-    git \
-    glfw \
-    libarchive \
-    mariadb-dev \
-    mesa-gl \
-    postgresql-dev \
-    nodejs \
-    sqlite-dev \
-    tzdata \
-    valkey \
-    yarn \
+  alpine-sdk \
+  bash \
+  git \
+  glfw \
+  libarchive \
+  mariadb-dev \
+  mesa-gl \
+  postgresql-dev \
+  nodejs=~20.15 \
+  npm \
+  sqlite-dev \
+  tzdata \
+  valkey \
   && gem install foreman \
+  && npm install --global corepack \
   # Install manyfold
   && git clone --branch "v${VERSION}" "https://github.com/manyfold3d/manyfold.git" /app \
   && echo "${RUBY_VERSION}" > "/app/.ruby-version" \
   && sed -i '/^end$/i \ \ config.active_record.sqlite3_production_warning=false' /app/config/environments/production.rb \
   # Workaround for https://github.com/sparklemotion/sqlite3-ruby/issues/434
   && sed -i '/sqlite3/ s/$/, force_ruby_platform: true/' "/app/Gemfile" \
-  && yarn config set network-timeout 600000 -g \
-  && yarn install --prod \
+  && corepack enable yarn \
+  && yarn install \
   && bundle config set --local deployment 'true' \
   && bundle config set --local without 'development test' \
   && bundle install -j $(nproc) \
@@ -57,13 +58,13 @@ RUN \
   bundle exec rake assets:precompile \
   # Cleanup
   && rm -rf \
-    /app/.git \
-    /app/log/* \
-    /app/tmp/* \
-    /data \
-    /root/.cache \
-    /root/.cargo \
-    /tmp/* \
+  /app/.git \
+  /app/log/* \
+  /app/tmp/* \
+  /data \
+  /root/.cache \
+  /root/.cargo \
+  /tmp/* \
   # Prepare folders
   && chmod 777 /app/tmp \
   && chmod 777 /app/log

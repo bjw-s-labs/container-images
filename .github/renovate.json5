@@ -6,6 +6,17 @@
     "github>bjw-s/renovate-config:automerge-docker-digest",
   ],
   ignorePaths: [".archive/**"],
+  customManagers: [
+    {
+      customType: "regex",
+      fileMatch: ["^apps/piped-frontend/metadata.yaml$"],
+      matchStrings: ["version: (?<currentDigest>.*?)\\n"],
+      currentValueTemplate: "master",
+      depNameTemplate: "piped",
+      packageNameTemplate: "https://github.com/TeamPiped/Piped",
+      datasourceTemplate: "git-refs",
+    },
+  ],
   packageRules: [
     {
       description: "Automerge image updates if tests pass",

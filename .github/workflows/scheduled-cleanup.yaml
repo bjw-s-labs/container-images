@@ -33,13 +33,3 @@ jobs:
           untagged_only: true
           owner_type: org
           except_untagged_multiplatform: true
-
-      - name: Delete all containers from package without tags from bjw-s
-        uses: Chizkiyahu/delete-untagged-ghcr-action@v4
-        with:
-          token: ${{ secrets.GHCR_TOKEN }}
-          repository_owner: bjw-s
-          repository: ""
-          untagged_only: true
-          owner_type: user
-          except_untagged_multiplatform: true

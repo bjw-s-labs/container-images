@@ -6,11 +6,16 @@ RUN \
   apk add --no-cache curl git \
   && git clone https://github.com/TeamPiped/Piped.git /app \
   && cd /app \
-  && git checkout $VERSION \
-  && corepack enable  \
+  && git checkout $VERSION
+
+WORKDIR /app
+
+RUN \
+  corepack enable  \
   && corepack prepare pnpm@latest --activate \
   && pnpm install --prefer-offline \
-  && pnpm build && ./localizefonts.sh
+  && pnpm build \
+  && ./localizefonts.sh
 
 FROM nginxinc/nginx-unprivileged:alpine
 

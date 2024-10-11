@@ -18,6 +18,13 @@ RUN \
 
 FROM nginxinc/nginx-unprivileged:alpine
 
+USER root
+RUN \
+  apk add --no-cache \
+  catatonit
+
+USER nginx
+
 COPY --chown=101:101 --from=build /app/dist/ /usr/share/nginx/html/
 COPY --chown=101:101 --from=build /app/nginx.conf /etc/nginx/conf.d/default.conf
 COPY entrypoint.sh /entrypoint.sh
@@ -26,4 +33,4 @@ RUN \
   sed -i "s/worker_processes  auto;/worker_processes  2;/g" /etc/nginx/nginx.conf \
   && sed -i "s/80;/8080;/g" /etc/nginx/conf.d/default.conf
 
-ENTRYPOINT [ "/entrypoint.sh" ]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]

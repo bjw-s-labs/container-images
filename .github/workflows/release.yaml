@@ -90,6 +90,7 @@ jobs:
       matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
+      app: ${{ matrix.job_name }}
       image: |
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
         ghcr.io/bjw-s/${{ matrix.job_name }}

@@ -97,12 +97,12 @@ jobs:
       platforms: |
         ${{ join(matrix.platforms, ', ') }}
       tags: |
-        type=raw,value=${{ matrix.version }}
+        type=raw,value=${{ matrix.targetVersion }}
         type=raw,value=latest
-        type=semver,pattern={{major}}.{{minor}},value=${{ matrix.version }}
-        type=semver,pattern={{major}},value=${{ matrix.version }}
+        type=semver,pattern={{major}}.{{minor}},value=${{ matrix.targetVersion }}
+        type=semver,pattern={{major}},value=${{ matrix.targetVersion }}
       build-args: |
-        VERSION=${{ matrix.version }}
+        VERSION=${{ matrix.sourceVersion }}
       context: ${{ matrix.context }}
       dockerfile: ${{ matrix.dockerfile }}
       labels: |

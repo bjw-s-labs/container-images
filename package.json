@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@octokit/rest": "^21.0.2",
+    "semver": "^7.6.3",
     "yaml": "^2.5.1"
   },
   "scripts": {

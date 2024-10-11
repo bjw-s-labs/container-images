@@ -23,6 +23,7 @@
 import fs from "fs";
 import path from "path";
 import YAML from "yaml";
+import semver from "semver";
 
 // Configuration from environment variables
 const DEFAULT_SOURCE_URL = process.env.DEFAULT_SOURCE_URL;
@@ -45,7 +46,20 @@ function extractMetadataField(metadataPath, field) {
   return yamlContent[field];
 }
 
-function extractVersion(metadataPath) {
+function extractTargetVersion(metadataPath) {
+  let version = extractMetadataField(metadataPath, "version");
+  // If the version is a valid semVer tag, return it as `major.minor.patch`
+  // otherwise return the current date as `yyyy.mm.dd`
+  if (semver.valid(version)) {
+    let parsedVersion = semver.parse(version);
+    return `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`;
+  } else {
+    let date = new Date();
+    return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+  }
+}
+
+function extractSourceVersion(metadataPath) {
   return extractMetadataField(metadataPath, "version");
 }
 
@@ -94,19 +108,21 @@ async function generateMatrix() {
       fs.existsSync(metadatafilePath)
     ) {
       try {
-        let version = extractVersion(metadatafilePath);
+        let sourceVersion = extractSourceVersion(metadatafilePath);
+        let targetVersion = extractTargetVersion(metadatafilePath);
         const platforms = extractPlatforms(metadatafilePath);
         const type = extractType(metadatafilePath);
         const testsConfig = extractTestConfig(metadatafilePath);
         const source_repo = extractSourceRepo(metadatafilePath);
         console.info(
-          `Adding image ${image_name}:${version} to the job matrix.`
+          `Adding image ${image_name}:${targetVersion} to the job matrix.`
         );
         matrix.push({
           job_name: image_name,
           context: folderPath,
           dockerfile: dockerfilePath,
-          version: version,
+          sourceVersion: sourceVersion,
+          targetVersion: targetVersion,
           platforms: platforms,
           type: type,
           source_repo: source_repo,

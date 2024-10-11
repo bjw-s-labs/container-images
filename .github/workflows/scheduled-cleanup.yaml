@@ -43,7 +43,6 @@ jobs:
           dry-run: ${{ steps.normalize.outputs.dry_run }}
           owner: bjw-s-labs
           packages: "*"
-          exclude-tags: buildcache
           expand-packages: true
           delete-untagged: true
           delete-partial-images: true

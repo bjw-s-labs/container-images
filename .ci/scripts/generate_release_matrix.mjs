@@ -48,10 +48,12 @@ function extractMetadataField(metadataPath, field) {
 
 function extractTargetVersion(metadataPath) {
   let version = extractMetadataField(metadataPath, "version");
+  const loose = true;
+
   // If the version is a valid semVer tag, return it as `major.minor.patch`
   // otherwise return the current date as `yyyy.mm.dd`
-  if (semver.valid(version)) {
-    let parsedVersion = semver.parse(version);
+  if (semver.valid(version, loose)) {
+    let parsedVersion = semver.parse(version, loose);
     return `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`;
   } else {
     let date = new Date();

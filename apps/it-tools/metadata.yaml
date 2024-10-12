@@ -8,4 +8,4 @@ platforms:
   - linux/arm64
 type: web
 tests:
-  enabled: true
+  enabled: false

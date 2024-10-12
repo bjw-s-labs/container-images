@@ -1,0 +1,9 @@
+{
+  order replace after encode
+}
+
+:8080 {
+  root * /app
+  replace "pipedapi.kavin.rocks" "{env.BACKEND_HOSTNAME}"
+  file_server
+}

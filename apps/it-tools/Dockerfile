@@ -1,17 +1,12 @@
 ARG VERSION
 
 FROM node:lts-alpine AS build
-
 RUN \
   apk add --no-cache curl git \
   && git clone https://github.com/CorentinTh/it-tools.git /app \
   && cd /app \
-  && git checkout $VERSION
-
-WORKDIR /app
-
-RUN \
-  corepack enable  \
+  && git checkout $VERSION \
+  && corepack enable  \
   && corepack prepare pnpm@latest --activate \
   && pnpm install --prefer-offline \
   && pnpm build

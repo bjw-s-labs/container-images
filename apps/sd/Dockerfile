@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM rust:1.81.0-alpine AS build
+FROM rust:1.82.0-alpine AS build
 ARG TARGETPLATFORM
 ENV PKGCONFIG_SYSROOTDIR=/
 WORKDIR /app

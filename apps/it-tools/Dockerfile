@@ -4,9 +4,8 @@ FROM node:lts-alpine AS build
 ARG VERSION
 RUN \
   apk add --no-cache curl git \
-  && git clone https://github.com/CorentinTh/it-tools.git /app \
+  && git clone -b v${VERSION} --single-branch https://github.com/CorentinTh/it-tools.git /app \
   && cd /app \
-  && git checkout $VERSION \
   && corepack enable  \
   && corepack prepare pnpm@latest --activate \
   && pnpm install --prefer-offline \

@@ -1,6 +1,7 @@
 ARG VERSION
 
 FROM node:lts-alpine AS build
+ARG VERSION
 RUN \
   apk add --no-cache curl git \
   && git clone https://github.com/TeamPiped/Piped.git /app \

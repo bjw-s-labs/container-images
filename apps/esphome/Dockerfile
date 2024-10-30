@@ -24,8 +24,7 @@ RUN \
     build-base \
     catatonit \
     gcompat \
-  && pip install uv \
-  && uv pip install --no-cache-dir "esphome[displays]==${VERSION}" \
+  && pip install --no-cache-dir "esphome[displays]==${VERSION}" \
   && mkdir /cache \
   && chown nobody:nogroup /cache \
   && rm -rf \

@@ -24,7 +24,8 @@ RUN \
     build-base \
     catatonit \
     gcompat \
-  && pip install --no-cache-dir "esphome[displays]==${VERSION}" \
+  && pip install uv \
+  && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "esphome[displays]==${VERSION}" \
   && mkdir /cache \
   && chown nobody:nogroup /cache \
   && rm -rf \

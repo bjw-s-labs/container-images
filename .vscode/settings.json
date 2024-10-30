@@ -17,5 +17,6 @@
     "editor.quickSuggestions": {
       "strings": true
     }
-  }
+  },
+  "docker.languageserver.formatter.ignoreMultilineInstructions": true
 }

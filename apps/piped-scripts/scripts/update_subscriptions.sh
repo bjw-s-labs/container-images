@@ -10,6 +10,8 @@ PGDATABASE="${PGDATABASE:=piped}"
 UPDATE_VIDEOS="${UPDATE_VIDEOS:=true}"
 UPDATE_STREAMS="${UPDATE_STREAMS:=true}"
 LOG_TIMESTAMP="${LOG_TIMESTAMP:=true}"
+MIN_SLEEP_BETWEEN_FEEDS="${MIN_SLEEP_BETWEEN_FEEDS:=1}"
+MAX_SLEEP_BETWEEN_FEEDS="${MAX_SLEEP_BETWEEN_FEEDS:=5}"
 
 log() {
   gum_opts=(
@@ -24,6 +26,21 @@ log() {
 
   gum log "${gum_opts[@]}" "$@"
 }
+
+if [[ ${MIN_SLEEP_BETWEEN_FEEDS} -lt 1 ]]; then
+  log --level error "MIN_SLEEP_BETWEEN_FEEDS has to be >= 1" "MIN_SLEEP_BETWEEN_FEEDS" "${MIN_SLEEP_BETWEEN_FEEDS}"
+  exit 4
+fi
+
+if [[ ${MAX_SLEEP_BETWEEN_FEEDS} -lt 1 ]]; then
+  log --level error "MAX_SLEEP_BETWEEN_FEEDS has to be >= 1" "MAX_SLEEP_BETWEEN_FEEDS" "${MAX_SLEEP_BETWEEN_FEEDS}"
+  exit 4
+fi
+
+if [[ ! ${MIN_SLEEP_BETWEEN_FEEDS} -le ${MAX_SLEEP_BETWEEN_FEEDS} ]]; then
+  log --level error "MIN_SLEEP_BETWEEN_FEEDS is not less than MAX_SLEEP_BETWEEN_FEEDS" "MIN_SLEEP_BETWEEN_FEEDS" "${MIN_SLEEP_BETWEEN_FEEDS}" "MAX_SLEEP_BETWEEN_FEEDS" "${MAX_SLEEP_BETWEEN_FEEDS}"
+  exit 4
+fi
 
 if ! curl -s --output /dev/null "${PIPED_BACKEND}"; then
   log --level error "Could not connect to Piped backend" "url" "${PIPED_BACKEND}"
@@ -86,7 +103,7 @@ while IFS= read -r channel; do
 
   if [[ ${i} -ne "${total_subscriptions}" ]]; then
     # Sleep randomly if not at the end of the subscription list
-    sleep_duration=$((RANDOM % 5 + 1))
+    sleep_duration=$((MIN_SLEEP_BETWEEN_FEEDS+RANDOM % (MAX_SLEEP_BETWEEN_FEEDS-MIN_SLEEP_BETWEEN_FEEDS+1)))
     log "Sleeping..." "duration" "${sleep_duration}s"
     sleep "${sleep_duration}"
     ((i++))

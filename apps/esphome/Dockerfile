@@ -24,6 +24,7 @@ RUN \
     build-base \
     catatonit \
     gcompat \
+    git \
   && pip install uv \
   && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "esphome[displays]==${VERSION}" \
   && mkdir /cache \

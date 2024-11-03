@@ -26,7 +26,7 @@ RUN \
     gcompat \
     git \
   && pip install uv \
-  && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "esphome[displays]==${VERSION}" \
+  && uv pip install --find-links "https://wheels.home-assistant.io/musllinux/" "setuptools" "esphome[displays]==${VERSION}" \
   && mkdir /cache \
   && chown nobody:nogroup /cache \
   && rm -rf \

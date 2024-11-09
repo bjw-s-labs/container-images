@@ -42,7 +42,7 @@ RUN \
   && gem install foreman \
   && npm install --global corepack \
   # Install manyfold
-  && git clone --branch "v${VERSION}" "https://github.com/manyfold3d/manyfold.git" /app \
+  && git clone --branch "${VERSION}" --single-branch "https://github.com/manyfold3d/manyfold.git" /app \
   && echo "${RUBY_VERSION}" > "/app/.ruby-version" \
   && sed -i '/^end$/i \ \ config.active_record.sqlite3_production_warning=false' /app/config/environments/production.rb \
   # Workaround for https://github.com/sparklemotion/sqlite3-ruby/issues/434

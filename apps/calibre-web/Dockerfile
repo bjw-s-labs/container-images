@@ -36,13 +36,15 @@ RUN \
         libmagic \
         libsasl \
         libxi \
-        libxml \
+        libxml2 \
         libxslt \
     && \
     apk add --no-cache --virtual=.build-deps \
         build-base \
         curl \
         libffi-dev \
+        libxml2-dev \
+        libxslt-dev \
         linux-headers \
         openldap-dev \
     && \

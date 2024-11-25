@@ -2,7 +2,7 @@
 app: mdbook
 source_repo: https://github.com/rust-lang/mdBook
 # renovate: depName=rust-lang/mdBook
-version: 0.4.42
+version: 0.4.43
 platforms:
   - linux/amd64
 type: cli

@@ -1,0 +1,11 @@
+---
+app: scrypted
+source_repo: https://github.com/koush/scrypted
+# renovate: depName=koush/scrypted
+version: 0.122.0
+platforms:
+  - linux/amd64
+  - linux/arm64
+type: web
+tests:
+  enabled: false

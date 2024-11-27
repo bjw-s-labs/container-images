@@ -2,114 +2,93 @@
 version: "3"
 
 vars:
-  cue_file: "{{ .ROOT_DIR }}/.ci/lint/metadata.rules.cue"
-  goss_folder: "{{ .ROOT_DIR }}/.goss"
+  GOSS_FOLDER: "{{ .ROOT_DIR }}/.goss"
 
 tasks:
   build:
-    desc: Build container image
-    summary: |
-      Args:
-        app: App to build (required)
-        multiplatform: Build multi-platform image (default: false)
-        push: Push the image to the registry (default: false)
-        registry: Registry to prefix the image with (default: {{.default_registry}})
+    desc: Build container image [APP=required] [MULTIPLATFORM=false] [PUSH=false] [REGISTRY={{.DEFAULT_REGISTRY}}]
     silent: true
     vars:
       # User vars
-      app: "{{ .app }}"
-      multiplatform: '{{ .multiplatform | default "false" }}'
-      push: '{{ .push | default "false" }}'
-      registry: "{{ .registry | default .default_registry }}"
+      APP: "{{ .APP }}"
+      MULTIPLATFORM: '{{ .MULTIPLATFORM | default "false" }}'
+      PUSH: '{{ .PUSH | default "false" }}'
+      REGISTRY: "{{ .REGISTRY | default .DEFAULT_REGISTRY }}"
 
       # Helper vars
-      app_folder: "{{ .ROOT_DIR }}/apps/{{ .app }}"
-      dockerfile: "{{ .app_folder }}/Dockerfile"
-      metadata_file: "{{ .app_folder }}/metadata.yaml"
-      app_version:
+      APP_FOLDER: "{{ .ROOT_DIR }}/apps/{{ .APP }}"
+      DOCKERFILE: "{{ .APP_FOLDER }}/Dockerfile"
+      METADATA_FILE: "{{ .APP_FOLDER }}/metadata.yaml"
+      APP_VERSION:
         sh: >-
-          [ ! -f "{{ .metadata_file }}" ] || yq -r .version "{{ .metadata_file }}"
-      all_platforms:
+          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r .version "{{ .METADATA_FILE }}"
+      ALL_PLATFORMS:
         sh: >-
-          [ ! -f "{{ .metadata_file }}" ] || yq -r '.platforms | join(",")' "{{ .metadata_file }}"
-      single_platform: "linux/{{ARCH}}"
+          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r '.platforms | join(",")' "{{ .METADATA_FILE }}"
+      SINGLE_PLATFORM: "linux/{{ARCH}}"
     requires:
       vars:
-        - app
+        - APP
     preconditions:
-      - sh: test -f "{{ .dockerfile }}"
-        msg: |
-          Dockerfile "{{ .dockerfile }}" not found
-      - sh: test -f "{{ .metadata_file }}"
-        msg: |
-          No metadata.yaml found in "{{ .app_folder }}"
+      - test -f "{{ .DOCKERFILE }}"
+      - test -f "{{ .METADATA_FILE }}"
     cmd: >-
       docker buildx build
-      --tag {{ .registry }}/{{ .app }}:{{ .app_version }}
-      --build-arg VERSION={{ .app_version }}
-      --platform {{ if eq .multiplatform "true" }} {{ .all_platforms }} {{ else }} {{ .single_platform }} {{ end }}
-      --file {{ .dockerfile }}
-      {{ if not (eq .multiplatform "true") }}
+      --tag {{ .REGISTRY }}/{{ .APP }}:{{ .APP_VERSION }}
+      --build-arg VERSION={{ .APP_VERSION }}
+      --platform {{ if eq .MULTIPLATFORM "true" }} {{ .ALL_PLATFORMS }} {{ else }} {{ .SINGLE_PLATFORM }} {{ end }}
+      --file {{ .DOCKERFILE }}
+      {{ if not (eq .MULTIPLATFORM "true") }}
       --load
       {{ end }}
-      {{ if eq .push "true" }}
+      {{ if eq .PUSH "true" }}
       --push
       {{ end }}
-      {{ .app_folder }}
+      {{ .APP_FOLDER }}
 
   test:
-    desc: test container image
-    summary: |
-      Args:
-        app: App to build (required)
-        registry: Registry to prefix the image with (default: {{.default_registry}})
+    desc: test container image [APP=required] [REGISTRY={{.DEFAULT_REGISTRY}}]
     silent: true
     vars:
       # User vars
-      app: "{{ .app }}"
-      registry: "{{ .registry | default .default_registry }}"
+      APP: "{{ .APP }}"
+      REGISTRY: "{{ .REGISTRY | default .DEFAULT_REGISTRY }}"
 
       # Helper vars
-      app_folder: "{{ .ROOT_DIR }}/apps/{{ .app }}"
-      dockerfile: "{{ .app_folder }}/Dockerfile"
-      metadata_file: "{{ .app_folder }}/metadata.yaml"
-      app_version:
+      APP_FOLDER: "{{ .ROOT_DIR }}/apps/{{ .APP }}"
+      DOCKERFILE: "{{ .APP_FOLDER }}/Dockerfile"
+      METADATA_FILE: "{{ .APP_FOLDER }}/metadata.yaml"
+      APP_VERSION:
         sh: >-
-          [ ! -f "{{ .metadata_file }}" ] || yq -r .version "{{ .metadata_file }}"
-      goss_file: "{{ .app_folder }}/ci/goss.yaml"
-      test_type:
+          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r .version "{{ .METADATA_FILE }}"
+      GOSS_FILE: "{{ .APP_FOLDER }}/ci/goss.yaml"
+      TEST_TYPE:
         sh: >-
-          [ ! -f "{{ .metadata_file }}" ] || yq -r '.type' "{{ .metadata_file }}"
+          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r '.type' "{{ .METADATA_FILE }}"
     requires:
       vars:
-        - app
+        - APP
     preconditions:
-      - sh: test -f "{{ .dockerfile }}"
-        msg: |
-          Dockerfile "{{ .dockerfile }}" not found
-      - sh: test -f "{{ .metadata_file }}"
-        msg: |
-          No metadata.yaml found in "{{ .app_folder }}"
-      - sh: test -f "{{ .goss_file }}"
-        msg: |
-          No container test file found at "{{ .goss_file }}"
+      - test -f "{{ .DOCKERFILE }}"
+      - test -f "{{ .METADATA_FILE }}"
+      - test -f "{{ .GOSS_FILE }}"
     env:
       CONTAINER_RUNTIME: docker
-      GOSS_PATH: "{{ .goss_folder }}/goss"
+      GOSS_PATH: "{{ .GOSS_FOLDER }}/goss"
       GOSS_OPTS: --sleep 5s --retry-timeout 60s --color --format documentation
       GOSS_SLEEP: 2
-      GOSS_FILES_PATH: "{{ .app_folder }}/ci"
+      GOSS_FILES_PATH: "{{ .APP_FOLDER }}/ci"
       GOSS_FILES_STRATEGY: cp
     cmds:
       - task: download-goss
       - task: build
         vars:
-          app: "{{.app}}"
-          registry: "{{.registry}}"
-          multiplatform: "false"
-          push: "false"
+          APP: "{{.APP}}"
+          REGISTRY: "{{.REGISTRY}}"
+          MULTIPLATFORM: "false"
+          PUSH: "false"
       - |
-        "{{ .goss_folder}}/dgoss" run "{{ .registry }}/{{ .app }}:{{ .app_version }}" {{if eq .test_type "cli"}}tail -f /dev/null{{end}}
+        "{{ .GOSS_FOLDER}}/dgoss" run "{{ .REGISTRY }}/{{ .APP }}:{{ .APP_VERSION }}" {{if eq .TEST_TYPE "cli"}}tail -f /dev/null{{end}}
 
   download-goss:
     silent: true
@@ -118,11 +97,11 @@ tasks:
       # renovate: datasource=github-releases depName=goss-org/goss versionTemplate=^(?<version>.*)$
       GOSS_VERSION: v0.4.4
     cmds:
-      - mkdir -p "{{ .goss_folder }}"
-      - curl -fsSL -o "{{ .goss_folder }}/goss" "https://github.com/goss-org/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-{{ARCH}}"
-      - chmod +x "{{ .goss_folder }}/goss"
-      - curl -fsSL -o "{{ .goss_folder }}/dgoss" "https://raw.githubusercontent.com/goss-org/goss/{{.GOSS_VERSION}}/extras/dgoss/dgoss"
-      - chmod +x "{{ .goss_folder }}/dgoss"
+      - mkdir -p "{{ .GOSS_FOLDER }}"
+      - curl -fsSL -o "{{ .GOSS_FOLDER }}/goss" "https://github.com/goss-org/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-{{ARCH}}"
+      - chmod +x "{{ .GOSS_FOLDER }}/goss"
+      - curl -fsSL -o "{{ .GOSS_FOLDER }}/dgoss" "https://raw.githubusercontent.com/goss-org/goss/{{.GOSS_VERSION}}/extras/dgoss/dgoss"
+      - chmod +x "{{ .GOSS_FOLDER }}/dgoss"
     status:
-      - test -f "{{ .goss_folder }}/goss"
-      - test -f "{{ .goss_folder }}/dgoss"
+      - test -f "{{ .GOSS_FOLDER }}/goss"
+      - test -f "{{ .GOSS_FOLDER }}/dgoss"

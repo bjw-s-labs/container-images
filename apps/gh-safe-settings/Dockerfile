@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM docker.io/library/alpine:3.20 AS build
+FROM docker.io/library/alpine:3.21 AS build
 
 ARG VERSION
 

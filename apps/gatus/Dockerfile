@@ -1,7 +1,7 @@
 ARG VERSION
 FROM docker.io/twinproduction/gatus:v$VERSION AS gatus
 
-FROM docker.io/library/alpine:3.20
+FROM docker.io/library/alpine:3.21
 
 ARG TARGETPLATFORM
 ARG TARGETARCH

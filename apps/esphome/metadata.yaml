@@ -2,7 +2,7 @@
 app: esphome
 source_repo: https://github.com/esphome/esphome
 # renovate: depName=esphome/esphome
-version: 2024.11.3
+version: 2024.12.0
 platforms:
   - linux/amd64
   - linux/arm64

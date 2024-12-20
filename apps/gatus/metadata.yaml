@@ -2,7 +2,7 @@
 app: gatus
 source_repo: https://github.com/TwiN/gatus
 # renovate: depName=TwiN/gatus
-version: 5.13.1
+version: 5.14.0
 platforms:
   - linux/amd64
   - linux/arm64

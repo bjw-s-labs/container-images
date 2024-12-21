@@ -1,7 +1,7 @@
 ---
 app: piped-frontend
 source_repo: https://github.com/TeamPiped/Piped
-version: aa88fa0b52a103b86e4f510a2f44231627b7fbba
+version: 3a65b23e29debfdb47621cf9230289cc91cf4fc3
 platforms:
   - linux/amd64
 type: web

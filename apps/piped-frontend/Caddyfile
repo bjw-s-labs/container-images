@@ -4,7 +4,10 @@
 
 (frontend) {
   replace "pipedapi.kavin.rocks" "{env.BACKEND_HOSTNAME}"
-  file_server
+  file_server {
+    status 200
+  }
+
 }
 
 :8080 {

@@ -153,5 +153,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
-          cache-to: ${{ inputs.dry-run && '' || 'type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }}' }}
+          cache-to: ${{ !inputs.dry-run && format('type=registry,ref=ghcr.io/{0}/build-cache:{1}', github.repository_owner, inputs.app) || '' }}
           cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }},mode=max

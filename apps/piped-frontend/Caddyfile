@@ -7,7 +7,6 @@
   file_server {
     status 200
   }
-
 }
 
 :8080 {

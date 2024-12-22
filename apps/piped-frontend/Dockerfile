@@ -13,7 +13,7 @@ RUN \
   && pnpm build \
   && ./localizefonts.sh
 
-FROM ghcr.io/bjw-s-labs/caddy-scratch:2.8.4@sha256:d13a019d74f62b39ac4a5780b8821c20e028e1a3356b0f32eb1593e0bb517b4a
+FROM ghcr.io/bjw-s-labs/caddy-scratch:2.8.4@sha256:013bc8bdec6fb00e425549ca91337fafdef8bc741fd3f6d32458040b3c0036ed
 COPY --chown=1000:1000 Caddyfile /config/Caddyfile
 COPY --chown=1000:1000 --from=build /app/dist/ /app
 CMD ["run", "--config", "/config/Caddyfile"]

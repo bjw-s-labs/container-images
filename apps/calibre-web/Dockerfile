@@ -54,7 +54,8 @@ RUN \
         | tar xzf - -C /app --strip-components=1 \
     # Install required python packages
     && pip install --upgrade pip uv \
-    && uv pip install --system --requirement /app/requirements.txt \
+    # TODO: Remove CFLAGS when netifaces installs without it again
+    && CFLAGS="-Wno-int-conversion" uv pip install --system --requirement /app/requirements.txt \
     && uv pip install --system --requirement /app/optional-requirements.txt \
     # Cleanup
     && apk del --purge .build-deps \

@@ -2,7 +2,7 @@
 app: radicale
 source_repo: https://github.com/Kozea/Radicale
 # renovate: depName=Kozea/Radicale
-version: 3.3.2
+version: 3.3.3
 platforms:
   - linux/amd64
   - linux/arm64

@@ -1,3 +1,3 @@
 ARG VERSION
 
-FROM ghcr.io/koush/scrypted:v${VERSION}-jammy-full
+FROM ghcr.io/koush/scrypted:v${VERSION}-noble-full

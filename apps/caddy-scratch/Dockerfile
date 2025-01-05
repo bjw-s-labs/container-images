@@ -1,12 +1,9 @@
 ARG VERSION
 
-FROM public.ecr.aws/docker/library/caddy:${VERSION}-builder AS build
-ARG PLUGINS="github.com/caddyserver/replace-response"
+FROM public.ecr.aws/docker/library/caddy:builder AS build
+ARG VERSION
 RUN \
-  for plugin in $(echo $PLUGINS | tr "," " "); do \
-  withFlags="$withFlags --with $plugin"; \
-  done \
-  && xcaddy build ${withFlags} \
+  xcaddy build "v${VERSION}" --with "github.com/caddyserver/replace-response" \
   && setcap -r /usr/bin/caddy
 
 FROM scratch

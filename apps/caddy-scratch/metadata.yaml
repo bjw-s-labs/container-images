@@ -2,7 +2,7 @@
 app: caddy-scratch
 source_repo: https://github.com/caddyserver/caddy
 # renovate: depName=caddyserver/caddy
-version: 2.9.0
+version: 2.9.1
 platforms:
   - linux/amd64
   - linux/arm64

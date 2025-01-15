@@ -2,7 +2,7 @@
 app: scrypted
 source_repo: https://github.com/koush/scrypted
 # renovate: depName=koush/scrypted
-version: 0.126.0
+version: 0.127.1
 platforms:
   - linux/amd64
   - linux/arm64

@@ -31,6 +31,7 @@ RUN \
   git \
   glfw \
   libarchive \
+  linux-headers \
   mariadb-dev \
   mesa-gl \
   postgresql-dev \

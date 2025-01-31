@@ -99,6 +99,8 @@ main() {
     set_qb_listen_port "${gluetun_port}"
   fi
 
+  # Give qbittorrent some time to process the change
+  sleep 2
   # Try to connect to the forwarded port
   nc -z "${external_ip}" "${gluetun_port}" &>/dev/null
 }

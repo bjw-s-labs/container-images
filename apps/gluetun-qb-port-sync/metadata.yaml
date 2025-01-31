@@ -1,6 +1,6 @@
 ---
 app: gluetun-qb-port-sync
-version: 0.0.2
+version: 0.0.3
 platforms:
   - linux/amd64
   - linux/arm64

@@ -8,7 +8,7 @@ RUN \
   && cd /app \
   && git checkout $VERSION \
   && corepack enable  \
-  && corepack prepare pnpm@latest --activate \
+  && corepack prepare pnpm@10.0.0 --activate \
   && pnpm install --prefer-offline \
   && pnpm build \
   && ./localizefonts.sh

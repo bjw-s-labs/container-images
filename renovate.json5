@@ -20,6 +20,12 @@
   ],
   packageRules: [
     {
+      description: "Separate PR's per app",
+      matchDatasources: ["docker"],
+      additionalBranchPrefix: "{{parentDir}}-",
+      semanticCommitScope: "{{parentDir}}",
+    },
+    {
       description: "Automerge image updates if tests pass",
       matchFileNames: ["apps/**/Dockerfile", "apps/**/metadata.yaml"],
       automerge: true,

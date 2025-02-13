@@ -7,9 +7,9 @@ on:
       dry-run:
         type: boolean
         description: Run in dry-mode
-        default: false
-  schedule:
-    - cron: "0 4 * * 1"
+        default: true
+  # schedule:
+  #   - cron: "0 4 * * 1"
 
 permissions:
   packages: write

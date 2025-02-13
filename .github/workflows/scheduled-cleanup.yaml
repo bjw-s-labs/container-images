@@ -8,6 +8,26 @@ on:
         type: boolean
         description: Run in dry-mode
         default: true
+      packages:
+        type: string
+        description: Packages to cleanup
+        default: "*"
+      delete-untagged:
+        type: boolean
+        description: Delete untagged images
+        default: true
+      delete-ghost:
+        type: boolean
+        description: Delete ghost images
+        default: true
+      delete-partial:
+        type: boolean
+        description: Delete partial images
+        default: true
+      delete-orphaned:
+        type: boolean
+        description: Delete orphaned images
+        default: true
   # schedule:
   #   - cron: "0 4 * * 1"
 
@@ -42,9 +62,10 @@ jobs:
           token: ${{ secrets.GHCR_TOKEN }}
           dry-run: ${{ steps.normalize.outputs.dry_run }}
           owner: bjw-s-labs
-          packages: "*"
+          packages: ${{ inputs.packages }}
           expand-packages: true
-          delete-untagged: true
-          delete-partial-images: true
-          delete-orphaned-images: true
+          delete-untagged: ${{ inputs.delete-untagged }}
+          delete-ghost-images: ${{ inputs.delete-ghost }}
+          delete-partial-images: ${{ inputs.delete-partial }}
+          delete-orphaned-images: ${{ inputs.delete-orphaned }}
           validate: true

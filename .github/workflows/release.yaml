@@ -126,5 +126,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check matrix status
-        if: ${{ !contains(needs.*.result, 'failure') }}
+        if: ${{ contains(needs.*.result, 'failure') }}
         run: exit 1

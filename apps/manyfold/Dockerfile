@@ -41,7 +41,7 @@ RUN \
   tzdata \
   valkey \
   && gem install foreman \
-  && npm install --global corepack \
+  && npm install -g corepack@latest \
   # Install manyfold
   && git clone --branch "${VERSION}" --single-branch "https://github.com/manyfold3d/manyfold.git" /app \
   && echo "${RUBY_VERSION}" > "/app/.ruby-version" \

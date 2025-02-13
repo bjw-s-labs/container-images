@@ -12,6 +12,10 @@ on:
         type: string
         description: Packages to cleanup
         default: "*"
+      use-regex:
+        type: boolean
+        description: The packages pattern is a regex
+        default: false
       delete-untagged:
         type: boolean
         description: Delete untagged images
@@ -49,7 +53,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_TOKEN }}
 
-      - name: Delete all containers from package without tags
+      - name: Delete all containers from GHCR without tags
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           token: ${{ secrets.GHCR_TOKEN }}
@@ -57,6 +61,7 @@ jobs:
           owner: bjw-s-labs
           packages: ${{ inputs.packages }}
           expand-packages: true
+          use-regex: ${{ inputs.use-regex }}
           delete-untagged: ${{ inputs.delete-untagged }}
           delete-ghost-images: ${{ inputs.delete-ghost }}
           delete-partial-images: ${{ inputs.delete-partial }}

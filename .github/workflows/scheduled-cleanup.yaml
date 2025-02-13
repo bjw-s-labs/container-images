@@ -20,8 +20,8 @@ on:
         type: boolean
         description: Delete orphaned images
         default: true
-  # schedule:
-  #   - cron: "0 4 * * 1"
+  schedule:
+    - cron: "0 4 * * 1"
 
 permissions:
   packages: write
@@ -51,4 +51,5 @@ jobs:
           expand-packages: true
           delete-untagged: ${{ inputs.delete-untagged }}
           delete-orphaned-images: ${{ inputs.delete-orphaned }}
+          older-than: 3 months
           validate: true

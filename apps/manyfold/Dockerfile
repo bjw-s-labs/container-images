@@ -1,4 +1,4 @@
-FROM ruby:3.4.1-alpine3.20
+FROM ruby:3.4.2-alpine3.20
 
 ARG VERSION
 ARG TARGETPLATFORM

@@ -28,19 +28,22 @@ RUN \
   apk add --no-cache \
   alpine-sdk \
   bash \
+  bzip2 \
   git \
   glfw \
   libarchive \
+  libffi-dev \
   linux-headers \
   mariadb-dev \
   mesa-gl \
   postgresql-dev \
-  nodejs=~20.15 \
+  nodejs=~22.13 \
   npm \
   sqlite-dev \
   tzdata \
   valkey \
   yaml-dev \
+  zlib-dev \
   && gem install foreman \
   && npm install -g corepack@latest \
   # Install manyfold

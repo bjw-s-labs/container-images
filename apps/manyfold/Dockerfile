@@ -1,4 +1,4 @@
-FROM ruby:3.4.2-alpine3.20
+FROM ruby:3.4.2-alpine3.21
 
 ARG VERSION
 ARG TARGETPLATFORM
@@ -40,6 +40,7 @@ RUN \
   sqlite-dev \
   tzdata \
   valkey \
+  yaml-dev \
   && gem install foreman \
   && npm install -g corepack@latest \
   # Install manyfold

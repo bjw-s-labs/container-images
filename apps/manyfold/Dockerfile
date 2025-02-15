@@ -1,4 +1,4 @@
-FROM ruby:3.4.1-alpine3.20
+FROM ruby:3.4.2-alpine3.21
 
 ARG VERSION
 ARG TARGETPLATFORM
@@ -28,18 +28,22 @@ RUN \
   apk add --no-cache \
   alpine-sdk \
   bash \
+  bzip2 \
   git \
   glfw \
   libarchive \
+  libffi-dev \
   linux-headers \
   mariadb-dev \
   mesa-gl \
   postgresql-dev \
-  nodejs=~20.15 \
+  nodejs=~22.13 \
   npm \
   sqlite-dev \
   tzdata \
   valkey \
+  yaml-dev \
+  zlib-dev \
   && gem install foreman \
   && npm install -g corepack@latest \
   # Install manyfold

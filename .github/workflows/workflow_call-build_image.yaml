@@ -122,6 +122,10 @@ jobs:
           outputs: |
             type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
 
+      - name: List images
+        run: |
+          docker images
+
       - name: Setup Goss
         if: ${{ inputs.tests-enabled == true }}
         uses: e1himself/goss-installation-action@v1.2.1

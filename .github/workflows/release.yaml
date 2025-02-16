@@ -96,7 +96,7 @@ jobs:
       app: ${{ matrix.job_name }}
       image: |
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
-      platforms: ${{ matrix.platforms }}
+      platforms: ${{ toJSON(matrix.platforms) }}
       tags: |
         type=raw,value=${{ matrix.targetVersion }}
         type=raw,value=latest

@@ -96,8 +96,7 @@ jobs:
       app: ${{ matrix.job_name }}
       image: |
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
-      platforms: |
-        ${{ join(matrix.platforms, ', ') }}
+      platforms: ${{ matrix.platforms }}
       tags: |
         type=raw,value=${{ matrix.targetVersion }}
         type=raw,value=latest
@@ -121,8 +120,7 @@ jobs:
     name: Build matrix success
     needs:
       - build
-    if: |
-      !cancelled()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check matrix status

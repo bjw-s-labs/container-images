@@ -92,16 +92,19 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ inputs.image }}
-          labels: ${{ inputs.labels }}
-          annotations: ${{ inputs.annotations }}
+          images: |-
+            ${{ inputs.image }}
+          labels: |-
+            ${{ inputs.labels }}
+          annotations: |-
+            ${{ inputs.annotations }}
 
-      - name: Determine primary image name
-        id: determine-primary-image
-        shell: bash
-        run: |
-          IFS=$'\n' read -r PRIMARY_IMAGE <<<"${{ inputs.image }}"
-          echo "image=$PRIMARY_IMAGE" >> "$GITHUB_OUTPUT"
+      # - name: Determine primary image name
+      #   id: determine-primary-image
+      #   shell: bash
+      #   run: |
+      #     IFS=$'\n' read -r PRIMARY_IMAGE <<<"${{ inputs.image }}"
+      #     echo "image=$PRIMARY_IMAGE" >> "$GITHUB_OUTPUT"
 
       - uses: docker/build-push-action@v6
         name: Build image

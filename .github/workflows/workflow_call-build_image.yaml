@@ -107,6 +107,46 @@ jobs:
       #     echo "image=$PRIMARY_IMAGE" >> "$GITHUB_OUTPUT"
 
       - uses: docker/build-push-action@v6
+        name: Build test image
+        if: ${{ inputs.tests-enabled == true }}
+        id: build-for-test
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+          DOCKER_BUILD_SUMMARY: false
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          platforms: ${{ matrix.platform }}
+          build-args: ${{ inputs.build-args }}
+          outputs: |
+            type=docker,name=${{ inputs.image }}:testing
+
+      - name: Setup Goss
+        if: ${{ inputs.tests-enabled == true }}
+        uses: e1himself/goss-installation-action@v1.2.1
+
+      - name: Run Goss Tests
+        id: dgoss
+        if: ${{ inputs.tests-enabled == true }}
+        shell: bash
+        env:
+          CONTAINER_RUNTIME: docker
+          GOSS_FILE: ${{ inputs.context }}/ci/goss.yaml
+          GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
+          GOSS_SLEEP: 2
+          GOSS_FILES_STRATEGY: cp
+          CONTAINER_LOG_OUTPUT: goss_container_log_output
+        run: |
+          image_name="${{ inputs.image }}:testing"
+          declare -a goss_args
+          if [[ "${{ inputs.type }}" == "cli" ]]; then
+            goss_args+=(
+              "tail" "-f" "/dev/null"
+            )
+          fi
+          dgoss run "${image_name}" "${goss_args[@]}"
+
+      - uses: docker/build-push-action@v6
         name: Build image
         id: build
         env:
@@ -120,16 +160,7 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
           outputs: |
-            type=docker,name=${{ inputs.image }}:testing
             type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
-
-      - name: List images
-        run: |
-          docker images
-
-      - name: Setup Goss
-        if: ${{ inputs.tests-enabled == true }}
-        uses: e1himself/goss-installation-action@v1.2.1
 
       - name: Export digest
         if: ${{ !inputs.dry-run }}
@@ -186,29 +217,3 @@ jobs:
         run: |
           docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ inputs.image }}@sha256:%s ' *)
-
-  # build-image:
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     packages: write
-
-  #     - name: Run Goss Tests
-  #       id: dgoss
-  #       if: ${{ inputs.tests-enabled == true }}
-  #       shell: bash
-  #       env:
-  #         CONTAINER_RUNTIME: docker
-  #         GOSS_FILE: ${{ inputs.context }}/ci/goss.yaml
-  #         GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
-  #         GOSS_SLEEP: 2
-  #         GOSS_FILES_STRATEGY: cp
-  #         CONTAINER_LOG_OUTPUT: goss_container_log_output
-  #       run: |
-  #         image_name="${{ steps.determine-primary-image.outputs.image }}:testing"
-  #         declare -a goss_args
-  #         if [[ "${{ inputs.type }}" == "cli" ]]; then
-  #           goss_args+=(
-  #             "tail" "-f" "/dev/null"
-  #           )
-  #         fi
-  #         dgoss run "${image_name}" "${goss_args[@]}"

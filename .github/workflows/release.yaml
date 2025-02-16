@@ -94,22 +94,22 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
       app: ${{ matrix.job_name }}
-      image: |
+      image: |-
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
       platforms: ${{ toJSON(matrix.platforms) }}
-      tags: |
+      tags: |-
         type=raw,value=${{ matrix.targetVersion }}
         type=raw,value=latest
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.targetVersion }}
         type=semver,pattern={{major}},value=${{ matrix.targetVersion }}
-      build-args: |
+      build-args: |-
         VERSION=${{ matrix.sourceVersion }}
       context: ${{ matrix.context }}
       dockerfile: ${{ matrix.dockerfile }}
-      labels: |
+      labels: |-
         org.opencontainers.image.title=${{ matrix.job_name }}
         org.opencontainers.image.source=${{ matrix.source_repo }}
-      annotations: |
+      annotations: |-
         org.opencontainers.image.title=${{ matrix.job_name }}
         org.opencontainers.image.source=${{ matrix.source_repo }}
       # dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}

@@ -117,15 +117,15 @@ jobs:
         uses: e1himself/goss-installation-action@v1.2.1
 
       - name: Export digest
-        if: ${{ !inputs.dry-run }}
+        # if: ${{ !inputs.dry-run }}
         run: |
           mkdir -p /tmp/digests/${{ inputs.app }}-${{ inputs.image }}
           digest="${{ steps.build.outputs.digest }}"
           touch "/tmp/digests/${{ inputs.app }}-${{ inputs.image }}/${digest#sha256:}"
 
       - name: Upload digest
-        if: ${{ !inputs.dry-run }}
-        uses: actions/upload-artifact@v3
+        # if: ${{ !inputs.dry-run }}
+        uses: actions/upload-artifact@v4
         with:
           name: digests-${{ inputs.app }}-${{ inputs.image }}
           path: /tmp/digests/${{ inputs.app }}-${{ inputs.image }}/*

@@ -109,6 +109,9 @@ jobs:
       - uses: docker/build-push-action@v6
         name: Build image
         id: build
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+          DOCKER_BUILD_SUMMARY: false
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
@@ -167,7 +170,7 @@ jobs:
           annotations: ${{ inputs.annotations }}
 
       - name: Download digests
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-${{ inputs.app }}-*

@@ -77,13 +77,9 @@ jobs:
       - pre-commit-check
       - actionlint
       - yamllint
-    if: |
-      always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check matrix status
-        if: >-
-          ${{
-            (contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled'))
-          }}
+        if: ${{ contains(needs.*.result, 'failure') }}
         run: exit 1

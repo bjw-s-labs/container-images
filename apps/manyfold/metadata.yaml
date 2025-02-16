@@ -5,7 +5,6 @@ source_repo: https://github.com/manyfold3d/manyfold
 version: v0.101.0
 platforms:
   - linux/amd64
-  - linux/arm64
 type: web
 tests:
   enabled: true

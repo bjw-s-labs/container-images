@@ -113,10 +113,8 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
-          # outputs: |
-          #   type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
           outputs: |
-            type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ inputs.dry-run }}
+            type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
 
       - name: Setup Goss
         if: ${{ inputs.tests-enabled == true }}

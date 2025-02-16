@@ -33,6 +33,7 @@ RUN \
   glfw \
   libarchive \
   libffi-dev \
+  libxml2-dev \
   linux-headers \
   mariadb-dev \
   mesa-gl \

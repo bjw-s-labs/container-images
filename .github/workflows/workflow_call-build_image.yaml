@@ -120,6 +120,7 @@ jobs:
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
           outputs: |
+            type=docker
             type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
 
       - name: List images

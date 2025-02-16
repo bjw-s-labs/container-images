@@ -112,7 +112,7 @@ jobs:
       annotations: |-
         org.opencontainers.image.title=${{ matrix.job_name }}
         org.opencontainers.image.source=${{ matrix.source_repo }}
-      # dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
+      dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
       type: ${{ matrix.type }}
       tests-enabled: ${{ matrix.tests.enabled }}
 

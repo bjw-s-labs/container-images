@@ -60,63 +60,65 @@ on:
         required: false
 
 jobs:
-  build-image:
-    runs-on: ubuntu-latest
+  build-test-push:
+    strategy:
+      matrix:
+        platform: ${{ fromJson(inputs.platforms) }}
+      fail-fast: false
+    runs-on: ${{ matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
     permissions:
       packages: write
     steps:
+      - name: Prepare
+        run: |
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> "${GITHUB_ENV}"
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Login to Container Registry
-        uses: docker/login-action@v3
-        if: ${{ !inputs.dry-run }}
+      - name: Setup Goss
+        if: ${{ inputs.tests-enabled == true }}
+        uses: mlipscombe/goss-installation-action@v1.2.2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          version: v0.4.9
 
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ inputs.image }}
-          tags: ${{ inputs.tags }}
-          labels: ${{ inputs.labels }}
-          annotations: ${{ inputs.annotations }}
+          images: |-
+            ${{ inputs.image }}
+          labels: |-
+            ${{ inputs.labels }}
+          annotations: |-
+            ${{ inputs.annotations }}
 
-      - name: Determine primary image name
-        id: determine-primary-image
-        shell: bash
-        run: |
-          IFS=$'\n' read -r PRIMARY_IMAGE <<<"${{ inputs.image }}"
-          echo "image=$PRIMARY_IMAGE" >> "$GITHUB_OUTPUT"
-
-      - name: Build single arch for testing
+      - uses: docker/build-push-action@v6
+        name: Build test image
         if: ${{ inputs.tests-enabled == true }}
-        id: build-test-image
-        uses: docker/build-push-action@v6
+        id: build-for-test
         env:
-          DOCKER_BUILD_CHECKS_ANNOTATIONS: false
-          DOCKER_BUILD_SUMMARY: false
           DOCKER_BUILD_RECORD_UPLOAD: false
+          DOCKER_BUILD_SUMMARY: false
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: linux/amd64
-          push: false
-          load: true
-          tags: |
-            ${{ steps.determine-primary-image.outputs.image }}:testing
+          platforms: ${{ matrix.platform }}
           build-args: ${{ inputs.build-args }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }},mode=max
-
-      - name: Setup Goss
-        if: ${{ inputs.tests-enabled == true }}
-        uses: e1himself/goss-installation-action@v1.2.1
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }}-${{ env.PLATFORM_PAIR }},mode=max
+          outputs: |-
+            type=docker,name=${{ inputs.image }}:testing
 
       - name: Run Goss Tests
         id: dgoss
@@ -130,7 +132,7 @@ jobs:
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |
-          image_name="${{ steps.determine-primary-image.outputs.image }}:testing"
+          image_name="${{ inputs.image }}:testing"
           declare -a goss_args
           if [[ "${{ inputs.type }}" == "cli" ]]; then
             goss_args+=(
@@ -139,18 +141,78 @@ jobs:
           fi
           dgoss run "${image_name}" "${goss_args[@]}"
 
-      - name: Build and (optionally) Push
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
+        name: Build image
+        id: build
         env:
           DOCKER_BUILD_RECORD_UPLOAD: false
+          DOCKER_BUILD_SUMMARY: false
         with:
           context: ${{ inputs.context }}
           file: ${{ inputs.dockerfile }}
-          platforms: ${{ inputs.platforms }}
-          push: ${{ !inputs.dry-run }}
-          tags: ${{ steps.meta.outputs.tags }}
+          platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
           annotations: ${{ steps.meta.outputs.annotations }}
           build-args: ${{ inputs.build-args }}
-          cache-to: ${{ !inputs.dry-run && format('type=registry,ref=ghcr.io/{0}/build-cache:{1}', github.repository_owner, inputs.app) || '' }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }},mode=max
+          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }}-${{ env.PLATFORM_PAIR }},mode=max
+          cache-to: ${{ !inputs.dry-run && format('type=registry,ref=ghcr.io/{0}/build-cache:{1}-{2}', github.repository_owner, inputs.app, env.PLATFORM_PAIR) || '' }}
+          outputs: |-
+            type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
+
+      - name: Export digest
+        if: ${{ !inputs.dry-run }}
+        run: |
+          mkdir -p ${{ runner.temp }}/digests/${{ inputs.app }}
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${{ runner.temp }}/digests/${{ inputs.app }}/${digest#sha256:}"
+
+      - name: Upload digest
+        if: ${{ !inputs.dry-run }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ inputs.app }}-${{ env.PLATFORM_PAIR }}
+          path: ${{ runner.temp }}/digests/${{ inputs.app }}/*
+          if-no-files-found: error
+          retention-days: 1
+
+  merge-manifests:
+    needs:
+      - build-test-push
+    if: ${{ !inputs.dry-run }}
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write
+    steps:
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ inputs.image }}
+          tags: ${{ inputs.tags }}
+          labels: ${{ inputs.labels }}
+          annotations: ${{ inputs.annotations }}
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ inputs.app }}-*
+          merge-multiple: true
+
+      - name: Create and push manifest
+        working-directory: ${{ runner.temp }}/digests
+        run: |-
+          TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "${DOCKER_METADATA_OUTPUT_JSON}")
+          MANIFESTS=$(printf '${{ inputs.image }}@sha256:%s ' *)
+          # shellcheck disable=SC2086 # split on purpose
+          docker buildx imagetools create ${TAGS} ${MANIFESTS}

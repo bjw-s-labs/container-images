@@ -90,7 +90,7 @@ jobs:
 
       - name: Setup Goss
         if: ${{ inputs.tests-enabled == true }}
-        uses: e1himself/goss-installation-action@v1
+        uses: mlipscombe/goss-installation-action@multi-arch
         with:
           version: v0.4.9
 

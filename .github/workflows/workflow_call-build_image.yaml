@@ -99,13 +99,6 @@ jobs:
           annotations: |-
             ${{ inputs.annotations }}
 
-      # - name: Determine primary image name
-      #   id: determine-primary-image
-      #   shell: bash
-      #   run: |
-      #     IFS=$'\n' read -r PRIMARY_IMAGE <<<"${{ inputs.image }}"
-      #     echo "image=$PRIMARY_IMAGE" >> "$GITHUB_OUTPUT"
-
       - uses: docker/build-push-action@v6
         name: Build test image
         if: ${{ inputs.tests-enabled == true }}

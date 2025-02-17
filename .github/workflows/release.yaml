@@ -4,6 +4,12 @@ name: "Docker: Build and Push"
 
 on:
   workflow_dispatch:
+    inputs:
+      apps:
+        description: "Comma separated list of apps to build"
+        required: false
+        type: string
+        default: ""
   push:
     branches:
       - main
@@ -22,30 +28,78 @@ on:
       - reopened
 
 jobs:
-  get-changed-images:
-    name: Determine changed images
+  prepare:
+    name: Prepare data required for workflow
     runs-on: ubuntu-latest
     outputs:
-      changed_images: ${{ steps.filter-containers.outputs.all_changed_files }}
+      images-to-build: ${{ steps.apps-to-build.outputs.appsToBuild }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Determine changed images
+      - name: Determine changed apps
         uses: tj-actions/changed-files@v45
-        id: filter-containers
+        id: changed-apps
+        if: ${{ github.event_name != 'workflow_dispatch' }}
         with:
           dir_names: true
           dir_names_max_depth: "1"
           path: apps
           separator: ","
 
+      - name: Get specified apps
+        id: specified-apps
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let input = '${{ inputs.apps }}';
+            let cwd = process.cwd();
+
+            let appsToBuild = []
+            if (input === '') {
+              console.log("Empty apps input, scanning for apps in repository");
+              const globber = await glob.create('apps/*', { implicitDescendants: false });
+              for await (const file of globber.globGenerator()) {
+                if (fs.lstatSync(file).isDirectory()) {
+                  relativePath = file.slice(`${cwd}/apps/`.length);
+                  appsToBuild.push(relativePath);
+                }
+              }
+            } else {
+              appsToBuild = JSON.parse(input);
+              appsToBuild.forEach(function (app) {
+                const fullPath = `${cwd}/apps/${app}`;
+                if (!fs.existsSync(fullPath)) {
+                  core.setFailed(`App ${app} does not exist in repository`);
+                  process.exit(1);
+                }
+                if (!fs.lstatSync(fullPath).isDirectory()) {
+                  core.setFailed(`${app} is not a valid directory`);
+                  process.exit(1);
+                }
+              });
+            }
+
+            core.setOutput('appsToBuild', appsToBuild.join(','));
+
+      - name: Consolidate apps to build
+        id: apps-to-build
+        uses: actions/github-script@v7
+        with:
+          script: |
+            let appsToBuild = '${{ github.event_name == 'workflow_dispatch' && steps.specified-apps.outputs.appsToBuild || steps.changed-apps.outputs.all_changed_files }}';
+            core.setOutput('appsToBuild', appsToBuild);
+
       - name: Add summary
         env:
-          CHANGED_IMAGES: "${{ steps.filter-containers.outputs.all_changed_files }}"
+          APPS_TO_BUILD: "${{ steps.apps-to-build.outputs.appsToBuild }}"
         run: |
-          IFS=',' read -r -a images <<< "${CHANGED_IMAGES}"
-          echo "### Changed images:" > "$GITHUB_STEP_SUMMARY"
+          IFS=',' read -r -a images <<< "${APPS_TO_BUILD}"
+          echo "### Apps to build:" > "$GITHUB_STEP_SUMMARY"
           for image in "${images[@]}"; do
             echo "- ${image}" >> "$GITHUB_STEP_SUMMARY"
           done
@@ -56,7 +110,7 @@ jobs:
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
     needs:
-      - get-changed-images
+      - prepare
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -74,7 +128,7 @@ jobs:
         env:
           DEFAULT_SOURCE_URL: "https://github.com/${{ github.repository }}"
           IMAGES_FOLDER: "apps"
-          INCLUDE_IMAGES: ${{ needs.get-changed-images.outputs.changed_images }}
+          INCLUDE_IMAGES: ${{ needs.prepare.outputs.images-to-build }}
 
       - name: Save Matrix
         id: matrix
@@ -94,23 +148,22 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
       app: ${{ matrix.job_name }}
-      image: |
+      image: |-
         ghcr.io/bjw-s-labs/${{ matrix.job_name }}
-      platforms: |
-        ${{ join(matrix.platforms, ', ') }}
-      tags: |
+      platforms: ${{ toJSON(matrix.platforms) }}
+      tags: |-
         type=raw,value=${{ matrix.targetVersion }}
         type=raw,value=latest
         type=semver,pattern={{major}}.{{minor}},value=${{ matrix.targetVersion }}
         type=semver,pattern={{major}},value=${{ matrix.targetVersion }}
-      build-args: |
+      build-args: |-
         VERSION=${{ matrix.sourceVersion }}
       context: ${{ matrix.context }}
       dockerfile: ${{ matrix.dockerfile }}
-      labels: |
+      labels: |-
         org.opencontainers.image.title=${{ matrix.job_name }}
         org.opencontainers.image.source=${{ matrix.source_repo }}
-      annotations: |
+      annotations: |-
         org.opencontainers.image.title=${{ matrix.job_name }}
         org.opencontainers.image.source=${{ matrix.source_repo }}
       dry-run: ${{ github.ref != 'refs/heads/main' || github.event_name == 'pull_request' }}
@@ -121,8 +174,7 @@ jobs:
     name: Build matrix success
     needs:
       - build
-    if: |
-      !cancelled()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
       - name: Check matrix status

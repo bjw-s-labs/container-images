@@ -3,10 +3,6 @@ process:
   foreman:
     running: true
 
-port:
-  tcp:3214:
-    listening: true
-
 http:
   http://localhost:3214:
     status: 302

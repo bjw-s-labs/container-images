@@ -1,0 +1,11 @@
+---
+app: commafeed
+source_repo: https://github.com/Athou/commafeed
+# renovate: depName=Athou/commafeed
+version: 5.6.1
+platforms:
+  - linux/amd64
+  - linux/arm64
+type: web
+tests:
+  enabled: true

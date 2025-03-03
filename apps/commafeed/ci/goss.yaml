@@ -1,0 +1,8 @@
+---
+port:
+  tcp6:8082:
+    listening: true
+
+http:
+  http://localhost:8082:
+    status: 200

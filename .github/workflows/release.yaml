@@ -13,24 +13,37 @@ on:
   push:
     branches:
       - main
-    paths:
-      - apps/**
-      - .github/workflows/release.yaml
-      - .github/workflows/workflow_call-build_image.yaml
   pull_request:
-    paths:
-      - apps/**
-      - .github/workflows/release.yaml
-      - .github/workflows/workflow_call-build_image.yaml
     types:
       - opened
       - synchronize
       - reopened
 
 jobs:
+  filter-changes:
+    name: Filter changes
+    runs-on: ubuntu-latest
+    outputs:
+      containers_changed: ${{ steps.container-files-changed.outputs.any_changed }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build files changed
+        id: container-files-changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            apps/**
+            .github/workflows/release.yaml
+            .github/workflows/workflow_call-build_image.yaml
+
   prepare:
     name: Prepare data required for workflow
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.filter-changes.outputs.containers_changed == 'true' }}
     runs-on: ubuntu-latest
+    needs:
+      - filter-changes
     outputs:
       images-to-build: ${{ steps.apps-to-build.outputs.appsToBuild }}
     steps:

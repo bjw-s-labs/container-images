@@ -31,7 +31,7 @@ jobs:
 
       - name: Build files changed
         id: container-files-changed
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46
         with:
           files: |
             apps/**
@@ -53,7 +53,7 @@ jobs:
           fetch-depth: 0
 
       - name: Determine changed apps
-        uses: tj-actions/changed-files@v45
+        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46
         id: changed-apps
         if: ${{ github.event_name != 'workflow_dispatch' }}
         with:

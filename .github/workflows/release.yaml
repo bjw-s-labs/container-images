@@ -105,8 +105,6 @@ jobs:
     with:
       app: ${{ matrix.app.name }}
       version: ${{ matrix.app.version }}
-      type: ${{ matrix.app.type }}
-      test: ${{ matrix.app.tests.enabled }}
       release: ${{ github.event_name == 'workflow_dispatch' && inputs.release || github.event_name == 'push' }}
 
   build_success:

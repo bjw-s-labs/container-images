@@ -1,0 +1,8 @@
+---
+port:
+  tcp6:3000:
+    listening: true
+
+http:
+  http://localhost:3000:
+    status: 200

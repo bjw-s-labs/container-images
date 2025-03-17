@@ -5,6 +5,3 @@ version: 2024.10.22-7ca5933
 platforms:
   - linux/amd64
   - linux/arm64
-type: web
-tests:
-  enabled: false

@@ -1,0 +1,21 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: mdbook
+    path: /bin/mdbook
+    shouldExist: true
+  - name: mdbook-linkcheck
+    path: /bin/mdbook-linkcheck
+    shouldExist: true
+  - name: mdbook-mermaid
+    path: /bin/mdbook-mermaid
+    shouldExist: true
+  - name: mdbook-toc
+    path: /bin/mdbook-toc
+    shouldExist: true
+  - name: mdbook-open-on-gh
+    path: /bin/mdbook-open-on-gh
+    shouldExist: true
+  - name: mdbook-emojicodes
+    path: /bin/mdbook-emojicodes
+    shouldExist: true

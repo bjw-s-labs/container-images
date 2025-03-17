@@ -4,6 +4,3 @@ name: mdbook
 version: 0.4.47
 platforms:
   - linux/amd64
-type: cli
-tests:
-  enabled: true

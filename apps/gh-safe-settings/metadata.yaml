@@ -5,6 +5,3 @@ version: 2.1.16
 platforms:
   - linux/amd64
   - linux/arm64
-type: web
-tests:
-  enabled: true

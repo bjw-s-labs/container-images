@@ -1,6 +1,5 @@
 ---
-app: mdbook
-source_repo: https://github.com/rust-lang/mdBook
+name: mdbook
 # renovate: depName=rust-lang/mdBook
 version: 0.4.47
 platforms:

@@ -8,7 +8,7 @@
     "$schema": {
       "type": "string"
     },
-    "app": {
+    "name": {
       "type": "string",
       "description": "The name of the app to use in container name",
       "pattern": "^[a-z0-9-]+$"
@@ -16,10 +16,6 @@
     "version": {
       "type": "string",
       "description": "The version of the app"
-    },
-    "source_repo": {
-      "type": "string",
-      "description": "The upstream repo to pull release notes from, etc."
     },
     "type": {
       "type": "string",

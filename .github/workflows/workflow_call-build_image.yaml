@@ -8,44 +8,13 @@ on:
         type: string
         description: The name of the app to build.
         required: true
-      image:
+      version:
         type: string
-        description: The name of the image to build.
+        description: The version of the app to build
         required: true
-      platforms:
-        type: string
-        description: The OS arches for which to build the docker image.
-        default: linux/amd64
-        required: false
-      tags:
-        type: string
-        description: Tags for the image.
-        required: true
-      labels:
-        type: string
-        description: Custom labels for the image.
-        required: false
-      annotations:
-        type: string
-        description: Custom annotations for the image.
-        required: false
-      context:
-        type: string
-        description: The context for the docker build command.
-        required: false
-        default: "."
-      dockerfile:
-        type: string
-        description: The path to the dockerfile to build.
-        required: true
-      build-args:
-        type: string
-        description: Additional build args to pass to the build command.
-        default: ""
-        required: false
-      dry-run:
+      test:
         type: boolean
-        description: Whether or not to push the image.
+        description: Whether to test the app
         default: false
         required: false
       type:
@@ -53,166 +22,156 @@ on:
         description: The type of application. Valid values are "web" and "cli".
         default: "web"
         required: false
-      tests-enabled:
+      release:
         type: boolean
-        description: Whether or not to run goss tests.
-        default: false
-        required: false
+        description: Whether to release the app
+        required: true
 
 jobs:
-  build-test-push:
+  build:
+    name: ${{ inputs.test && 'Build/Test' || 'Build' }} ${{ inputs.app }} (${{ matrix.platform }})
+    runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
-        platform: ${{ fromJson(inputs.platforms) }}
+        platform: ["amd64", "arm64"]
       fail-fast: false
-    runs-on: ${{ matrix.platform == 'linux/arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
-    permissions:
-      packages: write
+    outputs:
+      amd64: ${{ steps.digest.outputs.amd64 }}
+      arm64: ${{ steps.digest.outputs.arm64 }}
     steps:
-      - name: Prepare
-        run: |
-          platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> "${GITHUB_ENV}"
-
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - name: Login to Container Registry
-        uses: docker/login-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@b5ca514318bd6ebac0fb2aedd5d36ec1b5c232a2 # v3.10.0
 
-      - name: Setup Goss
-        if: ${{ inputs.tests-enabled == true }}
-        uses: mlipscombe/goss-installation-action@v1.2.2
+      - name: Build Image
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
+        id: build
         with:
-          version: v0.4.9
+          build-args: |
+            VENDOR=${{ github.repository_owner }}
+            VERSION=${{ inputs.version }}
+            REVISION=${{ github.sha }}
+          cache-from: |
+            ${{ format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2},mode=max', github.repository_owner, inputs.app, matrix.platform) }}
+          cache-to: |
+            ${{ inputs.release && format('type=registry,ref=ghcr.io/{0}/build_cache:{1}-{2}', github.repository_owner, inputs.app, matrix.platform) || '' }}
+          labels: |
+            org.opencontainers.image.title=${{ inputs.app }}
+            org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+            org.opencontainers.image.version=${{ inputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+          outputs: |
+            type=docker
+            ${{ inputs.release && format('type=image,name=ghcr.io/{0}/{1},push-by-digest=true,name-canonical=true,push=true', github.repository_owner, inputs.app) || '' }}
+          context: ./apps/${{ inputs.app }}
+          platforms: linux/${{ matrix.platform }}
+          provenance: false
 
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
+      - if: ${{ inputs.test == true }}
+        name: Setup goss
+        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
         with:
-          images: |-
-            ${{ inputs.image }}
-          labels: |-
-            ${{ inputs.labels }}
-          annotations: |-
-            ${{ inputs.annotations }}
+          version: latest
 
-      - uses: docker/build-push-action@v6
-        name: Build test image
-        if: ${{ inputs.tests-enabled == true }}
-        id: build-for-test
-        env:
-          DOCKER_BUILD_RECORD_UPLOAD: false
-          DOCKER_BUILD_SUMMARY: false
-        with:
-          context: ${{ inputs.context }}
-          file: ${{ inputs.dockerfile }}
-          platforms: ${{ matrix.platform }}
-          build-args: ${{ inputs.build-args }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }}-${{ env.PLATFORM_PAIR }},mode=max
-          outputs: |-
-            type=docker,name=${{ inputs.image }}:testing
-
-      - name: Run Goss Tests
-        id: dgoss
-        if: ${{ inputs.tests-enabled == true }}
+      - if: ${{ inputs.test == true }}
+        name: Run Goss Tests
         shell: bash
         env:
           CONTAINER_RUNTIME: docker
-          GOSS_FILE: ${{ inputs.context }}/ci/goss.yaml
+          GOSS_FILE: ./apps/${{ inputs.app }}/ci/goss.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: |
-          image_name="${{ inputs.image }}:testing"
-          declare -a goss_args
+        run: |-
           if [[ "${{ inputs.type }}" == "cli" ]]; then
-            goss_args+=(
-              "tail" "-f" "/dev/null"
-            )
+            dgoss run ${{ steps.build.outputs.imageid }} tail -f /dev/null
+          else
+            dgoss run ${{ steps.build.outputs.imageid }}
           fi
-          dgoss run "${image_name}" "${goss_args[@]}"
 
-      - uses: docker/build-push-action@v6
-        name: Build image
-        id: build
-        env:
-          DOCKER_BUILD_RECORD_UPLOAD: false
-          DOCKER_BUILD_SUMMARY: false
-        with:
-          context: ${{ inputs.context }}
-          file: ${{ inputs.dockerfile }}
-          platforms: ${{ matrix.platform }}
-          labels: ${{ steps.meta.outputs.labels }}
-          annotations: ${{ steps.meta.outputs.annotations }}
-          build-args: ${{ inputs.build-args }}
-          cache-from: type=registry,ref=ghcr.io/${{ github.repository_owner }}/build-cache:${{ inputs.app }}-${{ env.PLATFORM_PAIR }},mode=max
-          cache-to: ${{ !inputs.dry-run && format('type=registry,ref=ghcr.io/{0}/build-cache:{1}-{2}', github.repository_owner, inputs.app, env.PLATFORM_PAIR) || '' }}
-          outputs: |-
-            type=image,name=${{ inputs.image }},push-by-digest=true,name-canonical=true,push=${{ !inputs.dry-run }}
-
-      - name: Export digest
-        if: ${{ !inputs.dry-run }}
+      - if: ${{ inputs.release }}
+        name: Export Digest
+        id: digest
         run: |
-          mkdir -p ${{ runner.temp }}/digests/${{ inputs.app }}
-          digest="${{ steps.build.outputs.digest }}"
-          touch "${{ runner.temp }}/digests/${{ inputs.app }}/${digest#sha256:}"
+          echo "${{ matrix.platform }}=${{ steps.build.outputs.digest }}" >> "${GITHUB_OUTPUT}"
 
-      - name: Upload digest
-        if: ${{ !inputs.dry-run }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: digests-${{ inputs.app }}-${{ env.PLATFORM_PAIR }}
-          path: ${{ runner.temp }}/digests/${{ inputs.app }}/*
-          if-no-files-found: error
-          retention-days: 1
-
-  merge-manifests:
-    needs:
-      - build-test-push
-    if: ${{ !inputs.dry-run }}
-    runs-on: ubuntu-24.04
-    permissions:
-      packages: write
+  release:
+    if: ${{ inputs.release }}
+    needs: build
+    name: Release ${{ inputs.app }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Login to Container Registry
-        uses: docker/login-action@v3
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Setup Node
+        uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+        with:
+          node-version: 22.x
 
-      - name: Docker meta
+      - name: Install Semver
+        run: npm install semver
+
+      - name: Determine definitive version
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        id: version
+        with:
+          script: |
+            const semver = require('semver');
+            const version = "${{ inputs.version }}";
+            const loose = true;
+
+            if (semver.valid(version, loose)) {
+              let parsedVersion = semver.parse(version, loose);
+              return `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`;
+            } else {
+              let date = new Date();
+              return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+            }
+
+      - name: Build Meta
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
         with:
-          images: ${{ inputs.image }}
-          tags: ${{ inputs.tags }}
-          labels: ${{ inputs.labels }}
-          annotations: ${{ inputs.annotations }}
+          flavor: latest=false
+          images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+          tags: |
+            type=raw,value=${{ steps.version.outputs.result }}
+            type=raw,value=rolling
 
-      - name: Download digests
-        uses: actions/download-artifact@v4
+      - name: Push Images
+        id: push
+        uses: Noelware/docker-manifest-action@b33ab348026b120a895167160f5605b0197f0862 # 0.4.3
         with:
-          path: ${{ runner.temp }}/digests
-          pattern: digests-${{ inputs.app }}-*
-          merge-multiple: true
+          inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
+          images: >-
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
+            ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
+          push: true
 
-      - name: Create and push manifest
-        working-directory: ${{ runner.temp }}/digests
-        run: |-
-          TAGS=$(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "${DOCKER_METADATA_OUTPUT_JSON}")
-          MANIFESTS=$(printf '${{ inputs.image }}@sha256:%s ' *)
-          # shellcheck disable=SC2086 # split on purpose
-          docker buildx imagetools create ${TAGS} ${MANIFESTS}
+      - name: Export Digest
+        id: digest
+        run: |
+          digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
+          echo "digest=${digest}" >> "${GITHUB_OUTPUT}"
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
+
+      - name: Sign Image
+        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}

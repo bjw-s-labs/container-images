@@ -1,6 +1,5 @@
 ---
-app: gatus
-source_repo: https://github.com/TwiN/gatus
+name: gatus
 # renovate: depName=TwiN/gatus
 version: 5.16.0
 platforms:

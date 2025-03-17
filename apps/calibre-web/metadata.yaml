@@ -1,6 +1,5 @@
 ---
-app: calibre-web
-source_repo: https://github.com/janeczku/calibre-web
+name: calibre-web
 # renovate: depName=janeczku/calibre-web
 version: 0.6.24
 platforms:

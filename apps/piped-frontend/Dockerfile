@@ -15,6 +15,7 @@ RUN \
   && ./localizefonts.sh
 
 FROM ghcr.io/bjw-s-labs/caddy-scratch:2.9.1@sha256:4edeb1025e6012a6813fe018a09310b3bda86a15cd941dd59cbc4882d06f2888
+LABEL org.opencontainers.image.source="https://github.com/TeamPiped/Piped"
 COPY --chown=1000:1000 Caddyfile /config/Caddyfile
 COPY --chown=1000:1000 --from=build /app/dist/ /app
 CMD ["run", "--config", "/config/Caddyfile"]

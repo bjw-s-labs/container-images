@@ -1,6 +1,5 @@
 ---
-app: getmail
-source_repo: https://github.com/getmail6/getmail6
+name: getmail
 # renovate: depName=getmail6/getmail6 versioning=loose
 version: 6.19.07
 platforms:

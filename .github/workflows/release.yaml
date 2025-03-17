@@ -90,6 +90,7 @@ jobs:
             core.summary.addHeading('Apps to build:').addList(appsToBuild).write()
 
   build:
+    if: ${{ needs.prepare.outputs.apps != '[]' }}
     name: Build ${{ matrix.app.name }} image
     needs:
       - prepare

@@ -84,7 +84,7 @@ jobs:
         name: Run container-structure-test
         uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
         with:
-          args: test --image ${{ steps.build.outputs.imageid }} --config /github/workspace/apps/${{ inputs.app }}/tests.yaml
+          args: test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
 
       - if: ${{ steps.test.outputs.tool == 'goss' }}
         name: Setup goss
@@ -144,10 +144,12 @@ jobs:
 
             if (semver.valid(version, loose)) {
               let parsedVersion = semver.parse(version, loose);
-              return `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`;
+              core.setOutput('version', `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`);
+              core.setOutput('validSemver', true);
             } else {
               let date = new Date();
-              return `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
+              core.setOutput('version', `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`);
+              core.setOutput('validSemver', false);
             }
 
       - name: Build Meta
@@ -157,10 +159,9 @@ jobs:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
           tags: |
-            type=match,pattern=^v?(\d+(\.\d+)?(\.\d+)?(\.\d+)?),value=${{ steps.version.outputs.result }}
-            type=match,pattern=^v?(\d+(\.\d+)),value=${{ steps.version.outputs.result }}
-            type=match,pattern=^v?(\d+),value=${{ steps.version.outputs.result }}
-            type=raw,value=rolling
+            type=match,pattern=^(\d+(\.\d+)?(\.\d+)?),group=1,value=${{ steps.version.outputs.version }}
+            type=match,pattern=^(\d+(\.\d+)),value=${{ steps.version.outputs.version }},group=1,enable=${{ steps.version.outputs.validSemver }}
+            type=match,pattern=^(\d+),value=${{ steps.version.outputs.version }},group=1,enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=latest
 
       - name: Push Images

@@ -1,6 +1,5 @@
 ---
-app: radicale
-source_repo: https://github.com/Kozea/Radicale
+name: radicale
 # renovate: depName=Kozea/Radicale
 version: 3.5.0
 platforms:

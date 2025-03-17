@@ -1,6 +1,5 @@
 ---
-app: caddy-scratch
-source_repo: https://github.com/caddyserver/caddy
+name: caddy-scratch
 # renovate: depName=caddyserver/caddy
 version: 2.9.1
 platforms:

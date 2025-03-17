@@ -2,6 +2,8 @@ FROM docker.io/library/python:3.13.2-alpine
 
 ARG VERSION
 
+LABEL org.opencontainers.image.source="https://github.com/esphome/esphome"
+
 ENV \
   PYTHONDONTWRITEBYTECODE=1 \
   PYTHONUNBUFFERED=1 \

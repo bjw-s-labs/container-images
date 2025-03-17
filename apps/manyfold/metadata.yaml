@@ -1,6 +1,5 @@
 ---
-app: manyfold
-source_repo: https://github.com/manyfold3d/manyfold
+name: manyfold
 # renovate: depName=manyfold3d/manyfold
 version: v0.103.2
 platforms:

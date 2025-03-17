@@ -11,75 +11,63 @@ on:
       - reopened
 
 jobs:
-  pre-commit-check:
-    name: Check pre-commit rules
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-      - uses: pre-commit/action@v3.0.1
-        with:
-          extra_args: --config .pre-commit-config.yaml
-
   actionlint:
     name: actionlint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v45
+        uses: bjw-s-labs/action-changed-files@c0e46be824469396914d5a163aa10033b00870ab # v0.1.1
         with:
-          files: |
-            .github/workflows/**/*.yml
-            .github/workflows/**/*.yaml
+          patterns: |-
+            .github/workflows/*.yaml
+            .github/workflows/*.yml
 
       - name: Run actionlint
-        if: steps.changed-files.outputs.any_changed == 'true'
-        uses: bjw-s/action-actionlint@v0.1
+        if: steps.changed-files.outputs.changed_files != '[]'
+        uses: bjw-s/action-actionlint@83d0aa4dfef4ebecbdd304776e133f5936ff7358 # v0.1.0
         with:
           actionlint_config: .ci/lint/actionlint.yml
-          file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
+          file_pattern: ${{ join(fromJSON(steps.changed-files.outputs.changed_files), ' ') }}
 
   yamllint:
     name: yamllint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Get changed files
         id: changed-files
-        uses: tj-actions/changed-files@v45
+        uses: bjw-s-labs/action-changed-files@c0e46be824469396914d5a163aa10033b00870ab # v0.1.1
         with:
-          files: |
-            **.yml
-            **.yaml
+          patterns: |-
+            **/*.yaml
+            **/*.yml
 
-      - name: Install yamllint
-        if: steps.changed-files.outputs.any_changed == 'true'
+      - if: steps.changed-files.outputs.changed_files != '[]'
+        name: Install yamllint
+        shell: bash
         run: |
-          pip install yamllint
+          pip install --user yamllint
 
-      - name: Run yamllint
-        if: steps.changed-files.outputs.any_changed == 'true'
-        run: yamllint --config-file .ci/lint/yamllint.yaml --format github ${{ steps.changed-files.outputs.all_changed_files }}
+      - if: steps.changed-files.outputs.changed_files != '[]'
+        name: Run yamllint
+        shell: bash
+        run: |
+          yamllint --config-file .ci/lint/yamllint.yaml --format github ${{ join(fromJSON(steps.changed-files.outputs.changed_files), ' ') }}
 
   lint_success:
+    if: ${{ !cancelled() }}
     name: Linting success
     needs:
-      - pre-commit-check
       - actionlint
       - yamllint
-    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Check matrix status
-        if: ${{ contains(needs.*.result, 'failure') }}
+      - if: ${{ contains(needs.*.result, 'failure') }}
+        name: Check matrix status
         run: exit 1

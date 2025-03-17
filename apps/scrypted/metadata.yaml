@@ -1,6 +1,5 @@
 ---
-app: scrypted
-source_repo: https://github.com/koush/scrypted
+name: scrypted
 # renovate: depName=koush/scrypted
 version: 0.137.0
 platforms:

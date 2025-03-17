@@ -1,15 +1,14 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: "Docker: Build and Push"
+name: "Build and Push"
 
 on:
   workflow_dispatch:
     inputs:
       apps:
         description: "Comma separated list of apps to build"
-        required: false
+        required: true
         type: string
-        default: ""
   push:
     branches:
       - main
@@ -20,144 +19,75 @@ on:
       - reopened
 
 jobs:
-  filter-changes:
-    name: Filter changes
-    runs-on: ubuntu-latest
-    outputs:
-      containers_changed: ${{ steps.container-files-changed.outputs.any_changed }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Build files changed
-        id: container-files-changed
-        uses: tj-actions/changed-files@v45
-        with:
-          files: |
-            apps/**
-            .github/workflows/release.yaml
-            .github/workflows/workflow_call-build_image.yaml
-
   prepare:
     name: Prepare data required for workflow
-    if: ${{ github.event_name == 'workflow_dispatch' || needs.filter-changes.outputs.containers_changed == 'true' }}
     runs-on: ubuntu-latest
-    needs:
-      - filter-changes
     outputs:
-      images-to-build: ${{ steps.apps-to-build.outputs.appsToBuild }}
+      apps: ${{ steps.apps.outputs.apps }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
 
-      - name: Determine changed apps
-        uses: tj-actions/changed-files@v45
-        id: changed-apps
-        if: ${{ github.event_name != 'workflow_dispatch' }}
+      - if: ${{ github.event_name != 'workflow_dispatch' }}
+        name: Get Changed Directories
+        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
+        id: changed-dirs
         with:
           dir_names: true
           dir_names_max_depth: "1"
           path: apps
           separator: ","
 
-      - name: Get specified apps
-        id: specified-apps
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+      - name: Install required packages
+        run: npm install yaml
+
+      - name: Apps to build
+        id: apps
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            let input = '${{ inputs.apps }}';
-            let cwd = process.cwd();
+            const yaml = require('yaml');
+            const cwd = process.cwd();
 
-            let appsToBuild = []
-            if (input === '') {
-              console.log("Empty apps input, scanning for apps in repository");
-              const globber = await glob.create('apps/*', { implicitDescendants: false });
-              for await (const file of globber.globGenerator()) {
-                if (fs.lstatSync(file).isDirectory()) {
-                  relativePath = file.slice(`${cwd}/apps/`.length);
-                  appsToBuild.push(relativePath);
-                }
-              }
+            let input = '';
+            if (context.eventName == 'workflow_dispatch') {
+              input = '${{ inputs.apps }}';
             } else {
-              appsToBuild = JSON.parse(input);
-              appsToBuild.forEach(function (app) {
-                const fullPath = `${cwd}/apps/${app}`;
-                if (!fs.existsSync(fullPath)) {
-                  core.setFailed(`App ${app} does not exist in repository`);
-                  process.exit(1);
-                }
-                if (!fs.lstatSync(fullPath).isDirectory()) {
-                  core.setFailed(`${app} is not a valid directory`);
-                  process.exit(1);
-                }
-              });
+              input = '${{ steps.changed-dirs.outputs.all_changed_and_modified_files }}';
             }
 
-            core.setOutput('appsToBuild', appsToBuild.join(','));
+            appsToBuild = input.split(',').filter((v) => v !== '');
 
-      - name: Consolidate apps to build
-        id: apps-to-build
-        uses: actions/github-script@v7
-        with:
-          script: |
-            let appsToBuild = '${{ github.event_name == 'workflow_dispatch' && steps.specified-apps.outputs.appsToBuild || steps.changed-apps.outputs.all_changed_files }}';
-            core.setOutput('appsToBuild', appsToBuild);
+            let output = {};
+            appsToBuild.forEach(function(app) {
+              const metadataPath = `${cwd}/apps/${app}/metadata.yaml`;
+              if (!fs.existsSync(metadataPath)) {
+                core.setFailed(`App ${app} does not have a metadata.yaml`);
+                process.exit(1);
+              }
 
-      - name: Add summary
-        env:
-          APPS_TO_BUILD: "${{ steps.apps-to-build.outputs.appsToBuild }}"
-        run: |
-          IFS=',' read -r -a images <<< "${APPS_TO_BUILD}"
-          echo "### Apps to build:" > "$GITHUB_STEP_SUMMARY"
-          for image in "${images[@]}"; do
-            echo "- ${image}" >> "$GITHUB_STEP_SUMMARY"
-          done
+              metadataContent = fs.readFileSync(metadataPath, {encoding: "utf8"});
+              metadata = yaml.parse(metadataContent);
 
-  generate-matrix:
-    name: Generate build matrix
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-    needs:
-      - prepare
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+              output[app] = metadata;
+            });
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22.x"
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Generate matrix
-        run: npm run genmatrix
-        env:
-          DEFAULT_SOURCE_URL: "https://github.com/${{ github.repository }}"
-          IMAGES_FOLDER: "apps"
-          INCLUDE_IMAGES: ${{ needs.prepare.outputs.images-to-build }}
-
-      - name: Save Matrix
-        id: matrix
-        run: |
-          matrix="$(cat matrix.json)"
-          echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
+            core.setOutput('apps', output);
+            console.log('Apps to build');
+            console.log(JSON.stringify(output, null, 2));
 
   build:
     name: Build ${{ matrix.job_name }} image
     needs:
-      - generate-matrix
+      - prepare
     permissions:
       packages: write
     strategy:
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
-      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.apps) }}
+      fail-fast: true
     uses: ./.github/workflows/workflow_call-build_image.yaml
     with:
       app: ${{ matrix.job_name }}
@@ -183,13 +113,13 @@ jobs:
       type: ${{ matrix.type }}
       tests-enabled: ${{ matrix.tests.enabled }}
 
-  build_success:
-    name: Build matrix success
-    needs:
-      - build
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check matrix status
-        if: ${{ contains(needs.*.result, 'failure') }}
-        run: exit 1
+  # build_success:
+  #   name: Build matrix success
+  #   needs:
+  #     - build
+  #   if: ${{ !cancelled() }}
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check matrix status
+  #       if: ${{ contains(needs.*.result, 'failure') }}
+  #       run: exit 1

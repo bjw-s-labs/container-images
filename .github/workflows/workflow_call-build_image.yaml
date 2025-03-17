@@ -12,16 +12,6 @@ on:
         type: string
         description: The version of the app to build
         required: true
-      test:
-        type: boolean
-        description: Whether to test the app
-        default: false
-        required: false
-      type:
-        type: string
-        description: The type of application. Valid values are "web" and "cli".
-        default: "web"
-        required: false
       release:
         type: boolean
         description: Whether to release the app
@@ -29,7 +19,7 @@ on:
 
 jobs:
   build:
-    name: ${{ inputs.test && 'Build/Test' || 'Build' }} ${{ inputs.app }} (${{ matrix.platform }})
+    name: Build ${{ inputs.app }} (${{ matrix.platform }})
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
@@ -77,28 +67,43 @@ jobs:
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - if: ${{ inputs.test == true }}
+      - name: Determine Testing Tool
+        id: test
+        run: |
+          if [[ ! -f ./apps/${{ inputs.app }}/tests.yaml ]]; then
+            echo "tool=none" >> $GITHUB_OUTPUT
+          else
+            if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+                echo "tool=goss" >> $GITHUB_OUTPUT
+            else
+                echo "tool=cst" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - if: ${{ steps.test.outputs.tool == 'cst' }}
+        name: Run container-structure-test
+        uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
+        with:
+          args: test --image ${{ steps.build.outputs.imageid }} --config /github/workspace/apps/${{ inputs.app }}/tests.yaml
+
+      - if: ${{ steps.test.outputs.tool == 'goss' }}
         name: Setup goss
         uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
         with:
           version: latest
 
-      - if: ${{ inputs.test == true }}
+      - if: ${{ steps.test.outputs.tool == 'goss' }}
         name: Run Goss Tests
         shell: bash
         env:
           CONTAINER_RUNTIME: docker
-          GOSS_FILE: ./apps/${{ inputs.app }}/ci/goss.yaml
+          GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
           GOSS_FILES_STRATEGY: cp
           CONTAINER_LOG_OUTPUT: goss_container_log_output
         run: |-
-          if [[ "${{ inputs.type }}" == "cli" ]]; then
-            dgoss run ${{ steps.build.outputs.imageid }} tail -f /dev/null
-          else
-            dgoss run ${{ steps.build.outputs.imageid }}
-          fi
+          dgoss run ${{ steps.build.outputs.imageid }}
 
       - if: ${{ inputs.release }}
         name: Export Digest

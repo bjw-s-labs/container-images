@@ -4,6 +4,3 @@ version: 0.0.4
 platforms:
   - linux/amd64
   - linux/arm64
-type: cli
-tests:
-  enabled: false

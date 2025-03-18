@@ -1,4 +1,4 @@
 ---
 # renovate: datasource=custom.sonarr depName=sonarr versioning=loose
-version: 4.0.13.2931
+version: 4.0.13.2934
 name: sonarr

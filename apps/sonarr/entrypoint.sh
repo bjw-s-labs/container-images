@@ -2,7 +2,7 @@
 #shellcheck disable=SC2086
 
 exec \
-    /app/bin/Radarr \
+    /app/bin/Sonarr \
         --nobrowser \
         --data=/config \
         "$@"

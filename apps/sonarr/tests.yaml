@@ -1,12 +1,11 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/goss-org/goss/master/docs/schema.yaml
 process:
-  Radarr:
+  Sonarr:
     running: true
 port:
-  tcp6:7878:
+  tcp6:8989:
     listening: true
 http:
-  http://localhost:7878:
+  http://localhost:8989:
     status: 200
-    timeout: 5000

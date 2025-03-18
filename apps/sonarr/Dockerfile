@@ -8,7 +8,7 @@ ENV UMASK="0002" \
     TZ="Etc/UTC"
 
 ENV DOTNET_EnableDiagnostics=0 \
-    RADARR__UPDATE__BRANCH=develop
+    SONARR__UPDATE__BRANCH=develop
 
 USER root
 WORKDIR /app
@@ -35,11 +35,11 @@ RUN \
         'linux/arm64') export ARCH='arm64' ;; \
     esac \
     && mkdir -p /app/bin \
-    && curl -fsSL "https://radarr.servarr.com/v1/update/${RADARR__UPDATE__BRANCH}/updatefile?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
+    && curl -fsSL "https://services.sonarr.tv/v1/update/${SONARR__UPDATE__BRANCH}/download?version=${VERSION}&os=linuxmusl&runtime=netcore&arch=${ARCH}" \
         | tar xzf - -C /app/bin --strip-components=1 \
-    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[%s](https://github.com/%s)\n" "${RADARR__UPDATE__BRANCH}" "${VERSION}" "${VENDOR}" "${VENDOR}" > /app/package_info \
+    && printf "UpdateMethod=docker\nBranch=%s\nPackageVersion=%s\nPackageAuthor=[%s](https://github.com/%s)\n" "${SONARR__UPDATE__BRANCH}" "${VERSION}" "${VENDOR}" "${VENDOR}" > /app/package_info \
     && chown -R root:root /app && chmod -R 755 /app \
-    && rm -rf /tmp/* /app/bin/Radarr.Update
+    && rm -rf /tmp/* /app/bin/Sonarr.Update
 
 COPY ./entrypoint.sh /entrypoint.sh
 
@@ -49,4 +49,4 @@ VOLUME ["/config"]
 
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
 
-LABEL org.opencontainers.image.source="https://github.com/Radarr/Radarr"
+LABEL org.opencontainers.image.source="https://github.com/Sonarr/Sonarr"

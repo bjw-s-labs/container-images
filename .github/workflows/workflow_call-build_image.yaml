@@ -136,7 +136,6 @@ jobs:
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: version
         with:
-          result-encoding: string
           script: |
             const semver = require('semver');
             const version = "${{ inputs.version }}";
@@ -144,7 +143,7 @@ jobs:
             const date = new Date();
 
             const parsedVersion = validSemverRegex.exec(version);
-            const validSemver = parsedVersion != null
+            const validSemver = parsedVersion != null;
             const parsedSemver =
                 validSemver
                 ? semver.parse(parsedVersion[0])
@@ -152,7 +151,7 @@ jobs:
             const outputVersion =
                 validSemver
                 ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
-                : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
+                : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
 
             core.setOutput('version', outputVersion);
             core.setOutput('validSemver', validSemver);

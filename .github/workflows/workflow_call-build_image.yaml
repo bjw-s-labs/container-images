@@ -72,12 +72,12 @@ jobs:
         run: |
           if [[ ! -f ./apps/${{ inputs.app }}/tests.yaml ]]; then
             echo "tool=none" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+              echo "tool=goss" >> $GITHUB_OUTPUT
           else
-            if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-                echo "tool=goss" >> $GITHUB_OUTPUT
-            else
-                echo "tool=cst" >> $GITHUB_OUTPUT
-            fi
+              echo "tool=cst" >> $GITHUB_OUTPUT
           fi
 
       - if: ${{ steps.test.outputs.tool == 'cst' }}
@@ -140,17 +140,22 @@ jobs:
           script: |
             const semver = require('semver');
             const version = "${{ inputs.version }}";
-            const loose = true;
+            const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
+            const date = new Date();
 
-            if (semver.valid(version, loose)) {
-              let parsedVersion = semver.parse(version, loose);
-              core.setOutput('version', `${parsedVersion.major}.${parsedVersion.minor}.${parsedVersion.patch}`);
-              core.setOutput('validSemver', true);
-            } else {
-              let date = new Date();
-              core.setOutput('version', `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`);
-              core.setOutput('validSemver', false);
-            }
+            const parsedVersion = validSemverRegex.exec(version);
+            const validSemver = parsedVersion != null
+            const parsedSemver =
+                validSemver
+                ? semver.parse(parsedVersion[0])
+                : null;
+            const outputVersion =
+                validSemver
+                ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
+                : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`
+
+            core.setOutput('version', outputVersion);
+            core.setOutput('validSemver', validSemver);
 
       - name: Build Meta
         id: meta

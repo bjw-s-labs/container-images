@@ -132,33 +132,37 @@ jobs:
       - name: Install Semver
         run: npm install semver
 
-      - name: Determine definitive version
+      - name: Determine Definitive Version
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: version
         with:
           script: |
             const semver = require('semver');
-            const version = "${{ inputs.version }}";
-            const validSemverRegex = new RegExp('^v?(\\d+(\\.\\d+)?(\\.\\d+)?)');
-            const date = new Date();
 
+            function sanitizeInputVersion(version) {
+                return version.split('-')[0]; // Remove any pre-release suffixes
+            }
+
+            const version = '${{ inputs.version }}';
+            const validSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
+            const date = new Date();
             const parsedVersion = validSemverRegex.exec(version);
-            const validSemver = parsedVersion != null;
-            const parsedSemver =
-                validSemver
-                ? semver.parse(parsedVersion[0])
-                : null;
-            const outputVersion =
-                validSemver
+            const validSemver = parsedVersion !== null;
+
+            const parsedSemver = validSemver ? semver.coerce(parsedVersion[0]) : null;
+            const outputVersion = validSemver
                 ? `${parsedSemver.major}.${parsedSemver.minor}.${parsedSemver.patch}`
                 : `${date.getFullYear()}.${date.getMonth() + 1}.${date.getDate()}`;
 
+            const sanitizedInputVersion = validSemver ? sanitizeInputVersion(version) : version;
+
             core.setOutput('version', outputVersion);
             core.setOutput('validSemver', validSemver);
+            core.setOutput('sanitizedInputVersion', sanitizedInputVersion);
 
       - name: Build Meta
-        id: meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        id: meta
         with:
           flavor: latest=false
           images: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
@@ -166,10 +170,8 @@ jobs:
             type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
             type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
-            type=raw,value=${{ inputs.version }},enable=${{ steps.version.outputs.validSemver }}
-            type=raw,value=latest
-          labels: |
-            org.opencontainers.image.version=${{ inputs.version }}
+            type=raw,value=${{ steps.version.outputs.sanitizedInputVersion }},enable=${{ steps.version.outputs.validSemver }}
+            type=raw,value=rolling
 
       - name: Push Images
         id: push

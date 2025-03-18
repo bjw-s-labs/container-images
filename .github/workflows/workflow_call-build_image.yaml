@@ -167,6 +167,7 @@ jobs:
             type=semver,pattern={{version}},value=${{ steps.version.outputs.version }}
             type=semver,pattern={{major}}.{{minor}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
             type=semver,pattern={{major}},value=${{ steps.version.outputs.version }},enable=${{ steps.version.outputs.validSemver }}
+            type=raw,value=${{ inputs.version }},enable=${{ steps.version.outputs.validSemver }}
             type=raw,value=latest
           labels: |
             org.opencontainers.image.version=${{ inputs.version }}

@@ -1,7 +1,7 @@
 ---
 name: manyfold
 # renovate: depName=manyfold3d/manyfold
-version: v0.103.2
+version: v0.104.0
 platforms:
   - linux/amd64
   - linux/arm64

@@ -1,18 +1,13 @@
 ---
 version: "3"
 
-vars:
-  GOSS_FOLDER: "{{ .ROOT_DIR }}/.goss"
-
 tasks:
   build:
-    desc: Build container image [APP=required] [MULTIPLATFORM=false] [PUSH=false] [REGISTRY={{.DEFAULT_REGISTRY}}]
+    desc: Build container image [APP=required] [REGISTRY={{.DEFAULT_REGISTRY}}]
     silent: true
     vars:
       # User vars
       APP: "{{ .APP }}"
-      MULTIPLATFORM: '{{ .MULTIPLATFORM | default "false" }}'
-      PUSH: '{{ .PUSH | default "false" }}'
       REGISTRY: "{{ .REGISTRY | default .DEFAULT_REGISTRY }}"
 
       # Helper vars
@@ -22,9 +17,6 @@ tasks:
       APP_VERSION:
         sh: >-
           [ ! -f "{{ .METADATA_FILE }}" ] || yq -r .version "{{ .METADATA_FILE }}"
-      ALL_PLATFORMS:
-        sh: >-
-          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r '.platforms | join(",")' "{{ .METADATA_FILE }}"
       SINGLE_PLATFORM: "linux/{{ARCH}}"
     requires:
       vars:
@@ -36,72 +28,7 @@ tasks:
       docker buildx build
       --tag {{ .REGISTRY }}/{{ .APP }}:{{ .APP_VERSION }}
       --build-arg VERSION={{ .APP_VERSION }}
-      --platform {{ if eq .MULTIPLATFORM "true" }} {{ .ALL_PLATFORMS }} {{ else }} {{ .SINGLE_PLATFORM }} {{ end }}
+      --platform {{ .SINGLE_PLATFORM }}
       --file {{ .DOCKERFILE }}
-      {{ if not (eq .MULTIPLATFORM "true") }}
       --load
-      {{ end }}
-      {{ if eq .PUSH "true" }}
-      --push
-      {{ end }}
       {{ .APP_FOLDER }}
-
-  test:
-    desc: test container image [APP=required] [REGISTRY={{.DEFAULT_REGISTRY}}]
-    silent: true
-    vars:
-      # User vars
-      APP: "{{ .APP }}"
-      REGISTRY: "{{ .REGISTRY | default .DEFAULT_REGISTRY }}"
-
-      # Helper vars
-      APP_FOLDER: "{{ .ROOT_DIR }}/apps/{{ .APP }}"
-      DOCKERFILE: "{{ .APP_FOLDER }}/Dockerfile"
-      METADATA_FILE: "{{ .APP_FOLDER }}/metadata.yaml"
-      APP_VERSION:
-        sh: >-
-          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r .version "{{ .METADATA_FILE }}"
-      GOSS_FILE: "{{ .APP_FOLDER }}/ci/goss.yaml"
-      TEST_TYPE:
-        sh: >-
-          [ ! -f "{{ .METADATA_FILE }}" ] || yq -r '.type' "{{ .METADATA_FILE }}"
-    requires:
-      vars:
-        - APP
-    preconditions:
-      - test -f "{{ .DOCKERFILE }}"
-      - test -f "{{ .METADATA_FILE }}"
-      - test -f "{{ .GOSS_FILE }}"
-    env:
-      CONTAINER_RUNTIME: docker
-      GOSS_PATH: "{{ .GOSS_FOLDER }}/goss"
-      GOSS_OPTS: --sleep 5s --retry-timeout 60s --color --format documentation
-      GOSS_SLEEP: 2
-      GOSS_FILES_PATH: "{{ .APP_FOLDER }}/ci"
-      GOSS_FILES_STRATEGY: cp
-    cmds:
-      - task: download-goss
-      - task: build
-        vars:
-          APP: "{{.APP}}"
-          REGISTRY: "{{.REGISTRY}}"
-          MULTIPLATFORM: "false"
-          PUSH: "false"
-      - |
-        "{{ .GOSS_FOLDER}}/dgoss" run "{{ .REGISTRY }}/{{ .APP }}:{{ .APP_VERSION }}" {{if eq .TEST_TYPE "cli"}}tail -f /dev/null{{end}}
-
-  download-goss:
-    silent: true
-    internal: true
-    vars:
-      # renovate: datasource=github-releases depName=goss-org/goss versionTemplate=^(?<version>.*)$
-      GOSS_VERSION: v0.4.4
-    cmds:
-      - mkdir -p "{{ .GOSS_FOLDER }}"
-      - curl -fsSL -o "{{ .GOSS_FOLDER }}/goss" "https://github.com/goss-org/goss/releases/download/{{.GOSS_VERSION}}/goss-linux-{{ARCH}}"
-      - chmod +x "{{ .GOSS_FOLDER }}/goss"
-      - curl -fsSL -o "{{ .GOSS_FOLDER }}/dgoss" "https://raw.githubusercontent.com/goss-org/goss/{{.GOSS_VERSION}}/extras/dgoss/dgoss"
-      - chmod +x "{{ .GOSS_FOLDER }}/dgoss"
-    status:
-      - test -f "{{ .GOSS_FOLDER }}/goss"
-      - test -f "{{ .GOSS_FOLDER }}/dgoss"

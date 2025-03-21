@@ -1,7 +1,4 @@
 ---
 name: manyfold
-# renovate: depName=manyfold3d/manyfold
-version: v0.104.1
-platforms:
-  - linux/amd64
-  - linux/arm64
+# renovate: depName=manyfold3d/manyfold extractVersion": "^v(?<version>.*)$
+version: 0.104.1

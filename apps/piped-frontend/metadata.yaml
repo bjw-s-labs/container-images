@@ -1,5 +1,5 @@
 ---
 name: piped-frontend
-version: ff7662c50e96500804e9be7878910773f76a10ab
+version: 8b8b823abdbcc3c57b455a390e6548444bcbacf8
 platforms:
   - linux/amd64

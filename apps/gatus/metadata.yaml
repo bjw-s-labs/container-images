@@ -1,7 +1,0 @@
----
-name: gatus
-# renovate: depName=TwiN/gatus
-version: 5.17.0
-platforms:
-  - linux/amd64
-  - linux/arm64

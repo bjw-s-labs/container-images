@@ -33,22 +33,18 @@ jobs:
     name: Pre-Job
     runs-on: ubuntu-latest
     outputs:
-      any_changed: ${{ steps.changed-dirs.outputs.any_changed }}
-      all_changed_and_modified_files: ${{ steps.changed-dirs.outputs.all_changed_and_modified_files }}
+      changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Get Changed Files
-        uses: tj-actions/changed-files@2f7c5bfce28377bc069a65ba478de0a74aa0ca32 # v46.0.1
-        id: changed-dirs
+      - name: Get changed files
+        id: changed-files
+        uses: bjw-s-labs/action-changed-files@113ac3737a803369edce8db410cf014cde00ab07 # v0.3.0
         with:
-          dir_names: true
-          dir_names_max_depth: "1"
           path: apps
+          include_only_directories: true
+          max_depth: 1
 
   changed:
-    if: ${{ needs.pre-job.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ needs.pre-job.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
     needs:
       - pre-job
     name: Get Changed Apps

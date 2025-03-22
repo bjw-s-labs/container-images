@@ -6,15 +6,19 @@ on:
     inputs:
       app:
         type: string
-        description: The name of the app to build.
+        description: Application Name
         required: true
       version:
         type: string
-        description: The version of the app to build
+        description: Version
         required: true
       release:
         type: boolean
-        description: Whether to release the app
+        description: Release
+        required: true
+      test:
+        type: boolean
+        description: Test
         required: true
 
 jobs:
@@ -23,7 +27,9 @@ jobs:
     runs-on: ${{ matrix.platform == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
     strategy:
       matrix:
-        platform: ["amd64", "arm64"]
+        platform:
+          - amd64
+          - arm64
       fail-fast: false
     outputs:
       amd64: ${{ steps.digest.outputs.amd64 }}
@@ -67,43 +73,23 @@ jobs:
           platforms: linux/${{ matrix.platform }}
           provenance: false
 
-      - name: Determine Testing Tool
-        id: test
-        run: |
-          if [[ ! -f ./apps/${{ inputs.app }}/tests.yaml ]]; then
-            echo "tool=none" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-          if ! yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
-              echo "tool=goss" >> $GITHUB_OUTPUT
-          else
-              echo "tool=cst" >> $GITHUB_OUTPUT
-          fi
-
-      - if: ${{ steps.test.outputs.tool == 'cst' }}
-        name: Run container-structure-test
-        uses: docker://ghcr.io/googlecontainertools/container-structure-test:1.19.3
-        with:
-          args: test --image ${{ steps.build.outputs.imageid }} --config ./apps/${{ inputs.app }}/tests.yaml
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Setup goss
-        uses: mlipscombe/goss-installation-action@a440e50e0ca070a5b84fc4b99a4e2bc7f9390201 # v1.2.2
-        with:
-          version: latest
-
-      - if: ${{ steps.test.outputs.tool == 'goss' }}
-        name: Run Goss Tests
-        shell: bash
+      - if: ${{ inputs.test }}
+        name: Run Tests
         env:
-          CONTAINER_RUNTIME: docker
           GOSS_FILE: ./apps/${{ inputs.app }}/tests.yaml
           GOSS_OPTS: --retry-timeout 60s --sleep 2s --color --format documentation
           GOSS_SLEEP: 2
-          GOSS_FILES_STRATEGY: cp
-          CONTAINER_LOG_OUTPUT: goss_container_log_output
-        run: |-
-          dgoss run ${{ steps.build.outputs.imageid }}
+        run: |
+          if yq --exit-status '.schemaVersion' ./apps/${{ inputs.app }}/tests.yaml &>/dev/null; then
+              curl -fsSL \
+                  https://github.com/GoogleContainerTools/container-structure-test/releases/latest/download/container-structure-test-linux-${{ matrix.platform }} \
+                  -o /usr/local/bin/container-structure-test
+              chmod +x /usr/local/bin/container-structure-test
+              container-structure-test test --image ${{ steps.build.outputs.imageid }} --config "${GOSS_FILE}"
+          else
+              curl -fsSL https://raw.githubusercontent.com/goss-org/goss/5704120d25902119cb1139e04bca3db7742a9f73/install.sh | sh
+              dgoss run ${{ steps.build.outputs.imageid }}
+          fi
 
       - if: ${{ inputs.release }}
         name: Export Digest
@@ -189,8 +175,50 @@ jobs:
           digest=$(echo "${{ steps.push.outputs.images }}" | grep -oP 'sha256:[^, ]+' | head -n1)
           echo "digest=${digest}" >> "${GITHUB_OUTPUT}"
 
+  attest:
+    if: ${{ inputs.release }}
+    needs: release
+    name: Attest ${{ inputs.app }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
       - name: Install Cosign
         uses: sigstore/cosign-installer@d7d6bc7722e3daa8354c50bcb52f4837da5e9b6a # v3.8.1
 
-      - name: Sign Image
-        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ steps.digest.outputs.digest }}
+      - name: Sign Digest
+        run: cosign sign --yes ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@f325610c9f50a54015d37c8d16cb3b0e2c8f4de0 # v0.18.0
+        with:
+          format: spdx-json
+          image: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.release.outputs.digest }}
+          output-file: ${{ inputs.app }}-sbom.spdx.json
+
+      - name: Scan SBOM
+        uses: anchore/scan-action@7c05671ae9be166aeb155bad2d7df9121823df32 # v6.1.0
+        id: scan
+        with:
+          cache-db: true
+          fail-build: false
+          sbom: ${{ inputs.app }}-sbom.spdx.json
+
+      - name: Attest
+        uses: actions/attest-sbom@115c3be05ff3974bcbd596578934b3f9ce39bf68 # v2.2.0
+        id: attest
+        with:
+          push-to-registry: true
+          sbom-path: ${{ inputs.app }}-sbom.spdx.json
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}
+          subject-digest: ${{ needs.release.outputs.digest }}
+
+      - name: Upload SARIF Report
+        uses: github/codeql-action/upload-sarif@5f8171a638ada777af81d42b55959a643bb29017 # v3.28.12
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}

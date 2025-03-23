@@ -101,7 +101,7 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     permissions:
       attestations: write
-      contents: read
+      contents: write
       id-token: write
       packages: write
       security-events: write

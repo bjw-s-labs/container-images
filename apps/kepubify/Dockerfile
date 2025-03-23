@@ -4,7 +4,6 @@ ARG TARGETPLATFORM
 ARG VERSION
 
 USER root
-WORKDIR /app
 
 #hadolint ignore=DL3018
 RUN \
@@ -20,9 +19,9 @@ RUN case "${TARGETPLATFORM}" in \
         'linux/arm64') export ARCH='arm64' ;; \
     esac \
     && curl -o \
-        /app/kepubify -L \
+        kepubify -L \
         "https://github.com/pgaskin/kepubify/releases/download/v${VERSION}/kepubify-linux-${ARCH}" \
-    && chmod -R 755 /app/kepubify
+    && chmod -R 755 kepubify
 
 CMD [ "/app/kepubify" ]
 

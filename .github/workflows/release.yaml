@@ -13,7 +13,7 @@ on:
       - reopened
   workflow_dispatch:
     inputs:
-      apps:
+      app:
         description: Application Name
         required: true
         type: string

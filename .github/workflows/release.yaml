@@ -73,7 +73,7 @@ jobs:
             const input =
               context.eventName === 'workflow_dispatch'
                 ? '${{ inputs.app }}'
-                : '${{ needs.pre-job.outputs.all_changed_and_modified_files }}';
+                : '${{ needs.pre-job.outputs.changed-files }}';
 
             const appsToBuild = input.split(' ').filter(Boolean);
             const output = [];

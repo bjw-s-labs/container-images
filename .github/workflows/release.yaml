@@ -64,18 +64,16 @@ jobs:
       - name: Extract Metadata
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         id: apps
+        env:
+          APPS_TO_BUILD: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.pre-job.outputs.changed-files), ' ') }}
         with:
           script: |
             const fs = require('fs');
             const yaml = require('yaml');
             const cwd = process.cwd();
+            const { APPS_TO_BUILD } = process.env;
 
-            const input =
-              context.eventName === 'workflow_dispatch'
-                ? '${{ inputs.app }}'
-                : '${{ needs.pre-job.outputs.changed-files }}';
-
-            const appsToBuild = input.split(' ').filter(Boolean);
+            const appsToBuild = APPS_TO_BUILD.split(' ').filter(Boolean);
             const output = [];
 
             appsToBuild.forEach((app) => {
@@ -103,7 +101,7 @@ jobs:
     uses: ./.github/workflows/workflow_call-build_image.yaml
     permissions:
       attestations: write
-      contents: read
+      contents: write
       id-token: write
       packages: write
       security-events: write

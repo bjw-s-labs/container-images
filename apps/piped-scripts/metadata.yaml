@@ -1,6 +1,0 @@
----
-name: piped-scripts
-version: 0.0.2
-platforms:
-  - linux/amd64
-  - linux/arm64

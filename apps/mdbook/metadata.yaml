@@ -1,6 +1,6 @@
 ---
 name: mdbook
 # renovate: depName=rust-lang/mdBook
-version: 0.4.48
+version: 0.4.49
 platforms:
   - linux/amd64

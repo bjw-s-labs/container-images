@@ -1,7 +1,7 @@
 ---
 name: scrypted
 # renovate: depName=koush/scrypted
-version: 0.137.0
+version: 0.139.0
 platforms:
   - linux/amd64
   - linux/arm64

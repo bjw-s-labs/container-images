@@ -12,7 +12,7 @@ RUN \
   && pnpm install --prefer-offline \
   && pnpm build
 
-FROM ghcr.io/bjw-s-labs/caddy-scratch:2.9.1@sha256:2d67c97edae1a7d6fcadbd668136f6822444b9b1cf3f096f5f71fe1121c00555
+FROM ghcr.io/bjw-s-labs/caddy-scratch:2.10.0@sha256:0dc7e15fdf8ad46400406b37db6fbff50bee38af8b778a100d786ed96af55bd6
 LABEL org.opencontainers.image.source="https://github.com/CorentinTh/it-tools"
 COPY --chown=1000:1000 --from=build /app/dist/ /app
 CMD ["file-server", "--root", "/app", "--listen", ":8080"]

@@ -1,7 +1,7 @@
 ---
 name: getmail
 # renovate: depName=getmail6/getmail6 versioning=loose
-version: 6.19.07
+version: 6.19.08
 platforms:
   - linux/amd64
   - linux/arm64

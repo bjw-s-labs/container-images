@@ -1,6 +1,6 @@
 ARG VERSION
 
-FROM rust:1.86.0-slim AS build
+FROM rust:1.87.0-slim AS build
 
 ENV CARGO_INSTALL_ROOT=/usr/local/
 ENV CARGO_TARGET_DIR=/tmp/target/

@@ -143,6 +143,7 @@ jobs:
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true
+          fallback: true
 
       - name: Export Digest
         id: digest

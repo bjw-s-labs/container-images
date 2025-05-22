@@ -15,7 +15,7 @@ if [[ -d /goss ]]; then
   export RUN_BUILTIN_REDIS="true"
 fi
 
-cd /usr/src/app
+cd /app
 
 echo "Preparing database..."
 bundle exec rails db:prepare:with_data

@@ -7,8 +7,9 @@ RUN apk add --no-cache \
         bash \
         catatonit \
         valkey \
-    && chmod -R 777 /usr/src/app/tmp \
-    && chmod -R 777 /usr/src/app/log
+    && mv /usr/src/app /app \
+    && chmod -R 777 /app/tmp \
+    && chmod -R 777 /app/log
 
 USER nobody:nogroup
 WORKDIR /data

@@ -6,7 +6,6 @@ USER root
 RUN apk add --no-cache \
         bash \
         catatonit \
-        curl \
         valkey \
     && chmod -R 777 /usr/src/app/tmp \
     && chmod -R 777 /usr/src/app/log

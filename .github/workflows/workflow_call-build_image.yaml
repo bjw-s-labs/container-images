@@ -139,7 +139,7 @@ jobs:
         uses: Noelware/docker-manifest-action@65660a0ebf876a67d8374f1ff4c3ae5b7a3aeb50 # 1.0.0
         with:
           inputs: ${{ join(fromJSON(steps.meta.outputs.json).tags, ',') }}
-          images: >-
+          tags: >-
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.amd64 }},
             ghcr.io/${{ github.repository_owner }}/${{ inputs.app }}@${{ needs.build.outputs.arm64 }}
           push: true

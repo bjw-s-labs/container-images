@@ -1,4 +1,4 @@
 ---
 name: manyfold
-# renovate: depName=manyfold3d/manyfold extractVersion": "^v(?<version>.*)$
-version: 0.104.1
+# renovate: depName=manyfold3d/manyfold
+version: 0.110.1

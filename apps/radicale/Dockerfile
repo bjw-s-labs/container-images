@@ -42,7 +42,7 @@ RUN \
         /root/.cargo \
         /tmp/*
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 
 VOLUME [ "/config" "/data" ]
 CMD ["/entrypoint.sh"]

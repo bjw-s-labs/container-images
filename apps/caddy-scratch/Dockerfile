@@ -12,7 +12,6 @@ ENV \
     XDG_CONFIG_HOME=/config/rendered \
     XDG_DATA_HOME=/config/data
 
-USER nobody:nogroup
 WORKDIR /config/rendered
 WORKDIR /config/data
 WORKDIR /config

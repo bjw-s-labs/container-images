@@ -65,7 +65,7 @@ RUN \
 
 COPY --from=ghcr.io/cdloh/calibre-bare:8.4.0 / /opt/calibre
 COPY --from=ghcr.io/bjw-s-labs/kepubify:4.0.4 /app/kepubify /opt/kepubify/kepubify
-COPY ./entrypoint.sh /entrypoint.sh
+COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 

@@ -1,27 +1,19 @@
-FROM docker.io/library/python:3.13-alpine
+FROM docker.io/library/python:3.13-alpine3.21
 
 ARG VERSION
-ARG TARGETPLATFORM
-ARG TARGETARCH
-ARG TARGETOS
 
 ENV \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1
+    UV_NO_CACHE=true \
+    UV_SYSTEM_PYTHON=true
 
 ENV \
     RADICALE_CONFIG_FILE=/config/config
-
-LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
-LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
-LABEL dev.bjw-s.image.target_os=$TARGETOS
-LABEL org.opencontainers.image.source="https://github.com/Kozea/Radicale"
-
-COPY ./config /app/config.default
 
 USER root
 
@@ -30,19 +22,26 @@ RUN \
     apk add --no-cache \
         bash \
         ca-certificates \
-    && apk add --no-cache --virtual=build-dependencies \
-        build-base \
-        linux-headers \
-    && pip install --upgrade pip uv \
-    && uv pip install --system radicale==$VERSION passlib[bcrypt] \
-    && chmod -R 755 /app \
-    && apk del --purge build-dependencies \
+        catatonit \
+    && \
+    pip install uv \
+    && uv pip install \
+        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
+        radicale==$VERSION \
+        passlib[bcrypt] \
+    && pip uninstall --yes uv \
     && rm -rf \
         /root/.cache \
         /root/.cargo \
         /tmp/*
 
-COPY ./entrypoint.sh /entrypoint.sh
+COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 
-VOLUME [ "/config" "/data" ]
-CMD ["/entrypoint.sh"]
+USER nobody:nogroup
+
+COPY --chown=65534:65534 ./defaults/config /app/config.default
+
+WORKDIR /config
+WORKDIR /data
+VOLUME [ "/config", "data" ]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]

@@ -1,7 +1,0 @@
-{
-  "recommendations": [
-    "fnando.linter",
-    "redhat.vscode-yaml",
-    "ms-azuretools.vscode-docker"
-  ]
-}

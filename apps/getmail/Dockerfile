@@ -1,23 +1,16 @@
-FROM docker.io/library/python:3.13-alpine
-
-ARG TARGETPLATFORM
-ARG TARGETARCH
-ARG TARGETOS
+FROM docker.io/library/python:3.13-alpine3.21
 
 ARG VERSION
 
-LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
-LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
-LABEL dev.bjw-s.image.target_os=$TARGETOS
-LABEL org.opencontainers.image.source="https://github.com/getmail6/getmail6"
-
 ENV \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1
+    UV_NO_CACHE=true \
+    UV_SYSTEM_PYTHON=true
 
 USER root
 
@@ -25,6 +18,7 @@ USER root
 RUN apk add --no-cache \
         bash \
         ca-certificates \
+        catatonit \
     && \
     apk add --no-cache --virtual=.build-deps \
         build-base \
@@ -32,14 +26,20 @@ RUN apk add --no-cache \
         openssl-dev \
         musl-dev \
     && \
-    pip install --upgrade pip uv \
-    && \
-    uv pip install --system --no-cache-dir getmail6=="${VERSION}" \
+    pip install uv \
+    && uv pip install \
+        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
+        getmail6=="${VERSION}" \
+    && pip uninstall --yes uv \
     && apk del --purge .build-deps \
     && rm -rf \
         /root/.cache \
         /root/.cargo \
         /tmp/*
 
+USER nobody:nogroup
+WORKDIR /config
 VOLUME [ "/config" ]
-CMD [ "/usr/local/bin/getmail", "--getmaildir", "/config" ]
+
+ENTRYPOINT [ "/usr/bin/catatonit", "--", "/usr/local/bin/getmail" ]
+CMD ["--getmaildir", "/config" ]

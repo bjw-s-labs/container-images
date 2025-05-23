@@ -1,0 +1,35 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Application Tests
+description: Takes an app, container image and token then runs container tests
+
+inputs:
+  app:
+    description: Application Name
+    required: true
+  image:
+    description: Image
+    required: true
+  token:
+    description: GitHub Token
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Actions Script Path
+      shell: bash
+      run: |
+        echo "${{ github.action_path }}" >> $GITHUB_PATH
+
+    - name: Setup Testing Tools
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        setup.sh "${{ inputs.app }}"
+
+    - name: Run Tests
+      shell: bash
+      run: |
+        run.sh "${{ inputs.app }}" "${{ inputs.image }}"

@@ -1,7 +1,0 @@
----
-name: it-tools
-# renovate: depName=CorentinTh/it-tools versioning=regex:^(v?(?<major>\d+)\.(?<minor>\d+)\.(?<patch>\d+)-(?<revision>.*))$
-version: 2024.10.22-7ca5933
-platforms:
-  - linux/amd64
-  - linux/arm64

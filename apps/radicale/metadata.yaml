@@ -1,7 +1,0 @@
----
-name: radicale
-# renovate: depName=Kozea/Radicale
-version: 3.5.3
-platforms:
-  - linux/amd64
-  - linux/arm64

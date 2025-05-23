@@ -1,7 +1,0 @@
----
-name: gh-safe-settings
-# renovate: depName=github/safe-settings
-version: 2.1.17
-platforms:
-  - linux/amd64
-  - linux/arm64

@@ -5,7 +5,7 @@ variable "APP" {
 }
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=depName=caddyserver/caddy
+  // renovate: datasource=github-releases depName=caddyserver/caddy
   default = "2.10.0"
 }
 

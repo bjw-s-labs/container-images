@@ -1,27 +1,19 @@
-FROM docker.io/library/python:3.12-alpine
+FROM docker.io/library/python:3.12-alpine3.21
 
-ARG TARGETPLATFORM
-ARG TARGETARCH
-ARG TARGETOS
-
-ARG VERSION="0.6.23"
-
-LABEL dev.bjw-s.image.target_platform=$TARGETPLATFORM
-LABEL dev.bjw-s.image.target_architecture=$TARGETARCH
-LABEL dev.bjw-s.image.target_os=$TARGETOS
-LABEL org.opencontainers.image.source="https://github.com/janeczku/calibre-web"
+ARG VERSION
 
 ENV \
+    PIP_BREAK_SYSTEM_PACKAGES=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_ROOT_USER_ACTION=ignore \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1
+    UV_NO_CACHE=true \
+    UV_SYSTEM_PYTHON=true
 
 ENV \
-    CALIBRE_DBPATH=/config \
-    UMASK="0002"
+    CALIBRE_DBPATH=/config
 
 USER root
 
@@ -30,6 +22,7 @@ RUN \
     apk add --no-cache \
         bash \
         ca-certificates \
+        catatonit \
         ghostscript \
         libc6-compat \
         libldap \
@@ -53,11 +46,15 @@ RUN \
     && curl -fsSL https://github.com/janeczku/calibre-web/archive/${VERSION}.tar.gz \
         | tar xzf - -C /app --strip-components=1 \
     # Install required python packages
-    && pip install --upgrade pip uv \
+    && \
+    pip install uv \
     # TODO: Remove CFLAGS when netifaces installs without it again
-    && CFLAGS="-Wno-int-conversion" uv pip install --system --requirement /app/requirements.txt \
-    && uv pip install --system --requirement /app/optional-requirements.txt \
+    && CFLAGS="-Wno-int-conversion" uv pip install \
+        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
+        --requirement /app/requirements.txt \
+        --requirement /app/optional-requirements.txt \
     # Cleanup
+    && pip uninstall --yes uv \
     && apk del --purge .build-deps \
     && rm -rf \
         /root/.cache \
@@ -74,4 +71,6 @@ USER nobody:nogroup
 
 WORKDIR /config
 VOLUME [ "/config" ]
-CMD ["/entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
+
+LABEL org.opencontainers.image.source="https://github.com/janeczku/calibre-web"

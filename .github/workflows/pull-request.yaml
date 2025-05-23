@@ -1,0 +1,54 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Pull Request
+
+on:
+  merge_group:
+  pull_request:
+
+jobs:
+  prepare:
+    name: Prepare
+    runs-on: ubuntu-latest
+    outputs:
+      changed-files: ${{ steps.changed-files.outputs.changed_files }}
+    steps:
+      - name: Get changed files
+        id: changed-files
+        uses: bjw-s-labs/action-changed-files@930cef8463348e168cab7235c47fe95a7a235f65 # v0.3.3
+        with:
+          path: apps
+          include_only_directories: true
+          max_depth: 1
+
+  build:
+    if: ${{ needs.prepare.outputs.changed-files != '[]' }}
+    needs: ["prepare"]
+    name: Build ${{ matrix.app }}
+    uses: ./.github/workflows/app-builder.yaml
+    permissions:
+      contents: read
+      packages: read
+    secrets: inherit
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}
+      fail-fast: false
+      max-parallel: 4
+    with:
+      app: ${{ matrix.app }}
+      release: false
+
+  status:
+    if: ${{ !cancelled() }}
+    needs: ["build"]
+    name: Build Success
+    runs-on: ubuntu-latest
+    steps:
+      - name: Any jobs failed?
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1
+
+      - name: All jobs passed or skipped?
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"

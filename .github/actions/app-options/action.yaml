@@ -1,0 +1,45 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: Application Options
+description: Takes an app and returns various fields from its docker-bake.hcl file
+
+inputs:
+  app:
+    description: Application Name
+    required: true
+
+outputs:
+  platforms:
+    description: Platforms
+    value: ${{ steps.options.outputs.platforms }}
+  source:
+    description: Source
+    value: ${{ steps.options.outputs.source }}
+  version:
+    description: Version
+    value: ${{ steps.options.outputs.version }}
+
+runs:
+  using: composite
+  steps:
+    - name: Application Options
+      id: options
+      shell: bash
+      working-directory: ./apps/${{ inputs.app }}
+      run: |
+        PLATFORMS=$(\
+            docker buildx bake image-all --print --progress=quiet \
+                | jq --raw-output --compact-output '.target."image-all".platforms' \
+        )
+        SOURCE=$(\
+            docker buildx bake --list type=variables,format=json --progress=quiet \
+                | jq --raw-output '.[] | select(.name == "SOURCE") | .value' \
+        )
+        VERSION=$(\
+            docker buildx bake --list type=variables,format=json --progress=quiet \
+                | jq --raw-output '.[] | select(.name == "VERSION") | .value' \
+        )
+
+        echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
+        echo "source=${SOURCE}" >> $GITHUB_OUTPUT
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT

@@ -10,5 +10,3 @@ ADD --chown=65534:65534 --chmod=555 https://github.com/pgaskin/kepubify/releases
 WORKDIR /app
 
 ENTRYPOINT [ "/app/kepubify" ]
-
-LABEL org.opencontainers.image.source="https://github.com/pgaskin/kepubify"

@@ -43,5 +43,3 @@ VOLUME [ "/config" ]
 
 ENTRYPOINT [ "/usr/bin/catatonit", "--", "/usr/local/bin/getmail" ]
 CMD ["--getmaildir", "/config" ]
-
-LABEL org.opencontainers.image.source="https://github.com/getmail6/getmail6"

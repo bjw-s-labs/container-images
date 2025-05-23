@@ -1,5 +1,3 @@
-node_modules/
-package-lock.json
-matrix.json
-
-.goss
+.bin
+.private
+docker-bake.json

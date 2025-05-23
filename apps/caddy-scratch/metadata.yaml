@@ -1,7 +1,0 @@
----
-name: caddy-scratch
-# renovate: depName=caddyserver/caddy
-version: 2.10.0
-platforms:
-  - linux/amd64
-  - linux/arm64

@@ -1,7 +1,0 @@
----
-name: calibre-web
-# renovate: depName=janeczku/calibre-web
-version: 0.6.24
-platforms:
-  - linux/amd64
-  - linux/arm64

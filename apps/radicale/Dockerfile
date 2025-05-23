@@ -39,11 +39,9 @@ COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup
 
-COPY --chown=65534:65534 ./config /app/config.default
+COPY --chown=65534:65534 ./defaults/config /app/config.default
 
 WORKDIR /config
 WORKDIR /data
 VOLUME [ "/config", "data" ]
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/Kozea/Radicale"

@@ -17,5 +17,3 @@ WORKDIR /config/data
 WORKDIR /config
 
 ENTRYPOINT ["/caddy"]
-
-LABEL org.opencontainers.image.source="https://github.com/caddyserver/caddy"

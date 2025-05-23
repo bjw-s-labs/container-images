@@ -1,9 +1,5 @@
 target "docker-metadata-action" {}
 
-variable "APP" {
-  default = "radicale"
-}
-
 variable "VERSION" {
   // renovate: datasource=github-releases depName=Kozea/Radicale
   default = "3.5.3"

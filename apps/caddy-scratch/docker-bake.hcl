@@ -1,9 +1,5 @@
 target "docker-metadata-action" {}
 
-variable "APP" {
-  default = "caddy-scratch"
-}
-
 variable "VERSION" {
   // renovate: datasource=github-releases depName=caddyserver/caddy
   default = "2.10.0"
@@ -30,7 +26,6 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
-  tags   = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

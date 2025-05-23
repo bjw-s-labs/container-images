@@ -1,9 +1,5 @@
 target "docker-metadata-action" {}
 
-variable "APP" {
-  default = "gluetun-qb-port-sync"
-}
-
 variable "VERSION" {
   default = "0.0.4"
 }

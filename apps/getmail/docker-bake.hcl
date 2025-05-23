@@ -1,9 +1,5 @@
 target "docker-metadata-action" {}
 
-variable "APP" {
-  default = "getmail"
-}
-
 variable "VERSION" {
   // renovate: datasource=github-releases depName=getmail6/getmail6 versioning=loose
   default = "6.19.08"

@@ -1,9 +1,5 @@
 target "docker-metadata-action" {}
 
-variable "APP" {
-  default = "scrypted"
-}
-
 variable "VERSION" {
   // renovate: datasource=github-releases depName=koush/scrypted
   default = "0.139.0"

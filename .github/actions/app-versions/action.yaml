@@ -52,7 +52,7 @@ runs:
           }
 
           const upstreamVersion = '${{ inputs.upstream-version }}';
-          const strictSemverRegex = /^v?(\d+(\.\d+)?(\.\d+)?)/;
+          const strictSemverRegex = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
           const parsedVersion = strictSemverRegex.exec(upstreamVersion);
           const isValidSemver = parsedVersion !== null;

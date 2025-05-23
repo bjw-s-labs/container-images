@@ -17,5 +17,3 @@ VOLUME ["/data"]
 
 COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
-
-LABEL org.opencontainers.image.source="https://github.com/manyfold3d/manyfold"

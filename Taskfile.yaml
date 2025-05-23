@@ -32,7 +32,7 @@ tasks:
       - rsync -a --ignore-existing --progress {{.ROOT_DIR}}/apps/{{.APP}}/ {{.WORK_DIR}}
       - docker buildx bake --no-cache --metadata-file docker-bake.json --load
       - |
-        IMAGE=$(jq --raw-output '."image-local"."image.name" // ."image-local"."containerimage.config.digest"' docker-bake.json)
+        IMAGE=$(jq --raw-output '."image-local"."image.name"' docker-bake.json)
         case "{{.TEST_TOOL}}" in
             "cst")
                 container-structure-test test --image "${IMAGE}" --config tests.yaml
@@ -41,7 +41,7 @@ tasks:
                 {{.BIN_DIR}}/dgoss/dgoss run "${IMAGE}"
                 ;;
         esac
-      # - defer: rm -rf {{.WORK_DIR}}
+      - defer: rm -rf {{.WORK_DIR}}
     env:
       GOSS_FILE: tests.yaml
       GOSS_OPTS: --retry-timeout 60s --sleep 1s

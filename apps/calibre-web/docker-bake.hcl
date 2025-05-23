@@ -1,5 +1,9 @@
 target "docker-metadata-action" {}
 
+variable "APP" {
+  default = "calibre-web"
+}
+
 variable "VERSION" {
   // renovate: datasource=github-releases depName=janeczku/calibre-web
   default = "0.6.24"
@@ -26,6 +30,7 @@ target "image" {
 target "image-local" {
   inherits = ["image"]
   output = ["type=docker"]
+  tags = ["${APP}:${VERSION}"]
 }
 
 target "image-all" {

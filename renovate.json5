@@ -18,17 +18,34 @@
   ],
   packageRules: [
     {
-      description: "Separate PR's per app",
-      matchDatasources: ["docker"],
+      description: ["Release Rules for Application Updates"],
       additionalBranchPrefix: "{{parentDir}}-",
+      commitMessageExtra: "( {{currentVersion}} → {{newVersion}} )",
+      commitMessageTopic: "{{depName}}",
+      matchFileNames: ["**/docker-bake.hcl", "**/Dockerfile"],
       semanticCommitScope: "{{parentDir}}",
+      semanticCommitType: "release",
     },
     {
-      description: "Automerge image updates if tests pass",
-      matchFileNames: ["apps/**/Dockerfile", "apps/**/metadata.yaml"],
+      description: ["Auto-merge Application Updates"],
+      matchFileNames: ["**/docker-bake.hcl"],
       automerge: true,
       automergeType: "pr",
       ignoreTests: false,
+    },
+    {
+      description: ["Allowed Alpine Version for Base Images"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: ["/alpine/"],
+      allowedVersions: "/3\\.21/",
+    },
+    {
+      description: ["Allowed Python Version for Base Images"],
+      matchDatasources: ["docker"],
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: ["/python/"],
+      allowedVersions: "/3\\.13-alpine3\\.21/",
     },
   ],
 }

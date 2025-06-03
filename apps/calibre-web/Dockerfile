@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.12-alpine3.21
+FROM docker.io/library/python:3.12-alpine3.22
 
 ARG VERSION
 
@@ -10,7 +10,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 ENV \
     CALIBRE_DBPATH=/config
@@ -50,7 +51,6 @@ RUN \
     pip install uv \
     # TODO: Remove CFLAGS when netifaces installs without it again
     && CFLAGS="-Wno-int-conversion" uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
         --requirement /app/requirements.txt \
         --requirement /app/optional-requirements.txt \
     # Cleanup

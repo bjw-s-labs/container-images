@@ -1,0 +1,9 @@
+---
+schemaVersion: "2.0.0"
+fileExistenceTests:
+  - name: crd-extractor
+    path: /app/crd-extractor.sh
+    shouldExist: true
+  - name: openapi2jsonschema.py
+    path: /app/openapi2jsonschema.py
+    shouldExist: true

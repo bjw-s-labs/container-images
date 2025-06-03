@@ -1,4 +1,4 @@
-FROM docker.io/library/python:3.13-alpine3.21
+FROM docker.io/library/python:3.13-alpine3.22
 
 ARG VERSION
 
@@ -10,7 +10,8 @@ ENV \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true
+    UV_SYSTEM_PYTHON=true \
+    UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 ENV \
     RADICALE_CONFIG_FILE=/config/config
@@ -26,7 +27,6 @@ RUN \
     && \
     pip install uv \
     && uv pip install \
-        --find-links "https://wheel-index.linuxserver.io/alpine-3.21/" \
         radicale==$VERSION \
         passlib[bcrypt] \
     && pip uninstall --yes uv \

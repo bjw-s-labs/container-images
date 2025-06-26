@@ -50,7 +50,7 @@ jobs:
           private-key: ${{ secrets.LAB_ASSISTANT_APP_KEY }}
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@fb28c2b6339dcd94da6e4cbcbc5e888961f6f8c3 # v3.9.0
+        uses: sigstore/cosign-installer@398d4b0eeef1380460a10c8013a76f728fb906ac # v3.9.1
 
       - name: Install regctl
         uses: regclient/actions/regctl-installer@0a960cee89b1ef446f3d33b58064083fdd7728cb # main

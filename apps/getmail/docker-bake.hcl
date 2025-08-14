@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=getmail6/getmail6 versioning=loose
-  default = "6.19.08"
+  default = "6.19.09"
 }
 
 variable "SOURCE" {

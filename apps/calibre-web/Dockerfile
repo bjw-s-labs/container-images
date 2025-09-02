@@ -1,8 +1,9 @@
-FROM docker.io/library/python:3.12-alpine3.22
+FROM docker.io/library/python:3.13-alpine3.22
 
 ARG VERSION
 
 ENV \
+    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
     PIP_BREAK_SYSTEM_PACKAGES=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     PIP_NO_CACHE_DIR=1 \
@@ -53,6 +54,8 @@ RUN \
     && CFLAGS="-Wno-int-conversion" uv pip install \
         --requirement /app/requirements.txt \
         --requirement /app/optional-requirements.txt \
+    # TODO: Remove when new calibre-web version is released
+    && uv pip install pyopenssl --upgrade \
     # Cleanup
     && pip uninstall --yes uv \
     && apk del --purge .build-deps \

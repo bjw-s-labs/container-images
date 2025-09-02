@@ -1,12 +1,14 @@
 ---
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
-version: '3'
+version: "3"
 
-set: [pipefail]
-shopt: [globstar]
+set:
+  - pipefail
+shopt:
+  - globstar
 
 vars:
-  BIN_DIR: '{{.ROOT_DIR}}/.bin'
+  BIN_DIR: "{{.ROOT_DIR}}/.bin"
 
 tasks:
 
@@ -20,7 +22,7 @@ tasks:
       - mkdir -p {{.BIN_DIR}}/{goss,dgoss}
       - gh release download --repo goss-org/goss --skip-existing --pattern "*-linux-{{ARCH}}" --output {{.BIN_DIR}}/goss/goss
       - gh release download --repo goss-org/goss --skip-existing --pattern "dgoss" --output {{.BIN_DIR}}/goss/dgoss
-      - chmod +x {{.BIN_DIR}}/goss/goss {{.BIN_DIR}}/dgoss/dgoss
+      - chmod +x {{.BIN_DIR}}/goss/goss {{.BIN_DIR}}/goss/dgoss
     preconditions:
       - which gh
 
@@ -38,16 +40,16 @@ tasks:
                 container-structure-test test --image "${IMAGE}" --config tests.yaml
                 ;;
             "goss")
-                {{.BIN_DIR}}/dgoss/dgoss run "${IMAGE}"
+                {{.BIN_DIR}}/goss/dgoss run "${IMAGE}"
                 ;;
         esac
       - defer: rm -rf {{.WORK_DIR}}
     env:
       GOSS_FILE: tests.yaml
       GOSS_OPTS: --retry-timeout 60s --sleep 1s
-      GOSS_PATH: '{{.BIN_DIR}}/goss/goss'
+      GOSS_PATH: "{{.BIN_DIR}}/goss/goss"
     vars:
-      APP: '{{index .MATCH 0}}'
+      APP: "{{index .MATCH 0}}"
       TEST_TOOL:
         sh: yq --exit-status '.schemaVersion' {{.ROOT_DIR}}/apps/{{.APP}}/tests.yaml &>/dev/null && echo "cst" || echo "goss"
       WORK_DIR:
@@ -63,8 +65,9 @@ tasks:
     cmds:
       - gh workflow run release.yaml -f app={{.APP}} -f release={{.RELEASE}}
     vars:
-      APP: '{{index .MATCH 0}}'
-      RELEASE: '{{.RELEASE | default "false"}}'
+      APP: "{{index .MATCH 0}}"
+      RELEASE: |-
+        {{.RELEASE | default "false"}}
     preconditions:
       - gh auth status
       - test -f {{.ROOT_DIR}}/.github/workflows/release.yaml

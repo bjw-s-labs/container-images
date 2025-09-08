@@ -3,4 +3,4 @@
 "aqua:go-task/task" = "3.44.1"
 "aqua:GoogleContainerTools/container-structure-test" = "1.19.3"
 "aqua:jqlang/jq" = "1.7.1"
-"aqua:mikefarah/yq" = "4.47.1"
+"aqua:mikefarah/yq" = "4.47.2"

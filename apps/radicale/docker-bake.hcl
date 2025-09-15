@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=Kozea/Radicale
-  default = "3.5.5"
+  default = "3.5.6"
 }
 
 variable "SOURCE" {

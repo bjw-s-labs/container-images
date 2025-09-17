@@ -1,6 +1,6 @@
 [tools]
 "aqua:cli/cli" = "2.79.0"
-"aqua:go-task/task" = "3.45.3"
+"aqua:go-task/task" = "3.45.4"
 "aqua:GoogleContainerTools/container-structure-test" = "1.19.3"
 "aqua:jqlang/jq" = "1.7.1"
 "aqua:mikefarah/yq" = "4.47.2"

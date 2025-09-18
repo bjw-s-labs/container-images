@@ -14,8 +14,8 @@ jobs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
       - name: Get changed files
-        id: changed-files
         uses: bjw-s-labs/action-changed-files@930cef8463348e168cab7235c47fe95a7a235f65 # v0.3.3
+        id: changed-files
         with:
           path: apps
           include_only_directories: true
@@ -23,12 +23,15 @@ jobs:
 
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
-    needs: ["prepare"]
     name: Build ${{ matrix.app }}
+    needs:
+      - prepare
     uses: ./.github/workflows/app-builder.yaml
     permissions:
+      attestations: write
       contents: read
-      packages: read
+      id-token: write
+      packages: write
     secrets: inherit
     strategy:
       matrix:
@@ -41,14 +44,17 @@ jobs:
 
   status:
     if: ${{ !cancelled() }}
-    needs: ["build"]
     name: Build Success
+    needs:
+      - build
     runs-on: ubuntu-latest
     steps:
       - name: Any jobs failed?
         if: ${{ contains(needs.*.result, 'failure') }}
-        run: exit 1
+        run: |-
+          exit 1
 
       - name: All jobs passed or skipped?
         if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"
+        run: |-
+          echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"

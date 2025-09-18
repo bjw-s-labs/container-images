@@ -4,7 +4,7 @@ name: Retry Release
 
 on:
   schedule:
-    - cron: "30 1 * * *"
+    - cron: 30 1 * * *
   workflow_dispatch:
 
 permissions:
@@ -30,7 +30,8 @@ jobs:
     if: ${{ needs.apps.outputs.apps != '[]' }}
     name: Retry Release
     runs-on: ubuntu-latest
-    needs: ["apps"]
+    needs:
+      - apps
     strategy:
       matrix:
         app: ${{ fromJSON(needs.apps.outputs.apps) }}
@@ -56,16 +57,16 @@ jobs:
         uses: regclient/actions/regctl-installer@495560f7c3b510b71ff9f22d6c667c2c429b8e45 # main
 
       - name: Get Bake Options
-        id: app-options
         uses: ./.github/actions/app-options
+        id: app-options
         with:
           app: ${{ matrix.app }}
 
-      - name: Get Container Registry Version
+      - name: Get App Registry Version
         id: registry
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: |
+        run: |-
           if ! version=$(regctl image inspect ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:rolling \
               | jq --raw-output '.config.Labels["org.opencontainers.image.version"]' 2>/dev/null) || [[ -z "${version}" ]];
           then
@@ -87,7 +88,7 @@ jobs:
         name: Retry Release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
-        run: | # zizmor: ignore[template-injection]
+        run: |- # zizmor: ignore[template-injection]
           gh workflow run release.yaml \
               --repo ${{ github.repository }} \
               -f app=${{ matrix.app }} \
@@ -96,7 +97,7 @@ jobs:
           {
               echo '## Retrying Release'
               echo
-              echo '| Container Name | Actual Version | Expected Version |'
-              echo '|----------------|------------------|----------------|'
+              echo '| App Name | Actual Version | Expected Version |'
+              echo '|----------|----------------|------------------|'
               echo '| `${{ matrix.app }}` | `${{ steps.registry.outputs.version }}` | `${{ steps.app-options.outputs.version }}` |'
           } >> $GITHUB_STEP_SUMMARY

@@ -4,13 +4,15 @@ name: Release
 
 on:
   push:
-    branches: ["main"]
-    paths: ["apps/**"]
+    branches:
+      - main
+    paths:
+      - apps/**
   workflow_dispatch:
     inputs:
       app:
         type: string
-        description: Application Name
+        description: App Name
         required: true
       release:
         type: boolean
@@ -26,8 +28,8 @@ jobs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
       - name: Get Changed Files
-        id: changed-files
         uses: bjw-s-labs/action-changed-files@930cef8463348e168cab7235c47fe95a7a235f65 # v0.3.3
+        id: changed-files
         with:
           path: apps
           include_only_directories: true
@@ -35,8 +37,9 @@ jobs:
 
   changed:
     if: ${{ needs.prepare.outputs.changed-files != '[]' || github.event_name == 'workflow_dispatch' }}
-    needs: ["prepare"]
     name: Get Changed Apps
+    needs:
+      - prepare
     runs-on: ubuntu-latest
     outputs:
       apps: ${{ steps.apps.outputs.apps }}
@@ -47,7 +50,7 @@ jobs:
         env:
           APPS: ${{ github.event_name == 'workflow_dispatch' && inputs.app || join(fromJSON(needs.prepare.outputs.changed-files), ' ') }}
         with:
-          script: |
+          script: |-
             const { APPS } = process.env;
             const appsToBuild = APPS.split(' ').filter(Boolean);
             core.setOutput('apps', JSON.stringify(appsToBuild));
@@ -56,8 +59,9 @@ jobs:
 
   build:
     if: ${{ needs.changed.outputs.apps != '[]' }}
-    needs: ["changed"]
     name: Build ${{ matrix.app }}
+    needs:
+      - changed
     uses: ./.github/workflows/app-builder.yaml
     permissions:
       attestations: write
@@ -77,14 +81,17 @@ jobs:
 
   status:
     if: ${{ !cancelled() }}
-    needs: ["build"]
     name: Build Success
+    needs:
+      - build
     runs-on: ubuntu-latest
     steps:
       - name: Any jobs failed?
         if: ${{ contains(needs.*.result, 'failure') }}
-        run: exit 1
+        run: |-
+          exit 1
 
       - name: All jobs passed or skipped?
         if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"
+        run: |-
+          echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"

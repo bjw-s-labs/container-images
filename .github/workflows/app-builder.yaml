@@ -60,6 +60,7 @@ jobs:
             type=semver,pattern={{major}},value=${{ steps.app-versions.outputs.semantic }},enable=${{ steps.app-versions.outputs.is-valid-semver && inputs.release }}
             type=raw,value=${{ steps.app-versions.outputs.raw }},enable=${{ steps.app-versions.outputs.is-valid-semver && inputs.release }}
             type=raw,value=rolling,enable=${{ inputs.release }}
+            type=raw,value=sandbox,enable=${{ ! inputs.release }}
 
       - name: Upload Bake Metadata
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

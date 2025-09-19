@@ -14,6 +14,11 @@ on:
         description: Release
         required: true
 
+permissions:
+  contents: read
+  packages: write
+  id-token: write
+
 jobs:
   plan:
     name: Plan

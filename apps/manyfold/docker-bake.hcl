@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=manyfold3d/manyfold
-  default = "0.123.2"
+  default = "0.124.0"
 }
 
 variable "SOURCE" {

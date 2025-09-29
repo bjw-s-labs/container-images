@@ -24,6 +24,7 @@ RUN \
         catatonit \
     && uv sync --no-dev \
     && chown -R root:root /app && chmod -R 755 /app \
+    && rm /bin/uv /bin/uvx \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
 USER nobody:nogroup

@@ -3,14 +3,7 @@ FROM docker.io/library/python:3.13-alpine3.22
 ARG VERSION
 
 ENV \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true \
     UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
 
 ENV \
@@ -18,28 +11,23 @@ ENV \
 
 USER root
 
-#hadolint ignore=DL3018,DL3013
+COPY --from=ghcr.io/astral-sh/uv:0.8.22@sha256:9874eb7afe5ca16c363fe80b294fe700e460df29a55532bbfea234a0f12eddb1 /uv /uvx /bin/
+ADD --chmod=755 ./entrypoint.sh /entrypoint.sh
+ADD --keep-git-dir=false https://github.com/Kozea/Radicale.git#v${VERSION} /app
+ADD --chown=65534:65534 ./defaults/config /app/config.default
+
+WORKDIR /app
+
 RUN \
     apk add --no-cache \
-        bash \
         ca-certificates \
         catatonit \
-    && \
-    pip install uv \
-    && uv pip install \
-        radicale==$VERSION \
-        passlib[bcrypt] \
-    && pip uninstall --yes uv \
-    && rm -rf \
-        /root/.cache \
-        /root/.cargo \
-        /tmp/*
-
-COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
+    && uv sync --no-dev \
+    && chown -R root:root /app && chmod -R 755 /app \
+    && rm -rf /root/.cache /root/.cargo /tmp/*
 
 USER nobody:nogroup
-
-COPY --chown=65534:65534 ./defaults/config /app/config.default
+ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /config
 WORKDIR /data

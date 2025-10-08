@@ -12,6 +12,6 @@ func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/getmail:rolling")
 
 	t.Run("Check /usr/local/bin/getmail exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/getmail")
+		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/getmail", nil)
 	})
 }

@@ -14,6 +14,6 @@ func Test(t *testing.T) {
 	t.Run("HTTP endpoint test", func(t *testing.T) {
 		testhelpers.TestHTTPEndpoint(t, ctx, image, testhelpers.HTTPTestConfig{
 			Port: "5232",
-		})
+		}, nil)
 	})
 }

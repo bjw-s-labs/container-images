@@ -12,10 +12,10 @@ func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/k8s-crd-extractor:rolling")
 
 	t.Run("Check /app/crd-extractor.sh exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/app/crd-extractor.sh")
+		testhelpers.TestFileExists(t, ctx, image, "/app/crd-extractor.sh", nil)
 	})
 
 	t.Run("Check /app/openapi2jsonschema.py exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/app/openapi2jsonschema.py")
+		testhelpers.TestFileExists(t, ctx, image, "/app/openapi2jsonschema.py", nil)
 	})
 }

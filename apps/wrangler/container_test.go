@@ -12,6 +12,6 @@ func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/wrangler:rolling")
 
 	t.Run("Check /usr/local/bin/wrangler exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/wrangler")
+		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/wrangler", nil)
 	})
 }

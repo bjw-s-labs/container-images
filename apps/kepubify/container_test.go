@@ -11,7 +11,7 @@ func Test(t *testing.T) {
 	ctx := context.Background()
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/kepubify:rolling")
 
-	t.Run("Check /app/kepubify can run", func(t *testing.T) {
-		testhelpers.TestCommandSucceeds(t, ctx, image, "/app/kepubify", "--version")
+	t.Run("Check /app/kepubify exists", func(t *testing.T) {
+		testhelpers.TestCommandSucceeds(t, ctx, image, nil, "/app/kepubify", "--version")
 	})
 }

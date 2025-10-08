@@ -12,6 +12,6 @@ func Test(t *testing.T) {
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/gluetun-qb-port-sync:rolling")
 
 	t.Run("Check /app/script.sh exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/app/script.sh")
+		testhelpers.TestFileExists(t, ctx, image, "/app/script.sh", nil)
 	})
 }

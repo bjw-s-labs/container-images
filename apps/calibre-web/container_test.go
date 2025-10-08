@@ -18,7 +18,7 @@ func Test(t *testing.T) {
 	})
 
 	testhelpers.TestFilesExist(t, ctx, image, []string{
-		"/opt/kepubify/kepubifyz",
+		"/opt/kepubify/kepubify",
 		"/opt/calibre/ebook-convert",
 	})
 }

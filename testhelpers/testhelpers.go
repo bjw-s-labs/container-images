@@ -74,3 +74,26 @@ func TestFileExists(t *testing.T, ctx context.Context, image string, filePath st
 	require.NoError(t, err)
 	require.Equal(t, 0, state.ExitCode, fmt.Sprintf("file %s should exist", filePath))
 }
+
+// TestCommandSucceeds tests that a command runs successfully in the container (exit code 0)
+func TestCommandSucceeds(t *testing.T, ctx context.Context, image string, entrypoint string, args ...string) {
+	t.Helper()
+
+	opts := []testcontainers.ContainerCustomizer{
+		testcontainers.WithEntrypoint(entrypoint),
+		testcontainers.WithWaitStrategy(wait.ForExit()),
+	}
+
+	if len(args) > 0 {
+		opts = append(opts, testcontainers.WithEntrypointArgs(args...))
+	}
+
+	container, err := testcontainers.Run(ctx, image, opts...)
+	testcontainers.CleanupContainer(t, container)
+	require.NoError(t, err)
+
+	// Check the exit code
+	state, err := container.State(ctx)
+	require.NoError(t, err)
+	require.Equal(t, 0, state.ExitCode, fmt.Sprintf("command '%s %v' should succeed", entrypoint, args))
+}

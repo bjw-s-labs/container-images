@@ -17,8 +17,11 @@ func Test(t *testing.T) {
 		})
 	})
 
-	testhelpers.TestFilesExist(t, ctx, image, []string{
-		"/opt/kepubify/kepubify",
-		"/opt/calibre/ebook-convert",
+	t.Run("Check /opt/kepubify/kepubify exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/opt/kepubify/kepubify")
+	})
+
+	t.Run("Check /opt/calibre/ebook-convert exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/opt/calibre/ebook-convert")
 	})
 }

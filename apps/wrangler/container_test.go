@@ -11,7 +11,7 @@ func Test(t *testing.T) {
 	ctx := context.Background()
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/wrangler:rolling")
 
-	testhelpers.TestFilesExist(t, ctx, image, []string{
-		"/usr/local/bin/wrangler",
+	t.Run("Check /usr/local/bin/wrangler exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/wrangler")
 	})
 }

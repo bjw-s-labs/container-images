@@ -74,14 +74,3 @@ func TestFileExists(t *testing.T, ctx context.Context, image string, filePath st
 	require.NoError(t, err)
 	require.Equal(t, 0, state.ExitCode, fmt.Sprintf("file %s should exist", filePath))
 }
-
-// TestFilesExist tests that multiple files exist in the container
-func TestFilesExist(t *testing.T, ctx context.Context, image string, filePaths []string) {
-	t.Helper()
-
-	for _, filePath := range filePaths {
-		t.Run(fmt.Sprintf("Check %s exists", filePath), func(t *testing.T) {
-			TestFileExists(t, ctx, image, filePath)
-		})
-	}
-}

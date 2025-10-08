@@ -1,5 +1,0 @@
----
-http:
-  http://localhost:11080:
-    status: 302
-    no-follow-redirects: true

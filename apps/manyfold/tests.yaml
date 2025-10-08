@@ -1,9 +1,0 @@
----
-process:
-  foreman:
-    running: true
-
-http:
-  http://localhost:3214:
-    status: 302
-    no-follow-redirects: true

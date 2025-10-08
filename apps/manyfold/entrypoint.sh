@@ -8,13 +8,6 @@ export PORT=${PORT:-"3214"}
 export REDIS_URL=${REDIS_URL:-${DEFAULT_REDIS_URL}}
 export RUN_BUILTIN_REDIS=${RUN_BUILTIN_REDIS:-"false"}
 
-# Hack to work around foreman errors during CI tests
-if [[ -d /goss ]]; then
-  export SECRET_KEY_BASE="placeholder"
-  export DATABASE_URL="sqlite3:/data/manyfold.sqlite3"
-  export RUN_BUILTIN_REDIS="true"
-fi
-
 cd /app
 
 echo "Preparing database..."

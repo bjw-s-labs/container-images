@@ -11,7 +11,7 @@ ENV \
 
 USER root
 
-COPY --from=ghcr.io/astral-sh/uv:0.9.2@sha256:6dbd7c42a9088083fa79e41431a579196a189bcee3ae68ba904ac2bf77765867 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.9.3@sha256:ecfea7316b266ba82a5e9efb052339ca410dd774dc01e134a30890e6b85c7cd1 /uv /uvx /bin/
 ADD --chmod=755 ./entrypoint.sh /entrypoint.sh
 ADD --keep-git-dir=false https://github.com/Kozea/Radicale.git#v${VERSION} /app
 ADD --chown=65534:65534 ./defaults/config /app/config.default

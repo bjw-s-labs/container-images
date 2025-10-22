@@ -28,6 +28,7 @@ RUN \
     && rm -rf /root/.cache /root/.cargo /tmp/*
 
 USER nobody:nogroup
+ENV VIRTUAL_ENV=/app/.venv
 ENV PATH="/app/.venv/bin:$PATH"
 
 WORKDIR /config

@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=koush/scrypted
-  default = "0.141.0"
+  default = "0.143.0"
 }
 
 variable "SOURCE" {

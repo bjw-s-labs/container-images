@@ -4,28 +4,20 @@ FROM docker.io/library/python:3.13-alpine3.22
 ARG VERSION
 
 ENV \
-    CRYPTOGRAPHY_DONT_BUILD_RUST=1 \
-    PIP_BREAK_SYSTEM_PACKAGES=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_ROOT_USER_ACTION=ignore \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
     UV_NO_CACHE=true \
-    UV_SYSTEM_PYTHON=true \
     UV_EXTRA_INDEX_URL="https://wheel-index.linuxserver.io/alpine-3.22/"
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 RUN \
     apk add --no-cache \
         bash \
+        ca-certificates \
         catatonit \
         kubectl \
     && \
-    pip install uv \
-    && \
-    uv pip install \
-        pyyaml \
-    && pip uninstall --yes uv \
+    uv pip install --system pyyaml \
+    && rm /bin/uv /bin/uvx \
     && rm -rf /tmp/*
 
 USER nobody:nogroup

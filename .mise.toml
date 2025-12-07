@@ -1,5 +1,5 @@
 [tools]
-"aqua:casey/just" = "1.43.1"
+"aqua:casey/just" = "1.44.0"
 "aqua:cli/cli" = "2.83.1"
 "aqua:jqlang/jq" = "1.7.1"
 "aqua:mikefarah/yq" = "4.49.2"

@@ -46,7 +46,7 @@ get_gluetun_external_ip() {
 
 get_gluetun_forwarded_port() {
   local output
-  output=$(query_gluetun_control_server "/v1/openvpn/portforwarded")
+  output=$(query_gluetun_control_server "/v1/portforward")
   echo "${output}" | jq -r .'port'
 }
 

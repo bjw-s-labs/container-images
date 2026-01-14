@@ -1,6 +1,6 @@
 [tools]
 "aqua:casey/just" = "1.46.0"
-"aqua:cli/cli" = "2.83.2"
+"aqua:cli/cli" = "2.85.0"
 "aqua:jqlang/jq" = "1.7.1"
 "aqua:mikefarah/yq" = "4.50.1"
 "go" = "1.25"

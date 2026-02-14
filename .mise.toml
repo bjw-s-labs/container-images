@@ -2,7 +2,7 @@
 "aqua:casey/just" = "1.46.0"
 "aqua:cli/cli" = "2.86.0"
 "aqua:jqlang/jq" = "1.7.1"
-"aqua:mikefarah/yq" = "4.52.2"
+"aqua:mikefarah/yq" = "4.52.3"
 "go" = "1.26.0"
 
 [hooks]

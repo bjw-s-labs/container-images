@@ -55,5 +55,17 @@
       matchUpdateTypes: ["minor", "patch"],
       ignoreTests: false,
     },
+    {
+      description: ["Auto-merge certain container updates"],
+      matchFileNames: ["**/Dockerfile"],
+      matchPackageNames: [
+        "ghcr.io/cdloh/calibre-bare",
+        "ghcr.io/bjw-s-labs/kepubify",
+      ],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      ignoreTests: false,
+    },
   ],
 }

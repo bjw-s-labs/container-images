@@ -77,7 +77,7 @@ jobs:
 
       - if: ${{ steps.app-options.outputs.version != steps.registry.outputs.version }}
         name: Find Pull Request
-        uses: juliangruber/find-pull-request-action@952b3bb1ddb2dcc0aa3479e98bb1c2d1a922f096 # v1.10.0
+        uses: juliangruber/find-pull-request-action@33d46d4ff90884bb23aaead16044125daaf733d8 # v1.11.0
         id: find-pull-request
         with:
           github-token: ${{ steps.app-token.outputs.token }}

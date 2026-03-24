@@ -6,7 +6,7 @@ variable "APP" {
 
 variable "VERSION" {
   // renovate: datasource=npm depName=wrangler
-  default = "4.76.0"
+  default = "4.77.0"
 }
 
 variable "SOURCE" {

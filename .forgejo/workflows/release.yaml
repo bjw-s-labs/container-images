@@ -1,10 +1,19 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Pull Request
+name: Release
 
 on:
-  merge_group:
-  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - apps/**
+  workflow_dispatch:
+    inputs:
+      app:
+        type: string
+        description: App Name
+        required: true
 
 permissions:
   contents: read
@@ -41,6 +50,13 @@ jobs:
         with:
           token: ${{ secrets.FORGEJO_TOKEN }}
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.ghcr_username }}
+          password: ${{ secrets.ghcr_token }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4.0.0
 
@@ -55,32 +71,16 @@ jobs:
         run: |-
           rsync -a --ignore-existing --progress ./include/ ./apps/${{ inputs.app }}/
 
-      - name: Build image for testing
+      - name: Build and push image
         uses: docker/bake-action@v7.0.0
         id: bake
         with:
-          load: true
-          push: false
+          push: true
           files: ./docker-bake.hcl
           source: ./apps/${{ matrix.app }}
           targets: image-all
         env:
           GIT_SHA: ${{ github.sha }}
-
-      - name: Set up Go
-        uses: actions/setup-go@v6.3.0
-        with:
-          go-version-file: go.mod
-
-      - name: Run Tests
-        shell: bash
-        env:
-          APP: ${{ matrix.app }}
-          TESTCONTAINERS_RYUK_DISABLED: "true"
-          TEST_IMAGE: ghcr.io/bjw-s-labs/${{ matrix.app }}@${{ fromJSON(steps.bake.outputs.metadata).image-all['containerimage.digest'] }}
-        run: |-
-          echo "Running tests against ${TEST_IMAGE}"
-          go test -v ./apps/${APP}/...
 
   status:
     if: ${{ !cancelled() }}

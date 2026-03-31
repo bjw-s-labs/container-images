@@ -1,20 +1,15 @@
-target "docker-metadata-action" {}
-
-variable "APP" {
-  default = "kepubify"
-}
+DATE = formatdate( "YYYY.MM.DD", timestamp() )
+APP = "kepubify"
+SOURCE = "https://github.com/pgaskin/kepubify"
+variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=pgaskin/kepubify
   default = "4.0.4"
 }
 
-variable "SOURCE" {
-  default = "https://github.com/pgaskin/kepubify"
-}
-
 group "default" {
-  targets = ["image-local"]
+  targets = ["image-all"]
 }
 
 target "image" {
@@ -23,8 +18,15 @@ target "image" {
     VERSION = "${VERSION}"
   }
   labels = {
-    "org.opencontainers.image.source" = "${SOURCE}"
+    "org.opencontainers.image.vendor" = "bjw-s"
+    "org.opencontainers.image.source" = "https://github.com/bjw-s-labs/container-images"
+    "org.opencontainers.image.created" = "${DATE}"
+    "org.opencontainers.image.revision" = "${GIT_SHA}"
+    "org.opencontainers.image.title" = "${APP}"
+    "org.opencontainers.image.url" = "${SOURCE}"
+    "org.opencontainers.image.version" = "${VERSION}"
   }
+  no-cache = true
 }
 
 target "image-local" {
@@ -39,4 +41,15 @@ target "image-all" {
     "linux/amd64",
     "linux/arm64"
   ]
+  tags = [
+    "ghcr.io/bjw-s-labs/${APP}:rolling",
+    "ghcr.io/bjw-s-labs/${APP}:sha-${GIT_SHA}",
+    can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+", VERSION)) ? "" : "ghcr.io/bjw-s-labs/${APP}:${DATE}",
+    "ghcr.io/bjw-s-labs/${APP}:${VERSION}",
+    can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+", VERSION)) ? "ghcr.io/bjw-s-labs/${APP}:${regex("^([0-9]+\\.[0-9]+)", VERSION)[0]}" : "",
+    can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+", VERSION)) ? "ghcr.io/bjw-s-labs/${APP}:${regex("^([0-9]+)", VERSION)[0]}" : ""
+  ]
+
 }
+
+target "docker-metadata-action" {}

@@ -1,0 +1,79 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: Deprecate App
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        type: string
+        description: App Name
+        required: true
+      reason:
+        type: string
+        description: Deprecation Reason
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  deprecate:
+    name: Deprecate (${{ inputs.app }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate inputs
+        env:
+          APP: ${{ inputs.app }}
+        run: |
+          if [[ ! "$APP" =~ ^[a-zA-Z0-9_-]+$ ]]; then
+            echo "Invalid app name: must only contain alphanumeric characters, hyphens, and underscores"
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v6.0.2
+        with:
+          token: ${{ secrets.FORGEJO_TOKEN }}
+
+      - name: Delete App Directory
+        env:
+          APP: ${{ inputs.app }}
+        run: rm -rf "./apps/${APP}"
+
+      - name: Commit and push branch
+        env:
+          APP: ${{ inputs.app }}
+        run: |
+          git config user.name "lab-assistant"
+          git config user.email "lab-assistant@git.bjw-s.dev"
+          git checkout -b "deprecate/${APP}"
+          git add -A
+          git commit -m "release(${APP})!: deprecate app image"
+          git push origin "deprecate/${APP}"
+
+      - name: Create Pull Request
+        env:
+          APP: ${{ inputs.app }}
+          REASON: ${{ inputs.reason }}
+          FORGEJO_TOKEN: ${{ secrets.FORGEJO_TOKEN }}
+          API_BASE: ${{ github.server_url }}/api/v1/repos/${{ github.repository }}
+        run: |-
+          pr_number=$(curl --fail-with-body -sS -X POST \
+            -H "Authorization: token ${FORGEJO_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "${API_BASE}/pulls" \
+            --data "$(jq -n \
+              --arg title "release(${APP})!: deprecate app image" \
+              --arg body "**Reason**: ${REASON}" \
+              --arg head "deprecate/${APP}" \
+              --arg base "${{ github.ref_name }}" \
+              '{title: $title, body: $body, head: $head, base: $base}')" \
+            | jq -r '.number')
+
+          curl --fail-with-body -sS -X POST \
+            -H "Authorization: token ${FORGEJO_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "${API_BASE}/pulls/${pr_number}/merge" \
+            --data '{"Do": "rebase", "delete_branch_after_merge": true, "merge_when_checks_succeed": true}'

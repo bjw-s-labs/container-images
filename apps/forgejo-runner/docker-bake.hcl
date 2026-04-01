@@ -1,11 +1,10 @@
 DATE = formatdate( "YYYY.MM.DD", timestamp() )
-APP = "kepubify"
-SOURCE = "https://github.com/pgaskin/kepubify"
+APP = "forgejo-runner"
+SOURCE = "https://github.com/catthehacker/docker_images"
 variable "GIT_SHA" {}
 
 variable "VERSION" {
-  // renovate: datasource=github-releases depName=pgaskin/kepubify
-  default = "4.0.4"
+  default = "ubuntu-24.04"
 }
 
 group "default" {
@@ -42,12 +41,8 @@ target "image-all" {
     "linux/arm64"
   ]
   tags = [
-    "ghcr.io/bjw-s-labs/${APP}:rolling",
     "ghcr.io/bjw-s-labs/${APP}:sha-${GIT_SHA}",
-    can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+", VERSION)) ? "" : "ghcr.io/bjw-s-labs/${APP}:${DATE}",
     "ghcr.io/bjw-s-labs/${APP}:${VERSION}",
-    can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+", VERSION)) ? "ghcr.io/bjw-s-labs/${APP}:${regex("^([0-9]+\\.[0-9]+)", VERSION)[0]}" : "",
-    can(regex("^[0-9]+\\.[0-9]+\\.[0-9]+", VERSION)) ? "ghcr.io/bjw-s-labs/${APP}:${regex("^([0-9]+)", VERSION)[0]}" : ""
   ]
 
 }

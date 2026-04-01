@@ -1,6 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
-name: Pull Request
+name: Validate Pull Request
 
 on:
   merge_group:
@@ -26,7 +26,7 @@ jobs:
 
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}
-    name: Build ${{ matrix.app }}
+    name: Build and test ${{ matrix.app }}
     needs:
       - prepare
     runs-on: ubuntu-latest
@@ -81,20 +81,3 @@ jobs:
         run: |-
           echo "Running tests against ${TEST_IMAGE}"
           go test -v ./apps/${APP}/...
-
-  status:
-    if: ${{ !cancelled() }}
-    name: Build Success
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Any jobs failed?
-        if: ${{ contains(needs.*.result, 'failure') }}
-        run: |-
-          exit 1
-
-      - name: All jobs passed or skipped?
-        if: ${{ !(contains(needs.*.result, 'failure')) }}
-        run: |-
-          echo "All jobs passed or skipped" && echo "${{ toJSON(needs.*.result) }}"

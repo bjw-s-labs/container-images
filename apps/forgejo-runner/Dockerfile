@@ -3,7 +3,7 @@
 FROM ghcr.io/catthehacker/ubuntu:act-24.04@sha256:9692deeccb49050a87e7bc53d536ea5b9a8c4874665737da6ac7a3cb84eab181
 
 # Install packages from other images
-COPY --from=ghcr.io/fluxcd/flux-cli:v2.8.0  /usr/local/bin/flux  /usr/local/bin/flux
+COPY --from=ghcr.io/fluxcd/flux-cli:v2.8.3  /usr/local/bin/flux  /usr/local/bin/flux
 COPY --from=docker.io/alpine/helm:4.1.1     /usr/bin/helm        /usr/local/bin/helm
 
 # Install recent Python

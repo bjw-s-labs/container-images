@@ -25,13 +25,23 @@ jobs:
     outputs:
       changed-files: ${{ steps.changed-files.outputs.changed_files }}
     steps:
-      - name: Get changed files
+      - name: Get changed files (push)
         uses: https://github.com/bjw-s-labs/action-changed-files@a9a36fb08ce06db9b02fbd8026cc2c0945eb9841 # v0.6.0
-        id: changed-files
+        id: changed-files-action
+        if: ${{ github.event_name == 'push' }}
         with:
           path: apps
           include_only_directories: true
           max_depth: 1
+
+      - name: Set changed files output
+        id: changed-files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo 'changed_files=["${{ inputs.app }}"]' >> $GITHUB_OUTPUT
+          else
+            echo 'changed_files=${{ steps.changed-files-action.outputs.changed_files }}' >> $GITHUB_OUTPUT
+          fi
 
   build:
     if: ${{ needs.prepare.outputs.changed-files != '[]' }}

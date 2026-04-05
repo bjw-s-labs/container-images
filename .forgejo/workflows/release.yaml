@@ -38,7 +38,7 @@ jobs:
     name: Build ${{ matrix.app }}
     needs:
       - prepare
-    runs-on: ubuntu-latest
+    runs-on: docker
     strategy:
       matrix:
         app: ${{ fromJSON(needs.prepare.outputs.changed-files) }}

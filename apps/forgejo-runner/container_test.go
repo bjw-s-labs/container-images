@@ -11,6 +11,10 @@ func Test(t *testing.T) {
 	ctx := context.Background()
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/forgejo-rolling:rolling")
 
+	t.Run("Check cosign exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/cosign", nil)
+	})
+
 	t.Run("Check flux exists", func(t *testing.T) {
 		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/flux", nil)
 	})

@@ -3,7 +3,7 @@
 "aqua:cli/cli" = "2.89.0"
 "aqua:jqlang/jq" = "1.7.1"
 "aqua:mikefarah/yq" = "4.52.5"
-"go" = "1.26.1"
+"go" = "1.26.2"
 
 [hooks]
 postinstall = [

@@ -3,7 +3,7 @@ module github.com/bjw-s-labs/container-images
 go 1.25.1
 
 require (
-	github.com/docker/go-connections v0.6.0
+	github.com/docker/go-connections v0.7.0
 	github.com/stretchr/testify v1.11.1
 	github.com/testcontainers/testcontainers-go v0.41.0
 )

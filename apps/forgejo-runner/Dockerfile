@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/catthehacker/ubuntu:act-24.04@sha256:bd77095e81238f8860a21d5c481d10a562134d811e4cb726ad8a5cfff83e0f57
+FROM ghcr.io/catthehacker/ubuntu:act-24.04@sha256:15e550c0501533b336df62cd3c8ba530a77972b62180c3b4240a1222cb2cd1f3
 
 # Install packages from other images
 COPY --from=ghcr.io/fluxcd/flux-cli:v2.8.6 /usr/local/bin/flux /usr/local/bin/flux

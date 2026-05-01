@@ -1,6 +1,6 @@
 #!/usr/bin/env -S just --justfile
 
-set quiet := true
+set quiet
 set shell := ['bash', '-eu', '-o', 'pipefail', '-c']
 
 bin_dir := justfile_dir() + '/.bin'
@@ -10,6 +10,7 @@ default:
     just --list
 
 [doc('Build and test an app locally')]
+[env("TESTCONTAINERS_RYUK_DISABLED", "true")]
 [working-directory('.cache')]
 local-build app:
     rsync -aqIP {{ justfile_dir() }}/include/ {{ justfile_dir() }}/apps/{{ app }}/ .

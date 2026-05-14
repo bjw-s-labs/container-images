@@ -5,7 +5,7 @@ variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=Kozea/Radicale
-  default = "3.7.2"
+  default = "3.7.3"
 }
 
 group "default" {

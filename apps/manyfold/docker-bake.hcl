@@ -5,7 +5,7 @@ variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=manyfold3d/manyfold
-  default = "0.140.1"
+  default = "0.141.0"
 }
 
 group "default" {

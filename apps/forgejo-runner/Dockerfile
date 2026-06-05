@@ -32,7 +32,7 @@ RUN \
 
 # Install flux-local
 # renovate: datasource=github-releases depName=allenporter/flux-local
-ARG FLUX_LOCAL_VERSION=8.1.0
+ARG FLUX_LOCAL_VERSION=8.2.0
 RUN \
     pipx install flux-local==${FLUX_LOCAL_VERSION}
 

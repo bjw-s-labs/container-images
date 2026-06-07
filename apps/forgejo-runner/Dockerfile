@@ -6,7 +6,7 @@ FROM ghcr.io/catthehacker/ubuntu:act-24.04@sha256:eb153df03ca81e75f73d40a2b14b5d
 COPY --from=ghcr.io/fluxcd/flux-cli:v2.8.8 /usr/local/bin/flux /usr/local/bin/flux
 COPY --from=docker.io/alpine/helm:4.1.1 /usr/bin/helm /usr/local/bin/helm
 COPY --from=ghcr.io/sigstore/cosign/cosign:v3.0.6 /ko-app/cosign /usr/local/bin/cosign
-COPY --from=ghcr.io/home-operations/flate:0.2.12 /flate /usr/local/bin/flate
+COPY --from=ghcr.io/home-operations/flate:0.3.2 /flate /usr/local/bin/flate
 
 # Install recent Python
 RUN \

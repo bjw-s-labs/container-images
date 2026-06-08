@@ -1,0 +1,28 @@
+[settings]
+experimental = true
+unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
+
+[tools]
+gh = "2.93.0"
+go = "1.26.4"
+jq = "1.8.1"
+lefthook = "2.1.9"
+oxfmt = "0.53.0"
+shellcheck = "0.11.0"
+yq = "4.53.2"
+zizmor = "1.25.2"
+
+[tasks.local-build]
+description = "Build and test an app locally"
+dir = "{{config_root}}/.cache"
+usage = '''
+arg "<app>"
+'''
+run = '''
+rsync -aqIP {{config_root}}/include/ {{config_root}}/apps/"$usage_app"/ .
+docker buildx bake --no-cache --metadata-file docker-bake.json --set=*.output=type=docker --load
+TEST_IMAGE="$(jq -r '."image-local"."image.name" | sub("^docker.io/library/"; "")' docker-bake.json)" go test -v {{config_root}}/apps/"$usage_app"/...
+'''
+
+[hooks]
+postinstall = ["mkdir -p {{config_root}}/.cache", "lefthook install"]

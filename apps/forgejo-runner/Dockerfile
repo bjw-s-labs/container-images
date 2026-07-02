@@ -30,11 +30,12 @@ RUN \
     && ~/.local/share/pipx-venv/bin/pip install pipx \
     && ln -s ~/.local/share/pipx-venv/bin/pipx ~/.local/bin/pipx
 
-# Install flux-local
-# renovate: datasource=github-releases depName=allenporter/flux-local
-ARG FLUX_LOCAL_VERSION=8.3.0
-RUN \
-    pipx install flux-local==${FLUX_LOCAL_VERSION}
+# Install kustomize
+# renovate: datasource=github-releases depName=cli/cli
+ARG GH_CLI_VERSION=2.95.0
+RUN wget -qO- \
+    "https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz" \
+    | tar xz --strip-components=2 -C /usr/local/bin "gh_${GH_CLI_VERSION}_linux_${TARGETARCH}/bin/gh"
 
 # Cleanup
 RUN \

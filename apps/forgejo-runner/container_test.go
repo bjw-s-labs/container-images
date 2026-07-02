@@ -19,12 +19,12 @@ func Test(t *testing.T) {
 		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/flux", nil)
 	})
 
-	t.Run("Check flux-local exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/root/.local/bin/flux-local", nil)
-	})
-
 	t.Run("Check flate exists", func(t *testing.T) {
 		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/flate", nil)
+	})
+
+	t.Run("Check gh exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/gh", nil)
 	})
 
 	t.Run("Check helm exists", func(t *testing.T) {

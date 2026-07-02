@@ -32,7 +32,7 @@ RUN \
 
 # Install kustomize
 # renovate: datasource=github-releases depName=cli/cli
-ARG GH_CLI_VERSION=2.95.0
+ARG GH_CLI_VERSION=2.96.0
 RUN wget -qO- \
     "https://github.com/cli/cli/releases/download/v${GH_CLI_VERSION}/gh_${GH_CLI_VERSION}_linux_${TARGETARCH}.tar.gz" \
     | tar xz --strip-components=2 -C /usr/local/bin "gh_${GH_CLI_VERSION}_linux_${TARGETARCH}/bin/gh"

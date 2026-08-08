@@ -5,7 +5,7 @@ variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=janeczku/calibre-web
-  default = "0.6.26"
+  default = "0.6.27"
 }
 
 group "default" {

@@ -5,7 +5,7 @@ variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=modelcontextprotocol/servers
-  default = "2026.7.10"
+  default = "2026.8.18"
 }
 
 group "default" {

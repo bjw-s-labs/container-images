@@ -3,7 +3,7 @@ experimental = true
 unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
 
 [tools]
-gh = "2.97.0"
+gh = "2.98.0"
 go = "1.27.0"
 jq = "1.8.2"
 lefthook = "2.1.10"

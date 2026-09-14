@@ -17,7 +17,7 @@ jobs:
       changed-files: ${{ steps.set-fallback.outputs.changed_files || steps.changed-files.outputs.changed_files }}
     steps:
       - name: Get changed files
-        uses: https://github.com/bjw-s-labs/action-changed-files@a9a36fb08ce06db9b02fbd8026cc2c0945eb9841 # v0.6.0
+        uses: https://github.com/bjw-s-labs/action-changed-files@147be9638332cf68fd60714a610509d7a9360d60 # v0.7.0
         id: changed-files
         with:
           path: apps
@@ -101,7 +101,8 @@ jobs:
         env:
           APP: ${{ matrix.app }}
           TESTCONTAINERS_RYUK_DISABLED: "true"
-          TEST_IMAGE: ${{ matrix.app }}@${{ fromJSON(steps.bake.outputs.metadata)['image-local']['containerimage.digest'] }}
+          TEST_IMAGE: >-
+            ${{ matrix.app != '__skip__' && format('{0}@{1}', matrix.app, fromJSON(steps.bake.outputs.metadata)['image-local']['containerimage.digest']) || '' }}
         run: |-
           echo "Running tests against ${TEST_IMAGE}"
           go test -v ./apps/${APP}/...

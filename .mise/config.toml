@@ -1,6 +1,5 @@
 [settings]
 experimental = true
-unix_default_inline_shell_args = "bash -c -o errexit -o pipefail -o nounset"
 
 [tools]
 gh = "2.101.0"

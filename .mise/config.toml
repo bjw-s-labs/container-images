@@ -2,7 +2,7 @@
 experimental = true
 
 [tools]
-gh = "2.101.0"
+gh = "2.102.0"
 go = "1.27.1"
 jq = "1.8.2"
 lefthook = "2.1.15"

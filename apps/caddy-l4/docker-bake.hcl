@@ -5,7 +5,7 @@ variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=docker depName=caddy
-  default = "2.11.4"
+  default = "2.11.6"
 }
 
 group "default" {

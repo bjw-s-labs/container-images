@@ -7,7 +7,7 @@ COPY --from=ghcr.io/fluxcd/flux-cli:v2.9.6 /usr/local/bin/flux /usr/local/bin/fl
 COPY --from=docker.io/alpine/helm:4.1.1 /usr/bin/helm /usr/local/bin/helm
 COPY --from=ghcr.io/sigstore/cosign/cosign:v3.1.3 /ko-app/cosign /usr/local/bin/cosign
 COPY --from=ghcr.io/home-operations/flate:0.6.5 /flate /usr/local/bin/flate
-COPY --from=codeberg.org/forgejo-contrib/forgejo-cli:0.6.0 /usr/local/bin/fj /usr/local/bin/fj
+COPY --from=ghcr.io/perfectra1n/fjo:0.2.5 /usr/local/bin/fjo /usr/local/bin/fjo
 
 # Install recent Python
 RUN \

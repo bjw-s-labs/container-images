@@ -15,8 +15,8 @@ func Test(t *testing.T) {
 		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/cosign", nil)
 	})
 
-	t.Run("Check fj exists", func(t *testing.T) {
-		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/fj", nil)
+	t.Run("Check fjo exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/fjo", nil)
 	})
 
 	t.Run("Check flux exists", func(t *testing.T) {

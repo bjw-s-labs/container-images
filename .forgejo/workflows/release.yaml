@@ -60,7 +60,18 @@ jobs:
         with:
           token: ${{ secrets.FORGEJO_TOKEN }}
 
+      - name: Check whether app directory exists
+        id: app-check
+        run: |
+          if [ -d "apps/${{ matrix.app }}" ]; then
+            echo "exists=true" >> "${FORGEJO_OUTPUT}"
+          else
+            echo "App directory was deleted; skipping image release"
+            echo "exists=false" >> "${FORGEJO_OUTPUT}"
+          fi
+
       - name: Login to GitHub Container Registry
+        if: ${{ steps.app-check.outputs.exists == 'true' }}
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
@@ -68,9 +79,11 @@ jobs:
           password: ${{ secrets.ghcr_token }}
 
       - name: Set up Docker Buildx
+        if: ${{ steps.app-check.outputs.exists == 'true' }}
         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
 
       - name: Set up rsync
+        if: ${{ steps.app-check.outputs.exists == 'true' }}
         shell: bash
         run: |-
           sudo apt-get -qq update
@@ -78,10 +91,12 @@ jobs:
           rsync --version
 
       - name: Add include directory to build context
+        if: ${{ steps.app-check.outputs.exists == 'true' }}
         run: |-
-          rsync -a --ignore-existing --progress ./include/ ./apps/${{ inputs.app }}/
+          rsync -a --ignore-existing --progress ./include/ ./apps/${{ matrix.app }}/
 
       - name: Build and push image
+        if: ${{ steps.app-check.outputs.exists == 'true' }}
         uses: docker/bake-action@59cb1203cd42bcefd40a1b6d73b589e48c86040e # v7.5.0
         id: bake
         with:

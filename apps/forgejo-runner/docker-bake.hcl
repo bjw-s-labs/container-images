@@ -1,10 +1,10 @@
 DATE = formatdate( "YYYY.MM.DD", timestamp() )
 APP = "forgejo-runner"
-SOURCE = "https://github.com/catthehacker/docker_images"
+SOURCE = "https://gitea.com/gitea/runner-images"
 variable "GIT_SHA" {}
 
 variable "VERSION" {
-  default = "ubuntu-24.04"
+  default = "ubuntu-26.04"
 }
 
 group "default" {

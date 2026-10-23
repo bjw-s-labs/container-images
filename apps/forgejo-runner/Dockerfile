@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/catthehacker/ubuntu:act-24.04@sha256:eb153df03ca81e75f73d40a2b14b5dbd2605e7813556efab47b23dfbfceeaa9d
+FROM gitea/runner-images:ubuntu-26.04@sha256:76a1a763aaf8ee11ac9c9f1bc01efaf6c0763eea5ad2791a577871393a4e4448
 
 # Install packages from other images
 COPY --from=ghcr.io/fluxcd/flux-cli:v2.9.6 /usr/local/bin/flux /usr/local/bin/flux
@@ -11,8 +11,7 @@ COPY --from=ghcr.io/perfectra1n/fjo:0.2.6 /usr/local/bin/fjo /usr/local/bin/fjo
 
 # Install recent Python
 RUN \
-    add-apt-repository ppa:deadsnakes/ppa \
-    && apt-get -qq update \
+    apt-get -qq update \
     && apt-get -qq install python3.14 python3.14-venv rsync
 
 # Install kustomize

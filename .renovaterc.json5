@@ -36,6 +36,20 @@
       semanticCommitType: "release",
     },
     {
+      description: ["Use digests in commit message for digest-only Application Updates"],
+      matchFileNames: ["**/docker-bake.hcl", "**/Dockerfile"],
+      matchUpdateTypes: ["digest"],
+      commitMessageExtra: "( {{currentDigestShort}} → {{newDigestShort}} )",
+    },
+    {
+      description: ["Auto-merge digest updates in Dockerfiles"],
+      matchFileNames: ["**/Dockerfile"],
+      matchUpdateTypes: ["digest"],
+      automerge: true,
+      automergeType: "pr",
+      ignoreTests: false,
+    },
+    {
       description: ["Auto-merge Application Updates"],
       matchFileNames: ["**/docker-bake.hcl"],
       automerge: true,

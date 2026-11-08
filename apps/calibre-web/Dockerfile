@@ -67,7 +67,7 @@ RUN \
     && chmod -R 755 /app
 
 COPY --chmod=755 --from=ghcr.io/cdloh/calibre-bare:9.11.0 / /opt/calibre
-COPY --chmod=755 --from=ghcr.io/bjw-s-labs/kepubify:4.0.4 /app/kepubify /opt/kepubify/kepubify
+COPY --chmod=755 --from=ghcr.io/bjw-s-labs/kepubify:5.0.0 /app/kepubify /opt/kepubify/kepubify
 COPY --chmod=755 ./entrypoint.sh /entrypoint.sh
 
 USER nobody:nogroup

@@ -5,7 +5,7 @@ variable "GIT_SHA" {}
 
 variable "VERSION" {
   // renovate: datasource=github-releases depName=pgaskin/kepubify
-  default = "4.0.4"
+  default = "5.0.0"
 }
 
 group "default" {

@@ -11,6 +11,10 @@ func Test(t *testing.T) {
 	ctx := context.Background()
 	image := testhelpers.GetTestImage("ghcr.io/bjw-s-labs/forgejo-rolling:rolling")
 
+	t.Run("Check clang exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/usr/bin/clang", nil)
+	})
+
 	t.Run("Check cosign exists", func(t *testing.T) {
 		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/cosign", nil)
 	})
@@ -37,6 +41,10 @@ func Test(t *testing.T) {
 
 	t.Run("Check kustomize exists", func(t *testing.T) {
 		testhelpers.TestFileExists(t, ctx, image, "/usr/local/bin/kustomize", nil)
+	})
+
+	t.Run("Check llvm-config exists", func(t *testing.T) {
+		testhelpers.TestFileExists(t, ctx, image, "/usr/bin/llvm-config", nil)
 	})
 
 	t.Run("Check rsync exists", func(t *testing.T) {

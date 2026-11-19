@@ -9,10 +9,10 @@ COPY --from=ghcr.io/sigstore/cosign/cosign:v3.1.4 /ko-app/cosign /usr/local/bin/
 COPY --from=ghcr.io/home-operations/flate:0.7.3 /flate /usr/local/bin/flate
 COPY --from=ghcr.io/perfectra1n/fjo:0.3.1 /usr/local/bin/fjo /usr/local/bin/fjo
 
-# Install recent Python
+# Install additional packages
 RUN \
     apt-get -qq update \
-    && apt-get -qq install python3.14 python3.14-venv rsync
+    && apt-get -qq install clang llvm python3.14 python3.14-venv rsync
 
 # Install kustomize
 # renovate: datasource=github-releases depName=kubernetes-sigs/kustomize
@@ -30,7 +30,7 @@ RUN \
     && ~/.local/share/pipx-venv/bin/pip install pipx \
     && ln -s ~/.local/share/pipx-venv/bin/pipx ~/.local/bin/pipx
 
-# Install kustomize
+# Install gh
 # renovate: datasource=github-releases depName=cli/cli
 ARG GH_CLI_VERSION=2.105.0
 RUN wget -qO- \
@@ -40,4 +40,5 @@ RUN wget -qO- \
 # Cleanup
 RUN \
     apt-get clean \
-    rm -rf /var/cache/* /var/log/* /var/lib/apt/lists/* /tmp/* || echo 'Failed to delete directories'
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/* /var/log/* /var/lib/apt/lists/* /tmp/* || echo 'Failed to delete directories'

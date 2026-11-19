@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM gitea/runner-images:ubuntu-26.04@sha256:7c1f22a2d66b29d436a102084b09dba51523d4fc98d4f9737ffb348e19703c47
+FROM gitea/runner-images:ubuntu-26.04@sha256:433d703e6214e93234583ecc9cbec0b30fb5691259b0581597aaede21b031f8b
 
 # Install packages from other images
 COPY --from=ghcr.io/fluxcd/flux-cli:v2.10.0 /usr/local/bin/flux /usr/local/bin/flux

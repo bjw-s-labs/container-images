@@ -7,7 +7,7 @@ COPY --from=ghcr.io/fluxcd/flux-cli:v2.10.1 /usr/local/bin/flux /usr/local/bin/f
 COPY --from=docker.io/alpine/helm:4.1.1 /usr/bin/helm /usr/local/bin/helm
 COPY --from=ghcr.io/sigstore/cosign/cosign:v3.1.6 /ko-app/cosign /usr/local/bin/cosign
 COPY --from=ghcr.io/home-operations/flate:0.8.0 /flate /usr/local/bin/flate
-COPY --from=ghcr.io/perfectra1n/fjo:0.3.1 /usr/local/bin/fjo /usr/local/bin/fjo
+COPY --from=ghcr.io/perfectra1n/fjo:0.3.2 /usr/local/bin/fjo /usr/local/bin/fjo
 
 # Install additional packages
 RUN \
